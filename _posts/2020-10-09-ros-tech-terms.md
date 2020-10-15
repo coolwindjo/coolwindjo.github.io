@@ -103,4 +103,4 @@ Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File for
   - 이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공
   - User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.
 
-    ![Image of Meta-OS]({{ "/assets/images/robotis-lec-1_2.png" | relative_url }}
+    ![Image of Meta-OS]({{ "/assets/images/posts/2020-10-09/robotis-lec-1_2.png" | relative_url }})
