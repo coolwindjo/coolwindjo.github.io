@@ -6,7 +6,7 @@ tags: [ros, lecture, mooc, robotis, links]
 ---
 ## Robotics OS 종류
 
-![Image of Robotics OSes]({{ "/assets/images/robotis-lec-1_1.png" | relative_url }}
+![Image of Robotics OSes]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_1.png" | relative_url }})
 
 - [ROS](<https://ros.org>) (Robot Operating System)
   - [ROS References](#ros-references)
