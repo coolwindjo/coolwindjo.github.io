@@ -7,9 +7,9 @@
 title: Cool Wind on Study
 email: coolwind@hotmail.co.kr
 author: CoolWind
-copyright: © 2020 coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+copyright: © 2020 All rights reserved
 description: >- # this means to ignore newlines until "baseurl:"
-  Archive what I learned, what I experienced, what I feeled.
+  Archive what I learned, what I experienced, what I felt.
 
 baseurl: "" # the subpath of your site, e.g. /blog
 url: "coolwindjo.github.io" # the base hostname & protocol for your site, e.g. http://example.com
