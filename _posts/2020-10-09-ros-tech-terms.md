@@ -2,7 +2,7 @@
 layout: post
 title: ROS Technical Terms
 categories: ROS
-tags: [ROS, term, jargon]
+tags: [ros, term, jargon]
 ---
 ## Technical Terms
 
@@ -18,6 +18,7 @@ Message | Node 간 Data를 주고 받을 때 사용하는 Medium으로, int, flo
 [Action](#action) | Service처럼 양방향 통신이 필요하지만, 요청 처리 후 응답까지 오랜 시간이 걸리고, 처리 상태가 필요한 경우 사용됨
 Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File format, Bag을 재생하여 이전 상황을 그대로 재현 가능(같은 실험을 수행하지 않아도 Sensor값을 반복하여 사용가능)
 [Catkin](#catkin) | ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음
+[Meta-OS](#meta-os) (Meta-Operating System) | Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어)
 
 ## Detailed description
 
@@ -85,3 +86,21 @@ Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File for
 
 - CMakeLists.txt를 이용해서 사용
 - rosbuild -> catkin (ROS1) -> ament -> colcon (ROS2)
+
+### Meta OS
+
+- Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System
+- 즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함
+  - 기존 OS의 다음과 같은 기능 사용
+    - Process Management System
+    - File System
+    - User Interface
+    - Program Utilities (Compiler, Thread model)
+  - 추가적으로 다음과 같은 Robot Application 개발을 위한 필수 기능들을 Library 형태로 제공
+    - 다수의 이기종 HW간의 Data communication
+    - Scheduling
+    - Error handling
+  - 이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공
+  - User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.
+
+    ![Image of Meta-OS]({{ "/assets/images/robotis-lec-1_2.png" | relative_url }}
