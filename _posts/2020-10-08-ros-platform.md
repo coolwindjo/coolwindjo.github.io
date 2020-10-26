@@ -10,16 +10,15 @@ tags: [ros, lecture, mooc, robotis, link]
   - [Material](<https://github.com/robotpilot/ros-seminar>){:target="_blank"} Github
 - [ROS 한글책](<https://github.com/robotpilot/rosbook_kr>){:target="_blank"} Github
 - [로열모](<https://www.facebook.com/groups/KoreanRobotics>){:target="_blank"} (로봇공학을 위한 열린모임) Facebook
-
-## Robotics OS 종류
-
-![Image of Robotics OSes]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_1.png" | relative_url }})
-
 - [ROS](<https://ros.org>){:target="_blank"} (Robot Operating System)
   - [ROS References](#ros-references)
 - [OPROS](<https://github.com/opros-wiki/OPRoS_v1.1_Components/wiki/Open-Platform-for-Robotic-Services>){:target="_blank"} (Open Platform for Robotic Services)
 - [OpenRTM-aist](<https://www.openrtm.org/openrtm/>){:target="_blank"}
 - [오로카](<https://cafe.naver.com/openrt/23862>){:target="_blank"} Naver Cafe
+
+## Robotics OS 종류
+
+![Image of Robotics OSes]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_1.png" | relative_url }})
 
 ## Communication b/w Heterogeneous Multi-devices
 
