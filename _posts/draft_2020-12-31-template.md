@@ -1,9 +1,8 @@
 ---
 layout: post
 title: Title
-categories: ROS / RaspberryPi / GCP 
+categories: ROS / RaspberryPi / GCP / Skill / Study
 tags: [ros, lecture, mooc, robotis, link, sensor, term, jargon, gcp, google, iot, raspberrypi]
-hidden: true
 ---
 ## Reference Links
 
