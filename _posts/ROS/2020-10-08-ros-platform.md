@@ -113,7 +113,6 @@ tags: [ros, lecture, mooc, robotis, link]
     - 5년간 기술 지원되는 최신 LTS Version의 Ubuntu 선택
       - 2년마다 매년 4월 LTS Version Release, Release 3개월 이 후
         - 16.04, 18.04
-      - 
   - ROS
     - 2년마다 매년 5월 LTS Version Release, Release 3개월 이 후
   - Gazebo
