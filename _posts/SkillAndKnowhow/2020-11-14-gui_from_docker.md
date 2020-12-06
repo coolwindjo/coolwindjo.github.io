@@ -1,10 +1,10 @@
 ---
 layout: post
-title: Title
+title: GUI from Docker Container
 categories: Skill
 tags: [gui, docker]
 ---
-## 
+## Add xhost access permission for the docker
 
 ```terminal
 $ xhost +local:docker
