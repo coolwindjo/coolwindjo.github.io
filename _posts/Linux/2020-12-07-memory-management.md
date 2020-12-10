@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Linux Memory Management
-categories: Study 
+categories: Linux 
 tags: [linux, kernel]
 ---
 ## Memory management technic and virtual memory

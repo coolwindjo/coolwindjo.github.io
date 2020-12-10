@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Linux Kernel Structure
-categories: Study 
+categories: Linux 
 tags: [linux, kernel]
 ---
 ## Linux kernel structure
