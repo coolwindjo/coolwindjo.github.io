@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Linux Task Management
-categories: Study
+categories: Linux
 tags: [linux, task]
 ---
 ## Process, Thread and Task

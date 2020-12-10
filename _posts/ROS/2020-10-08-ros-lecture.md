@@ -1,8 +1,8 @@
 ---
 layout: post
-title: ROS - ROBOTIS Lecture 1,2 (with Links)
+title: ROS - ROBOTIS Lecture 1, 2, 4 (with Links)
 categories: ROS
-tags: [ros, lecture, mooc, robotis, link]
+tags: [ros, lecture, mooc, robotis]
 ---
 ## ROS References
 
@@ -11,7 +11,9 @@ tags: [ros, lecture, mooc, robotis, link]
 - [ROS 한글책](<https://github.com/robotpilot/rosbook_kr>){:target="_blank"} Github
 - [로열모](<https://www.facebook.com/groups/KoreanRobotics>){:target="_blank"} (로봇공학을 위한 열린모임) Facebook
 - [ROS](<https://ros.org>){:target="_blank"} (Robot Operating System)
-  - [ROS References](#ros-references)
+  - [ROS Wiki - Message](<https://wiki.ros.org/msg>){:target="_blank"}
+  - [ROS Wiki - Common Messages](<https://wiki.ros.org/common_msgs>){:target="_blank"}
+  - [ROS Wiki - Standard Messages](<https://wiki.ros.org/std_msgs>){:target="_blank"}
 - [OPROS](<https://github.com/opros-wiki/OPRoS_v1.1_Components/wiki/Open-Platform-for-Robotic-Services>){:target="_blank"} (Open Platform for Robotic Services)
 - [OpenRTM-aist](<https://www.openrtm.org/openrtm/>){:target="_blank"}
 - [오로카](<https://cafe.naver.com/openrt/23862>){:target="_blank"} Naver Cafe
