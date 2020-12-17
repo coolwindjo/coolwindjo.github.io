@@ -1,6 +1,6 @@
 ---
 layout: post
-title: Title
+title: ROS Basic Programming
 categories: ROS
 tags: [ros, lecture, mooc]
 ---
@@ -8,10 +8,10 @@ tags: [ros, lecture, mooc]
 
 - [Axis Orientation](<https://www.ros.org/reps/rep-0103.html#coordinate-frame-conventions>){:target="_blank"}
 
-    ![Coordinate]({{ "/assets/images/posts/2020-12-17/coordinate.png" | relative_url }})
-    - x: forward
-    - y: left
-    - z: upward
+  ![Coordinate]({{ "/assets/images/posts/2020-12-17/coordinate.png" | relative_url }})
+  - x: forward
+  - y: left
+  - z: upward
 
 - [SI Unit](<https://www.ros.org/reps/rep-0103.html>){:target="_blank"}
   
@@ -241,9 +241,10 @@ tags: [ros, lecture, mooc]
 
 - ROS Message Communication
 
-    ![Message Communication]({{ "/assets/images/posts/2020-12-17/message_comm.png" | relative_url }})
+  ![Message Communication]({{ "/assets/images/posts/2020-12-17/message_comm.png" | relative_url }})
 
-    - Topic
-    - Service
-    - Action
-    - Parameter
+  - Topic
+  - Service
+  - Action
+  - Parameter
+  
