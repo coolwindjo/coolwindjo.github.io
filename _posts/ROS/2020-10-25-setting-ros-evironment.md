@@ -23,16 +23,37 @@ tags: [ros, official, tutorial, link]
 
 ```terminal
 
-sudo apt-get install python-rosdep python-rosinstall-generator python-wstool python-rosinstall build-essential
-sudo apt-get install -y vim ros-melodic-costmap-converter
-sudo apt-get install -y ros-melodic-diagnostic-updater
-sudo apt-get install -y ros-melodic-controller-manager
-sudo apt-get install -y ros-melodic-roslint
-sudo apt-get install -y ros-melodic-filters
-sudo apt-get install -y ros-melodic-joint-limits-interface
-sudo apt-get install -y libmuparser-dev
-sudo apt-get install -y ros-melodic-tf2-geometry-msgs
-sudo apt-get install -y ros-melodic-rviz
+sudo apt-get install -y vim apt-utils \
+ros-melodic-desktop-full \
+libmuparser-dev \
+ros-melodic-costmap-converter \
+ros-melodic-costmap-2d
+#cmake \
+#pkg-config \
+#python-rospkg \
+#python-rosdep \
+#python-rosinstall-generator \
+#python-wstool \
+#python-rosinstall build-essential \
+#ros-melodic-cv-bridge \
+#ros-melodic-controller-manager \
+#ros-melodic-diagnostic-updater \
+#ros-melodic-dynamic-reconfigure \
+#ros-melodic-geometry-msgs \
+#ros-melodic-message-generation \
+#ros-melodic-message-runtime \
+#ros-melodic-nav-msgs \
+#ros-melodic-pluginlib \
+#ros-melodic-roscpp \
+#ros-melodic-roscpp-git \
+#ros-melodic-std-msgs \
+#ros-melodic-roslint \
+#ros-melodic-filters \ 
+#ros-melodic-joint-limits-interface \
+#ros-melodic-catkin \
+#ros-build-tools \
+#ros-melodic-tf2-geometry-msgs \
+#ros-melodic-rviz \
 
 sudo apt-get install ros-$ROS_DISTRO-turtle-tf2 ros-$ROS_DISTRO-tf2-tools ros-$ROS_DISTRO-tf
 roslaunch turtle_tf2 turtle_tf2_demo.launch
