@@ -270,17 +270,17 @@ vim union.launch
 
 | Launch Tag  | Description
 | ----------- | -----------
-| &lt;launch&gt;  | begin and end of the roslaunch statement
-| &lt;node&gt;    | configure the node running specification, such as package, type, name
-| &lt;machine&gt; | configure the machine specification the node running on, such as machine name, address, ros-root, ros-package-path, etc.
-| &lt;include&gt; | include the other launch files from the same or different packages to be run as one launch file
-| &lt;remap&gt;   | rename the ROS variables used in the running nodes, such as node's name, topic's name, etc.
-| &lt;env&gt;     | set path and IP, etc. (hardly used)
-| &lt;param&gt;   | set parameter's name, type, value, etc.
-| &lt;rosparam&gt;| check and modify parameters in the way how rosparam commands (load, dump, delete, etc.) do
-| &lt;group&gt;   | make groups of nodes
-| &lt;test&gt;    | test node running with additional specifications
-| &lt;arg&gt;     | set or change the value of parameters
+| launch      | begin and end of the roslaunch statement
+| node        | configure the node running specification, such as package, type, name
+| machine     | configure the machine specification the node running on, such as machine name, address, ros-root, ros-package-path, etc.
+| include     | include the other launch files from the same or different packages to be run as one launch file
+| remap       | rename the ROS variables used in the running nodes, such as node's name, topic's name, etc.
+| env         | set path and IP, etc. (hardly used)
+| param       | set parameter's name, type, value, etc.
+| rosparam    | check and modify parameters in the way how rosparam commands (load, dump, delete, etc.) do
+| group       | make groups of nodes
+| test        | test node running with additional specifications
+| arg         | set or change the value of parameters
 
 ```example.launch
 <launch>
