@@ -75,49 +75,16 @@ tags: [linux, memory]
         nr_active_anon 94246
         nr_inactive_file 146827
         nr_active_file 95508
-        nr_unevictable 0
-        nr_slab_reclaimable 6632
-        nr_slab_unreclaimable 8974
-        nr_isolated_anon 0
-        nr_isolated_file 0
-        workingset_refault 0
-        workingset_activate 0
-        workingset_nodereclaim 0
-        nr_anon_pages 92309
-        nr_mapped    38734
-        nr_file_pages 300632
-        nr_dirty     19570
-        nr_writeback 0
-        nr_writeback_temp 0
-        nr_shmem     64526
-        nr_shmem_hugepages 0
-        nr_shmem_pmdmapped 0
-        nr_anon_transparent_hugepages 88
-        nr_unstable  0
-        nr_vmscan_write 0
-        nr_vmscan_immediate_reclaim 0
-        nr_dirtied   43945
-        nr_written   20874
+        ...
     pages free     3721
             min      39
             low      48
             high     57
-            spanned  4095
-            present  3743
-            managed  3721
-            protection: (0, 3857, 6164, 6164)
+            ...
         nr_free_pages 3721
         nr_zone_inactive_anon 0
         nr_zone_active_anon 0
-        nr_zone_inactive_file 0
-        nr_zone_active_file 0
-        nr_zone_unevictable 0
-        nr_zone_write_pending 0
-        nr_mlock     0
-        nr_page_table_pages 0
-        nr_kernel_stack 0
-        nr_bounce    0
-        nr_free_cma  0
+        ...
     pagesets
         cpu: 0
                 count: 0
@@ -128,37 +95,7 @@ tags: [linux, memory]
                 count: 0
                 high:  0
                 batch: 1
-    vm stats threshold: 8
-        cpu: 2
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
-        cpu: 3
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
-        cpu: 4
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
-        cpu: 5
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
-        cpu: 6
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
-        cpu: 7
-                count: 0
-                high:  0
-                batch: 1
-    vm stats threshold: 8
+        ...
     node_unreclaimable:  0
     start_pfn:           1
   Node 0, zone    DMA32
@@ -166,22 +103,12 @@ tags: [linux, memory]
             min      10549
             low      13186
             high     15823
-            spanned  1044480
-            present  1011712
-            managed  988823
-            protection: (0, 0, 2306, 2306)
         nr_free_pages 988431
         nr_zone_inactive_anon 0
         nr_zone_active_anon 0
         nr_zone_inactive_file 0
         nr_zone_active_file 0
-        nr_zone_unevictable 0
-        nr_zone_write_pending 0
-        nr_mlock     0
-        nr_page_table_pages 0
-        nr_kernel_stack 0
-        nr_bounce    0
-        nr_free_cma  0
+        ...
     pagesets
         cpu: 0
                 count: 11
@@ -192,37 +119,7 @@ tags: [linux, memory]
                 count: 0
                 high:  378
                 batch: 63
-    vm stats threshold: 48
-        cpu: 2
-                count: 0
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 3
-                count: 0
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 4
-                count: 365
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 5
-                count: 0
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 6
-                count: 16
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 7
-                count: 0
-                high:  378
-                batch: 63
-    vm stats threshold: 48
+                ...
     node_unreclaimable:  0
     start_pfn:           4096
   Node 0, zone   Normal
@@ -231,21 +128,14 @@ tags: [linux, memory]
             low      7882
             high     9458
             spanned  619520
-            present  619520
-            managed  590396
-            protection: (0, 0, 0, 0)
+            ...
         nr_free_pages 158188
         nr_zone_inactive_anon 62122
         nr_zone_active_anon 94246
         nr_zone_inactive_file 146827
         nr_zone_active_file 95508
         nr_zone_unevictable 0
-        nr_zone_write_pending 19570
-        nr_mlock     0
-        nr_page_table_pages 731
-        nr_kernel_stack 7536
-        nr_bounce    0
-        nr_free_cma  0
+        ...
     pagesets
         cpu: 0
                 count: 373
@@ -266,27 +156,7 @@ tags: [linux, memory]
                 count: 282
                 high:  378
                 batch: 63
-    vm stats threshold: 48
-        cpu: 4
-                count: 369
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 5
-                count: 327
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 6
-                count: 268
-                high:  378
-                batch: 63
-    vm stats threshold: 48
-        cpu: 7
-                count: 123
-                high:  378
-                batch: 63
-    vm stats threshold: 48
+        ...
     node_unreclaimable:  0
     start_pfn:           1048576
   Node 0, zone  Movable
