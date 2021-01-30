@@ -53,7 +53,6 @@ tags: [linux, file-system, virtual-file-system]
     | FAT         | unique FAT(index block) for a whole file system | lose the FAT, lose the whole data
 
     - Block chain
-      -
     - Index block
     - FAT
 
