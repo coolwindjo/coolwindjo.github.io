@@ -1,7 +1,7 @@
 ---
 layout: post
 title: GUI from Docker Container
-categories: Skill or Knowhow
+categories: SkillOrKnowhow
 tags: [gui, docker]
 ---
 ## Add xhost access permission for the docker
