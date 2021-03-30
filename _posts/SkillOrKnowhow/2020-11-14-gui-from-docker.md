@@ -4,6 +4,7 @@ title: GUI from Docker Container
 categories: SkillOrKnowhow
 tags: [gui, docker]
 ---
+
 ## Add xhost access permission for the docker
 
 ```terminal

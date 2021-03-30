@@ -2,8 +2,9 @@
 layout: post
 title: Beginning Google Cloud Platform
 categories: GCP
-tags: [gcp, google, iot, raspberrypi, link]
+tags: [gcp, google, iot, raspberrypi]
 ---
+
 ## Google Cloud Platform 무료 사용 관련 영상
 
 <iframe width="711" height="400" src="https://www.youtube.com/embed/z6WOMYI-WiU" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

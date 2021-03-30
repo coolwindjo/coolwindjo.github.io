@@ -4,6 +4,7 @@ title: Interupt, Trap and System Call
 categories: Linux
 tags: [linux, interupt, trap, system-call]
 ---
+
 ## Interupt Handling Procedure
 
 ## System Call Handling Procedure

@@ -4,6 +4,7 @@ title: Linux Kernel Structure
 categories: Linux 
 tags: [linux, kernel]
 ---
+
 ## Linux kernel structure
 
 - Operating System is a resource manager
