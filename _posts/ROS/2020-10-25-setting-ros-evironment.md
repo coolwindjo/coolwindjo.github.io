@@ -2,7 +2,7 @@
 layout: post
 title: Setting ROS Environment
 categories: ROS
-tags: [ros, official, tutorial, link]
+tags: [ros, official, tutorial]
 ---
 
 ## ROS Official Tutorial

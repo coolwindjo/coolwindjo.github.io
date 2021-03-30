@@ -4,6 +4,7 @@ title: Linux Task Management
 categories: Linux
 tags: [linux, task]
 ---
+
 ## Process, Thread and Task
 
 | Managing unit | Description

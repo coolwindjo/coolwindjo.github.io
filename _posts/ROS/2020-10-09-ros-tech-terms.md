@@ -4,6 +4,7 @@ title: ROS Technical Terms
 categories: ROS
 tags: [ros, term, jargon]
 ---
+
 ## Technical Terms
 
 Term | Description
