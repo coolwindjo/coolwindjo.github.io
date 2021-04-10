@@ -1,0 +1,2492 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.1.1">Jekyll</generator><link href="coolwindjo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="coolwindjo.github.io/" rel="alternate" type="text/html" /><updated>2021-04-10T07:40:00+00:00</updated><id>coolwindjo.github.io/feed.xml</id><title type="html">Cool Wind on Study</title><subtitle>Archive what I learned, what I experienced, what I felt.</subtitle><author><name>CoolWind</name></author><entry><title type="html">Linux Kernel Building for Raspberry Pi 4</title><link href="coolwindjo.github.io/raspberrypi/2021/03/30/build-linux-for-raspberry-pi.html" rel="alternate" type="text/html" title="Linux Kernel Building for Raspberry Pi 4" /><published>2021-03-30T00:00:00+00:00</published><updated>2021-03-30T00:00:00+00:00</updated><id>coolwindjo.github.io/raspberrypi/2021/03/30/build-linux-for-raspberry-pi</id><content type="html" xml:base="coolwindjo.github.io/raspberrypi/2021/03/30/build-linux-for-raspberry-pi.html">&lt;h2 id=&quot;preparations&quot;&gt;Preparations&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itlearningcenter.tistory.com/entry/%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%84%B1%E2%91%A1?category=844869&quot; target=&quot;_blank&quot;&gt;Raspberry Pi Development Setting&lt;/a&gt; Get some snippets from the manual!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;repositories&quot;&gt;Repositories&lt;/h3&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;
+git clone https://github.com/kimdukyu/rpi4-uboot.git
+git clone https://bitbucket.org/jayleekr0125/rpi-5.4.y.git
+
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;build-a-kernel-dtb-rootfs-etc&quot;&gt;Build a kernel, dtb, rootfs, etc.&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.raspberrypi.org/documentation/linux/kernel/building.md&quot; target=&quot;_blank&quot;&gt;Kernel Building for Raspberry Pi (Official)&lt;/a&gt; Get some snippets from the manual!&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itlearningcenter.tistory.com/entry/%E3%80%90RPI4%E3%80%91Buildroot%EB%A5%BC-%EC%82%AC%EC%9A%A9%ED%95%9C-%EB%A6%AC%EB%88%85%EC%8A%A4-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%84%B1-%E2%91%A0&quot; target=&quot;_blank&quot;&gt;Build a kernel using Build root&lt;/a&gt; Get some snippets from the manual!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;related-repositories&quot;&gt;Related Repositories&lt;/h3&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;
+git clone git://git.buildroot.net/buildroot
+
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;write-on-sd-card&quot;&gt;Write on SD Card&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itlearningcenter.tistory.com/entry/%E3%80%90RPI4%E3%80%91Linux-BSP-%EA%B0%9C%EB%B0%9C-%ED%99%98%EA%B2%BD-%EA%B5%AC%EC%84%B1-%E2%91%A0&quot; target=&quot;_blank&quot;&gt;Write the image on a SD Card&lt;/a&gt; Get some snippets from the manual!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;update-the-image-and-dtb-files&quot;&gt;Update the Image and dtb files&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://itlearningcenter.tistory.com/entry/【RPI4】Linux-BSP-개발-환경-구성-②&quot; target=&quot;_blank&quot;&gt;Build a kernel using kimdukyu git repositories&lt;/a&gt; Get some snippets from the manual!&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;related-repositories-1&quot;&gt;Related Repositories&lt;/h3&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;
+git clone https://github.com/kimdukyu/rpi4-toolchain.git
+git clone https://github.com/kimdukyu/rpi4-kernel.git
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;git clone --depth=1 --branch=rpi-5.12.y https://github.com/raspberrypi/linux    #&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;replaceable wth the rpi4-kernel
+&lt;span class=&quot;go&quot;&gt;
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h2 id=&quot;settings&quot;&gt;Settings&lt;/h2&gt;
+
+&lt;h3 id=&quot;wlan-setting&quot;&gt;WLAN setting&lt;/h3&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/posts/2021-03-30/WLAN_setting.png&quot; alt=&quot;WLAN setting&quot; /&gt;&lt;/p&gt;</content><author><name>CoolWind</name></author><category term="RaspberryPi" /><category term="kernel" /><category term="raspberrypi" /><summary type="html">Preparations Raspberry Pi Development Setting Get some snippets from the manual! Repositories git clone https://github.com/kimdukyu/rpi4-uboot.git git clone https://bitbucket.org/jayleekr0125/rpi-5.4.y.git Build a kernel, dtb, rootfs, etc. Kernel Building for Raspberry Pi (Official) Get some snippets from the manual! Build a kernel using Build root Get some snippets from the manual! Related Repositories git clone git://git.buildroot.net/buildroot Write on SD Card Write the image on a SD Card Get some snippets from the manual! Update the Image and dtb files Build a kernel using kimdukyu git repositories Get some snippets from the manual! Related Repositories git clone https://github.com/kimdukyu/rpi4-toolchain.git git clone https://github.com/kimdukyu/rpi4-kernel.git git clone --depth=1 --branch=rpi-5.12.y https://github.com/raspberrypi/linux # replaceable wth the rpi4-kernel Settings WLAN setting</summary></entry><entry><title type="html">Interupt, Trap and System Call</title><link href="coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html" rel="alternate" type="text/html" title="Interupt, Trap and System Call" /><published>2021-01-25T00:00:00+00:00</published><updated>2021-01-25T00:00:00+00:00</updated><id>coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall</id><content type="html" xml:base="coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html">&lt;h2 id=&quot;interupt-handling-procedure&quot;&gt;Interupt Handling Procedure&lt;/h2&gt;
+
+&lt;h2 id=&quot;system-call-handling-procedure&quot;&gt;System Call Handling Procedure&lt;/h2&gt;
+
+&lt;h2 id=&quot;additional-system-call-implementation&quot;&gt;Additional System Call Implementation&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Adding a new system call
+    &lt;ol&gt;
+      &lt;li&gt;Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file.&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2021-01-25/adding_system_call_sys_call_table.png&quot; alt=&quot;adding_system_call_sys_call_table&quot; /&gt;&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;Add the new system call declaration in the “~/include/linux/syscall.h”.&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2021-01-25/adding_system_call_syscalls_h.png&quot; alt=&quot;adding_system_call_syscalls_h&quot; /&gt;&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;Add the new system call definition in the “kernel/” or “fs/”(for file system related system call).&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;  &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/unistd.h&amp;gt;
+&lt;/span&gt;  &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/errno.h&amp;gt;
+&lt;/span&gt;  &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/kernel.h&amp;gt;
+&lt;/span&gt;  &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/sched.h&amp;gt;
+&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;asmlinkage&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sys_newsyscall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt;Hello Linux, I'm in Kernel! &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;EXPORT_SYMBOL_GPL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;sys_newsyscall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Conventional prefix “sys_”&lt;/li&gt;
+      &lt;li&gt;Return value is “long”&lt;/li&gt;
+      &lt;li&gt;Keyword “asmlinkage”
+        &lt;ul&gt;
+          &lt;li&gt;Do nothing with Intel CPU&lt;/li&gt;
+          &lt;li&gt;Several preprocessing with Alpha CPU&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Kernel print function “printk”&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;Add the object file name in the “kernel/Makefile” to be compiled together&lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2021-01-25/adding_system_call_makefile.png&quot; alt=&quot;adding_system_call_makefile&quot; /&gt;&lt;/p&gt;
+
+    &lt;ol&gt;
+      &lt;li&gt;Implement an user application using the added system call
+        &lt;ul&gt;
+          &lt;li&gt;Without using a library&lt;/li&gt;
+          &lt;li&gt;With using a library&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2021-01-25/adding_system_call_using_library.png&quot; alt=&quot;adding_system_call_using_library&quot; /&gt;&lt;/p&gt;
+
+    &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;- Make the library with &quot;ar&quot; command
+- Use gcc option &quot;-l&quot; for linking the library
+- Use gcc option &quot;-L&quot; for specifying the directory includes the library
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;system-call-implementation-extended&quot;&gt;System Call Implementation Extended&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Two major objectives for using system call
+    &lt;ol&gt;
+      &lt;li&gt;Ask kernel to execute a kernel service&lt;/li&gt;
+      &lt;li&gt;Ask kernel to offer kernel information to an user application
+        &lt;ul&gt;
+          &lt;li&gt;“getpid()”, “stat()”, etc.&lt;/li&gt;
+          &lt;li&gt;Kernel information output&lt;/li&gt;
+        &lt;/ul&gt;
+        &lt;ul&gt;
+          &lt;li&gt;“current” is the pointer to the “task_struct” of the running task.&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;n&quot;&gt;asmlinkage&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sys_gettaskinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; PID: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; TGID: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tgid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; PPID: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; STATE: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; PRIORITY: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prio&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; POLICY: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; Number of MAJOR FAULT: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maj_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&amp;lt;0&amp;gt; Number of MINOR FAULT: %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;current&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+        &lt;div class=&quot;language-plaintext highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;     - Argument passing
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/unistd.h&amp;gt;
+&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/kernel.h&amp;gt;
+&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;asm/uaccess.h&amp;gt;
+&lt;/span&gt;
+ &lt;span class=&quot;n&quot;&gt;asmlinkage&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sys_show_mult&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;access_ok&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;VERIFY_WRITE&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;error&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;error in cdang &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;error is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+     &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;error&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;compute&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;compute is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;compute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;copy_to_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;res&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;compute&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt; &lt;span class=&quot;c1&quot;&gt;// include/asm/uaccess.h&lt;/span&gt;
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;stdio.h&amp;gt;
+&lt;/span&gt; &lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/unistd.h&amp;gt;
+&lt;/span&gt;
+ &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mult_ret&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;syscall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;318&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;&amp;amp;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mult_ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;x is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;x&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;y is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;y&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+   &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ret is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mult_ret&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+   &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+ &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ol&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Argument passing using struct
+        &lt;ul&gt;
+          &lt;li&gt;Maximum size of arguments for system call
+            &lt;ul&gt;
+              &lt;li&gt;32 bit or 64 bit&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;Maximum number of arguments for system call
+            &lt;ul&gt;
+              &lt;li&gt;6 for Intel CPU&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;c1&quot;&gt;// mystat.h&lt;/span&gt;
+&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;linux/kernel.h&amp;gt;
+#include &amp;lt;linux/sched.h&amp;gt;
+#include &amp;lt;linux/slab.h&amp;gt;
+#include &amp;lt;linux/uaccess.h&amp;gt;
+#include &amp;lt;linux/fs.h&amp;gt;
+#include &amp;lt;linux/fdtable.h&amp;gt;
+&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;pid_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;pid_t&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;ppid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;priority&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;utime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;stime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;starttime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;min_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;unsigned&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;maj_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;long&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;open_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &quot;mystat.h&quot;
+&lt;/span&gt;
+&lt;span class=&quot;n&quot;&gt;asmlinkage&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;sys_gettaskinfo&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;user_buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;task_struct&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;file&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fp&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;c1&quot;&gt;// pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process.&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// If the call returns NULL then the process does not exist.&lt;/span&gt;
+  &lt;span class=&quot;c1&quot;&gt;// pid_task() searches task with specified PID, sequentially from the init_task&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;pid_task&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;id&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;PIDTYPE_PID&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;kmalloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;),&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;GFP_KERNEL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;printk&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;buf is NULL &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;-&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ppid&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;parent&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stat&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;state&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;priority&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;prio&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;policy&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;utime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;utime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;starttime&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;start_time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;.&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;tv_sec&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min_flt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;min_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maj_flt&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;maj_flt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;for&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;&amp;lt;&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;32&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;((&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;search&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;files&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;fd_array&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;i&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;])&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+      &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;++&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+    &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open_files&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;cnt&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;copy_to_user&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;user_buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+
+        &lt;div class=&quot;language-c highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &quot;mystat.h&quot;
+#include &amp;lt;linux/unistd.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;task_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;!=&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Usage: a.out pid &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;task_number&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;atoi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;=&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;malloc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;sizeof&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mystat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;));&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;if&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;==&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;NULL&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;exit&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+
+  &lt;span class=&quot;n&quot;&gt;syscall&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;319&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;task_number&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;pid is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;pid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;ppid is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;ppid&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;state is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;stat&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Policy is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;policy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;File count is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;open_files&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;Start time is %d &lt;/span&gt;&lt;span class=&quot;se&quot;&gt;\n&lt;/span&gt;&lt;span class=&quot;s&quot;&gt;&quot;&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;)&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;mybuf&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;-&amp;gt;&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;starttime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+  &lt;span class=&quot;k&quot;&gt;return&lt;/span&gt; &lt;span class=&quot;mi&quot;&gt;0&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>CoolWind</name></author><category term="Linux" /><category term="linux" /><category term="interupt" /><category term="trap" /><category term="system-call" /><summary type="html">Interupt Handling Procedure System Call Handling Procedure Additional System Call Implementation Adding a new system call Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file. Add the new system call declaration in the “~/include/linux/syscall.h”. Add the new system call definition in the “kernel/” or “fs/”(for file system related system call). #include &amp;lt;linux/unistd.h&amp;gt; #include &amp;lt;linux/errno.h&amp;gt; #include &amp;lt;linux/kernel.h&amp;gt; #include &amp;lt;linux/sched.h&amp;gt; asmlinkage long sys_newsyscall(void) { printk(&quot;&amp;lt;0&amp;gt;Hello Linux, I'm in Kernel! \n&quot;); return 0; } EXPORT_SYMBOL_GPL(sys_newsyscall); Conventional prefix “sys_” Return value is “long” Keyword “asmlinkage” Do nothing with Intel CPU Several preprocessing with Alpha CPU Kernel print function “printk” Add the object file name in the “kernel/Makefile” to be compiled together Implement an user application using the added system call Without using a library With using a library - Make the library with &quot;ar&quot; command - Use gcc option &quot;-l&quot; for linking the library - Use gcc option &quot;-L&quot; for specifying the directory includes the library System Call Implementation Extended Two major objectives for using system call Ask kernel to execute a kernel service Ask kernel to offer kernel information to an user application “getpid()”, “stat()”, etc. Kernel information output “current” is the pointer to the “task_struct” of the running task. asmlinkage long sys_gettaskinfo(void) { printk(&quot;&amp;lt;0&amp;gt; PID: %d \n&quot;, current-&amp;gt;pid); printk(&quot;&amp;lt;0&amp;gt; TGID: %d \n&quot;, current-&amp;gt;tgid); printk(&quot;&amp;lt;0&amp;gt; PPID: %d \n&quot;, current-&amp;gt;parent-&amp;gt;pid); printk(&quot;&amp;lt;0&amp;gt; STATE: %d \n&quot;, current-&amp;gt;state); printk(&quot;&amp;lt;0&amp;gt; PRIORITY: %d \n&quot;, current-&amp;gt;prio); printk(&quot;&amp;lt;0&amp;gt; POLICY: %d \n&quot;, current-&amp;gt;policy); printk(&quot;&amp;lt;0&amp;gt; Number of MAJOR FAULT: %d \n&quot;, current-&amp;gt;maj_flt); printk(&quot;&amp;lt;0&amp;gt; Number of MINOR FAULT: %d \n&quot;, current-&amp;gt;min_flt); return 0; } - Argument passing #include &amp;lt;linux/unistd.h&amp;gt; #include &amp;lt;linux/kernel.h&amp;gt; #include &amp;lt;asm/uaccess.h&amp;gt; asmlinkage int sys_show_mult(int x, int y, int* res) { int error, compute; int i; error = access_ok(VERIFY_WRITE, res, sizeof(*res)); if (error &amp;lt; 0) { printk(&quot;error in cdang \n&quot;); printk(&quot;error is %d \n&quot;, error); return error; } compute = x*y; printk(&quot;compute is %d \n&quot;, compute); i = copy_to_user(res, &amp;amp;compute, sizeof(int)); // include/asm/uaccess.h return 0; } #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;linux/unistd.h&amp;gt; int main(void) { int mult_ret = 0; int x = 2, y = 5; int i; i = syscall(318, x, y, &amp;amp;mult_ret); printf(&quot;x is %d \n&quot;, x); printf(&quot;y is %d \n&quot;, y); printf(&quot;ret is %d \n&quot;, mult_ret); return 0; } Argument passing using struct Maximum size of arguments for system call 32 bit or 64 bit Maximum number of arguments for system call 6 for Intel CPU // mystat.h #include &amp;lt;linux/kernel.h&amp;gt; #include &amp;lt;linux/sched.h&amp;gt; #include &amp;lt;linux/slab.h&amp;gt; #include &amp;lt;linux/uaccess.h&amp;gt; #include &amp;lt;linux/fs.h&amp;gt; #include &amp;lt;linux/fdtable.h&amp;gt; struct mystat { pid_t pid; pid_t ppid; int stat; int priority; int policy; long utime; long stime; long starttime; unsigned long min_flt; unsigned long maj_flt; long open_files; } #include &quot;mystat.h&quot; asmlinkage int sys_gettaskinfo(int id, struct mystat* user_buf) { struct mystat* buf; int i, cnt = 0; struct task_struct *search; struct file *fp; // pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process. // If the call returns NULL then the process does not exist. // pid_task() searches task with specified PID, sequentially from the init_task search = pid_task(id, PIDTYPE_PID); if(search == NULL) return -1; buf = (char*)kmalloc(sizeof(struct mystat), GFP_KERNEL); if(buf == NULL) { printk(&quot;buf is NULL \n&quot;); return -1; } buf-&amp;gt;pid = search-&amp;gt;pid; buf-&amp;gt;ppid = search-&amp;gt;parent-&amp;gt;pid; buf-&amp;gt;stat = search-&amp;gt;state; buf-&amp;gt;priority = search-&amp;gt;prio; buf-&amp;gt;policy = search-&amp;gt;policy; buf-&amp;gt;utime = search-&amp;gt;utime; buf-&amp;gt;stime = search-&amp;gt;stime; buf-&amp;gt;starttime = search-&amp;gt;start_time.tv_sec; buf-&amp;gt;min_flt = search-&amp;gt;min_flt; buf-&amp;gt;maj_flt = search-&amp;gt;maj_flt; for (i = 0; i&amp;lt;32; i++) { if ((search-&amp;gt;files-&amp;gt;fd_array[i]) != NULL) { cnt++; } } buf-&amp;gt;open_files = cnt; copy_to_user(user_buf, buf, sizeof(struct mystat)); return 0; } #include &quot;mystat.h&quot; #include &amp;lt;linux/unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;stdlib.h&amp;gt; int main(int argc, char* argv[]) { int task_number; struct mystat* mybuf; if (argc != 2) { printf(&quot;Usage: a.out pid \n&quot;); exit(1); } task_number = atoi(argv[1]); mybuf = (char*)malloc(sizeof(struct mystat)); if (mybuf == NULL) exit(1); syscall(319, task_number, mybuf); printf(&quot;pid is %d \n&quot;, (int)mybuf-&amp;gt;pid); printf(&quot;ppid is %d \n&quot;, (int)mybuf-&amp;gt;ppid); printf(&quot;state is %d \n&quot;, (int)mybuf-&amp;gt;stat); printf(&quot;Policy is %d \n&quot;, (int)mybuf-&amp;gt;policy); printf(&quot;File count is %d \n&quot;, (int)mybuf-&amp;gt;open_files); printf(&quot;Start time is %d \n&quot;, (int)mybuf-&amp;gt;starttime); return 0; }</summary></entry><entry><title type="html">Linux File System and Virtual File System</title><link href="coolwindjo.github.io/linux/2020/12/28/linux-file-system.html" rel="alternate" type="text/html" title="Linux File System and Virtual File System" /><published>2020-12-28T00:00:00+00:00</published><updated>2020-12-28T00:00:00+00:00</updated><id>coolwindjo.github.io/linux/2020/12/28/linux-file-system</id><content type="html" xml:base="coolwindjo.github.io/linux/2020/12/28/linux-file-system.html">&lt;h2 id=&quot;file-system&quot;&gt;File System&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Main Memory vs. Secondary Storage&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Memory&lt;/th&gt;
+      &lt;th&gt;Memory Management&lt;/th&gt;
+      &lt;th&gt;Device&lt;/th&gt;
+      &lt;th&gt;Volatility&lt;/th&gt;
+      &lt;th&gt;Accessing Unit&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;main memory&lt;/td&gt;
+      &lt;td&gt;virtual memory&lt;/td&gt;
+      &lt;td&gt;RAM&lt;/td&gt;
+      &lt;td&gt;volatile&lt;/td&gt;
+      &lt;td&gt;page frame&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;secondary storage&lt;/td&gt;
+      &lt;td&gt;file system&lt;/td&gt;
+      &lt;td&gt;hard disk&lt;/td&gt;
+      &lt;td&gt;non-volatile&lt;/td&gt;
+      &lt;td&gt;disk block + FILE NAME&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;h2 id=&quot;disk-block-management&quot;&gt;Disk Block Management&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Disk&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-28/disk_structure.png&quot; alt=&quot;disk_structure&quot; /&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Plotter
+        &lt;ul&gt;
+          &lt;li&gt;Track
+            &lt;ul&gt;
+              &lt;li&gt;Sector: base unit for read and write on a disk&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;Cylinder: a set of Tracks at the same position through different plotters&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Arm&lt;/li&gt;
+      &lt;li&gt;Head&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Data Access Time
+    &lt;ul&gt;
+      &lt;li&gt;Seek time: head traveling time to the desired track&lt;/li&gt;
+      &lt;li&gt;Rotational latency: plotter spinning time to reach the desired sector by a head&lt;/li&gt;
+      &lt;li&gt;Transmission time: reading or writing time by a head&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Disk Block
+    &lt;ul&gt;
+      &lt;li&gt;Generally, its size is the same as page frame’s one.
+        &lt;ul&gt;
+          &lt;li&gt;Regular page fram size: 4 KB&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Larger disk block, faster disk I/O.&lt;/li&gt;
+      &lt;li&gt;Larger disk block, less efficient memory usage.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Disk Block - Sectors
+    &lt;ul&gt;
+      &lt;li&gt;Block device driver (“read_ahead” variable)&lt;/li&gt;
+      &lt;li&gt;Disk block numbers can be mapped to the corresspondent sectors
+        &lt;ul&gt;
+          &lt;li&gt;It is done by
+            &lt;ul&gt;
+              &lt;li&gt;Disk device driver or&lt;/li&gt;
+              &lt;li&gt;Disk controller&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Two ways of disk block allocation
+    &lt;ul&gt;
+      &lt;li&gt;Sequential allocation
+        &lt;ul&gt;
+          &lt;li&gt;Being hardly ever seen…&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Non-sequential allocation&lt;/p&gt;
+
+        &lt;table&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;Method&lt;/th&gt;
+              &lt;th&gt;Pros&lt;/th&gt;
+              &lt;th&gt;Cons&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Block chain&lt;/td&gt;
+              &lt;td&gt;no index block&lt;/td&gt;
+              &lt;td&gt;lose one block, lose the next whole data&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Index block&lt;/td&gt;
+              &lt;td&gt;direct access by indexing&lt;/td&gt;
+              &lt;td&gt;1) lose the index block, lose the whole data. 2) limited index block size&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;FAT&lt;/td&gt;
+              &lt;td&gt;unique FAT(index block) for a whole file system&lt;/td&gt;
+              &lt;td&gt;lose the FAT, lose the whole data&lt;/td&gt;
+            &lt;/tr&gt;
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+
+        &lt;ul&gt;
+          &lt;li&gt;Block chain&lt;/li&gt;
+          &lt;li&gt;Index block&lt;/li&gt;
+          &lt;li&gt;FAT&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;fat&quot;&gt;FAT&lt;/h2&gt;
+
+&lt;h2 id=&quot;inode-structure&quot;&gt;inode structure&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;ext2_inode&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-28/ext2_inode.png&quot; alt=&quot;ext2_inode&quot; /&gt;&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Field&lt;/th&gt;
+          &lt;th&gt;Description&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_blocks&lt;/td&gt;
+          &lt;td&gt;number of data blocks&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_mode&lt;/td&gt;
+          &lt;td&gt;file format and access rights&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_size&lt;/td&gt;
+          &lt;td&gt;file length in bytes&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_links_count&lt;/td&gt;
+          &lt;td&gt;number of files indicating the inode&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_uid, i_gid&lt;/td&gt;
+          &lt;td&gt;user ID, group ID&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_atime, i_ctime, i_mtime&lt;/td&gt;
+          &lt;td&gt;accessed time, created time, modified time&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;i_flags&lt;/td&gt;
+          &lt;td&gt;flie flags&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;osd1&lt;/td&gt;
+          &lt;td&gt;specific operating system information&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;i_mode
+        &lt;ul&gt;
+          &lt;li&gt;16 bit
+            &lt;ul&gt;
+              &lt;li&gt;0~3 (4bits): file format&lt;/li&gt;
+              &lt;li&gt;4~6 (3bits)
+                &lt;ul&gt;
+                  &lt;li&gt;u bit: setuid(set user id)&lt;/li&gt;
+                  &lt;li&gt;g bit: setgid(set group id)&lt;/li&gt;
+                  &lt;li&gt;s bit: sticky bit, used when a task is removed from the memory or for a shared directory&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+              &lt;li&gt;7~15 (9bits): access control
+                &lt;ul&gt;
+                  &lt;li&gt;7~9 (3 bits): user access&lt;/li&gt;
+                  &lt;li&gt;10~12 (3 bits): user group access&lt;/li&gt;
+                  &lt;li&gt;13~15 (3 bits): other access&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;i_block[15]: used for disk block location management
+        &lt;ul&gt;
+          &lt;li&gt;12 direct blocks: pointers indicating disk blocks, max. 48 KB&lt;/li&gt;
+          &lt;li&gt;3 indirect blocks: pointers indicating pointers indicating disk blocks
+            &lt;ul&gt;
+              &lt;li&gt;single indirect block: max. 4 MB&lt;/li&gt;
+              &lt;li&gt;double indirect block: max. 4 GB&lt;/li&gt;
+              &lt;li&gt;triple indirect block: max. 4 TB&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;directory entry: connect an inode to a file name&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;FAT directory entry&lt;/p&gt;
+
+        &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;msdos_dir_entry&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__u8&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;MSDOS_NAME&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* name and extension */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__u8&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;attr&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* attribute bits */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__u8&lt;/span&gt;    &lt;span class=&quot;n&quot;&gt;lcase&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Case for base and extension */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__u8&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;ctime_cs&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;cm&quot;&gt;/* Creation time, centiseconds (0-199) */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;ctime&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Creation time */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;cdate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Creation date */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;adate&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Last access date */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;starthi&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;	&lt;span class=&quot;cm&quot;&gt;/* High 16 bits of cluster in FAT32 */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;time&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;date&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;start&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;&lt;span class=&quot;cm&quot;&gt;/* time, date and first cluster */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le32&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;size&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* file size (in bytes) */&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;ext2 directory entry&lt;/p&gt;
+
+        &lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#define EXT2_NAME_LEN 255
+&lt;/span&gt;
+    &lt;span class=&quot;k&quot;&gt;struct&lt;/span&gt; &lt;span class=&quot;nc&quot;&gt;ext2_dir_entry&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le32&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;inode&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;			&lt;span class=&quot;cm&quot;&gt;/* Inode number */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;rec_len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Directory entry length */&lt;/span&gt;
+    &lt;span class=&quot;n&quot;&gt;__le16&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;name_len&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;;&lt;/span&gt;		&lt;span class=&quot;cm&quot;&gt;/* Name length */&lt;/span&gt;
+    &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt;	&lt;span class=&quot;n&quot;&gt;name&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[];&lt;/span&gt;			&lt;span class=&quot;cm&quot;&gt;/* File name, up to EXT2_NAME_LEN */&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;};&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ext2-file-system&quot;&gt;Ext2 File System&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;IDE disks
+    &lt;ul&gt;
+      &lt;li&gt;/dev/hda, /dev/hdb&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;SCSI disks
+    &lt;ul&gt;
+      &lt;li&gt;/dev/sda, /dev/sdb&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Partition in Ext2 file system&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-28/ext2_inode.png&quot; alt=&quot;ext2_inode&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;advisory-lock-vs-mandatory-lock&quot;&gt;Advisory Lock vs. Mandatory Lock&lt;/h2&gt;
+
+&lt;p&gt;-&lt;/p&gt;</content><author><name>CoolWind</name></author><category term="Linux" /><category term="linux" /><category term="file-system" /><category term="virtual-file-system" /><summary type="html">File System Main Memory vs. Secondary Storage Memory Memory Management Device Volatility Accessing Unit main memory virtual memory RAM volatile page frame secondary storage file system hard disk non-volatile disk block + FILE NAME Disk Block Management Disk Plotter Track Sector: base unit for read and write on a disk Cylinder: a set of Tracks at the same position through different plotters Arm Head Data Access Time Seek time: head traveling time to the desired track Rotational latency: plotter spinning time to reach the desired sector by a head Transmission time: reading or writing time by a head Disk Block Generally, its size is the same as page frame’s one. Regular page fram size: 4 KB Larger disk block, faster disk I/O. Larger disk block, less efficient memory usage. Disk Block - Sectors Block device driver (“read_ahead” variable) Disk block numbers can be mapped to the corresspondent sectors It is done by Disk device driver or Disk controller Two ways of disk block allocation Sequential allocation Being hardly ever seen… Non-sequential allocation Method Pros Cons Block chain no index block lose one block, lose the next whole data Index block direct access by indexing 1) lose the index block, lose the whole data. 2) limited index block size FAT unique FAT(index block) for a whole file system lose the FAT, lose the whole data Block chain Index block FAT FAT inode structure ext2_inode Field Description i_blocks number of data blocks i_mode file format and access rights i_size file length in bytes i_links_count number of files indicating the inode i_uid, i_gid user ID, group ID i_atime, i_ctime, i_mtime accessed time, created time, modified time i_flags flie flags osd1 specific operating system information i_mode 16 bit 0~3 (4bits): file format 4~6 (3bits) u bit: setuid(set user id) g bit: setgid(set group id) s bit: sticky bit, used when a task is removed from the memory or for a shared directory 7~15 (9bits): access control 7~9 (3 bits): user access 10~12 (3 bits): user group access 13~15 (3 bits): other access i_block[15]: used for disk block location management 12 direct blocks: pointers indicating disk blocks, max. 48 KB 3 indirect blocks: pointers indicating pointers indicating disk blocks single indirect block: max. 4 MB double indirect block: max. 4 GB triple indirect block: max. 4 TB directory entry: connect an inode to a file name FAT directory entry struct msdos_dir_entry { __u8 name[MSDOS_NAME];/* name and extension */ __u8 attr; /* attribute bits */ __u8 lcase; /* Case for base and extension */ __u8 ctime_cs; /* Creation time, centiseconds (0-199) */ __le16 ctime; /* Creation time */ __le16 cdate; /* Creation date */ __le16 adate; /* Last access date */ __le16 starthi; /* High 16 bits of cluster in FAT32 */ __le16 time,date,start;/* time, date and first cluster */ __le32 size; /* file size (in bytes) */ }; ext2 directory entry #define EXT2_NAME_LEN 255 struct ext2_dir_entry { __le32 inode; /* Inode number */ __le16 rec_len; /* Directory entry length */ __le16 name_len; /* Name length */ char name[]; /* File name, up to EXT2_NAME_LEN */ }; Ext2 File System IDE disks /dev/hda, /dev/hdb SCSI disks /dev/sda, /dev/sdb Partition in Ext2 file system Advisory Lock vs. Mandatory Lock -</summary></entry><entry><title type="html">ROS Basic Programming</title><link href="coolwindjo.github.io/ros/2020/12/17/ros-basic-programming.html" rel="alternate" type="text/html" title="ROS Basic Programming" /><published>2020-12-17T00:00:00+00:00</published><updated>2020-12-17T00:00:00+00:00</updated><id>coolwindjo.github.io/ros/2020/12/17/ros-basic-programming</id><content type="html" xml:base="coolwindjo.github.io/ros/2020/12/17/ros-basic-programming.html">&lt;h2 id=&quot;ros-basics&quot;&gt;ROS basics&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.ros.org/reps/rep-0103.html#coordinate-frame-conventions&quot; target=&quot;_blank&quot;&gt;Axis Orientation&lt;/a&gt;&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-17/coordinate.png&quot; alt=&quot;Coordinate&quot; /&gt;&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;x: forward&lt;/li&gt;
+      &lt;li&gt;y: left&lt;/li&gt;
+      &lt;li&gt;z: upward&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;https://www.ros.org/reps/rep-0103.html&quot; target=&quot;_blank&quot;&gt;SI Unit&lt;/a&gt;&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Quantity&lt;/th&gt;
+          &lt;th&gt;Unit&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;angle&lt;/td&gt;
+          &lt;td&gt;radian&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;length&lt;/td&gt;
+          &lt;td&gt;meter&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;mass&lt;/td&gt;
+          &lt;td&gt;kilogram&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;frequency&lt;/td&gt;
+          &lt;td&gt;hertz&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;force&lt;/td&gt;
+          &lt;td&gt;newton&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;power&lt;/td&gt;
+          &lt;td&gt;watt&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;voltage&lt;/td&gt;
+          &lt;td&gt;volt&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;current&lt;/td&gt;
+          &lt;td&gt;ampere&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;time&lt;/td&gt;
+          &lt;td&gt;second&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;temperature&lt;/td&gt;
+          &lt;td&gt;celsius&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;&lt;a href=&quot;http://wiki.ros.org/CppStyleGuide&quot; target=&quot;_blank&quot;&gt;Coding Style&lt;/a&gt;&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Object&lt;/th&gt;
+          &lt;th&gt;Naming Rule&lt;/th&gt;
+          &lt;th&gt;Example&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Package&lt;/td&gt;
+          &lt;td&gt;under_scored&lt;/td&gt;
+          &lt;td&gt;first_ros_package&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Topic, Service&lt;/td&gt;
+          &lt;td&gt;under_scored&lt;/td&gt;
+          &lt;td&gt;raw_image&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;File&lt;/td&gt;
+          &lt;td&gt;under_scored&lt;/td&gt;
+          &lt;td&gt;turtlebot3_fake.cpp&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Namespace&lt;/td&gt;
+          &lt;td&gt;under_scored&lt;/td&gt;
+          &lt;td&gt;ros_awesome_package&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Variable&lt;/td&gt;
+          &lt;td&gt;under_scored&lt;/td&gt;
+          &lt;td&gt;string_table_name&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Type&lt;/td&gt;
+          &lt;td&gt;CamelCased&lt;/td&gt;
+          &lt;td&gt;typedef int32_t PropertiesNumber&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Class&lt;/td&gt;
+          &lt;td&gt;CamelCased&lt;/td&gt;
+          &lt;td&gt;class UrlTable&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Structure&lt;/td&gt;
+          &lt;td&gt;CamelCased&lt;/td&gt;
+          &lt;td&gt;struct UrlTableProperties&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Enumeration&lt;/td&gt;
+          &lt;td&gt;CamelCased&lt;/td&gt;
+          &lt;td&gt;enum ChoiceNumber&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Function&lt;/td&gt;
+          &lt;td&gt;camelCased&lt;/td&gt;
+          &lt;td&gt;addTableEntry()&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Method&lt;/td&gt;
+          &lt;td&gt;camelCased&lt;/td&gt;
+          &lt;td&gt;void setNumEntries(int32_t num_entries)&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Constant&lt;/td&gt;
+          &lt;td&gt;ALL_CAPITALS&lt;/td&gt;
+          &lt;td&gt;const uint8_t DAYS_IN_A_WEEK = 7;&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Macro&lt;/td&gt;
+          &lt;td&gt;ALL_CAPITALS&lt;/td&gt;
+          &lt;td&gt;#define PI_ROUNDED 3.0&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;ros-message-communications&quot;&gt;ROS Message Communications&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Overall Diagram&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-17/message_comm.png&quot; alt=&quot;Message Communication&quot; /&gt;&lt;/p&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Topic&lt;/li&gt;
+      &lt;li&gt;Service&lt;/li&gt;
+      &lt;li&gt;Action&lt;/li&gt;
+      &lt;li&gt;Parameter&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;ros-package-creation&quot;&gt;ROS Package Creation&lt;/h3&gt;
+
+&lt;h4 id=&quot;create-ros-package-for-topic-test&quot;&gt;Create ROS Package for Topic Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;cw
+cd src
+catkin_create_pkg ros_tutorials_topic_josh message_generation std_msgs roscpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-package.xml&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot;?&amp;gt;
+  &amp;lt;package format=&quot;2&quot;&amp;gt;
+    &amp;lt;name&amp;gt;ros_tutorials_topic_josh&amp;lt;/name&amp;gt;
+    &amp;lt;version&amp;gt;0.1.0&amp;lt;/version&amp;gt;
+    &amp;lt;description&amp;gt;The ros_tutorials_topic_josh package&amp;lt;/description&amp;gt;
+
+    &amp;lt;maintainer email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/maintainer&amp;gt;
+
+    &amp;lt;license&amp;gt;Apache 2.0&amp;lt;/license&amp;gt;
+
+    &amp;lt;author email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/author&amp;gt;
+
+    &amp;lt;url type=&quot;website&quot;&amp;gt;http://www.robotis.com&amp;lt;/url&amp;gt;
+    &amp;lt;url type=&quot;repository&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials.git&amp;lt;/url&amp;gt;
+    &amp;lt;url type=&quot;bugtracker&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials/issues&amp;lt;/url&amp;gt;
+
+    &amp;lt;buildtool_depend&amp;gt;catkin&amp;lt;/buildtool_depend&amp;gt;
+    &amp;lt;depend&amp;gt;message_generation&amp;lt;/depend&amp;gt;
+    &amp;lt;depend&amp;gt;roscpp&amp;lt;/depend&amp;gt;
+    &amp;lt;depend&amp;gt;std_msgs&amp;lt;/depend&amp;gt;
+
+    &amp;lt;export&amp;gt;
+    &amp;lt;/export&amp;gt;
+    &amp;lt;/package&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-CMakeList.txt&quot;&gt;cmake_minimum_required(VERSION 2.8.3)
+project(ros_tutorials_topic_josh)
+
+find_package(catkin REQUIRED COMPONENTS
+message_generation
+roscpp
+std_msgs
+)
+
+add_message_files(
+FILES
+MsgTutorial.msg
+)
+
+generate_messages(
+DEPENDENCIES
+std_msgs
+)
+
+catkin_package(
+LIBRARIES ros_tutorials_topic_josh
+CATKIN_DEPENDS roscpp std_msgs
+)
+
+###########
+## Build ##
+###########
+
+include_directories(
+${catkin_INCLUDE_DIRS}
+)
+
+add_executable(topic_publisher_josh src/topic_publisher.cpp)
+add_executable(topic_subscriber_josh src/topic_subscriber.cpp)
+
+add_dependencies(topic_publisher_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(topic_subscriber_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(topic_publisher_josh
+${catkin_LIBRARIES}
+)
+target_link_libraries(topic_subscriber_josh
+${catkin_LIBRARIES}
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h4 id=&quot;create-ros-package-for-service-test&quot;&gt;Create ROS Package for Service Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;cw
+cd src
+catkin_create_pkg ros_tutorials_service_josh message_generation std_msgs roscpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-package.xml&quot;&gt;&amp;lt;?xml version=&quot;1.0&quot;?&amp;gt;
+  &amp;lt;package format=&quot;2&quot;&amp;gt;
+    &amp;lt;name&amp;gt;ros_tutorials_service_josh&amp;lt;/name&amp;gt;
+    &amp;lt;version&amp;gt;0.1.0&amp;lt;/version&amp;gt;
+    &amp;lt;description&amp;gt;The ros_tutorials_service_josh package&amp;lt;/description&amp;gt;
+
+    &amp;lt;maintainer email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/maintainer&amp;gt;
+
+    &amp;lt;license&amp;gt;Apache 2.0&amp;lt;/license&amp;gt;
+
+    &amp;lt;author email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/author&amp;gt;
+
+    &amp;lt;url type=&quot;website&quot;&amp;gt;http://www.robotis.com&amp;lt;/url&amp;gt;
+    &amp;lt;url type=&quot;repository&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials.git&amp;lt;/url&amp;gt;
+    &amp;lt;url type=&quot;bugtracker&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials/issues&amp;lt;/url&amp;gt;
+
+    &amp;lt;buildtool_depend&amp;gt;catkin&amp;lt;/buildtool_depend&amp;gt;
+    &amp;lt;depend&amp;gt;message_generation&amp;lt;/depend&amp;gt;
+    &amp;lt;depend&amp;gt;roscpp&amp;lt;/depend&amp;gt;
+    &amp;lt;depend&amp;gt;std_msgs&amp;lt;/depend&amp;gt;
+
+    &amp;lt;export&amp;gt;
+    &amp;lt;/export&amp;gt;
+    &amp;lt;/package&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-CMakeList.txt&quot;&gt;cmake_minimum_required(VERSION 2.8.3)
+project(ros_tutorials_service_josh)
+
+find_package(catkin REQUIRED COMPONENTS
+message_generation
+roscpp
+std_msgs
+)
+
+add_service_files(
+FILES
+SrvTutorial.srv
+)
+
+generate_messages(
+DEPENDENCIES
+std_msgs
+)
+
+catkin_package(
+LIBRARIES ros_tutorials_topic_josh
+CATKIN_DEPENDS roscpp std_msgs
+)
+
+###########
+## Build ##
+###########
+
+include_directories(
+${catkin_INCLUDE_DIRS}
+)
+
+add_executable(service_server_josh src/service_server.cpp)
+add_executable(service_client_josh src/service_client.cpp)
+
+add_dependencies(service_server_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+add_dependencies(service_client_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS})
+
+target_link_libraries(service_server_josh
+${catkin_LIBRARIES}
+)
+target_link_libraries(service_client_josh
+${catkin_LIBRARIES}
+)
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;h3 id=&quot;message-file-creation&quot;&gt;Message File Creation&lt;/h3&gt;
+
+&lt;h4 id=&quot;create-message-file-for-topic-test&quot;&gt;Create Message File for Topic Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_topic_josh
+mkdir msg
+cd msg
+vim MsgTutorial.msg
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-MsgTutorial.msg&quot;&gt;time stamp
+int32 data
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Message type can be not only time and int32, but also
+    &lt;ul&gt;
+      &lt;li&gt;built-in types: bool, int8, int16, float32, string, time, duration, etc.&lt;/li&gt;
+      &lt;li&gt;common_msgs: common messages being used in ROS&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/msg&quot; target=&quot;_blank&quot;&gt;Message reference&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;create-launch-file-for-topic-test&quot;&gt;Create Launch File for Topic Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_topic_josh
+mkdir launch
+cd launch
+vim union.launch
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-union.launch&quot;&gt;&amp;lt;launch&amp;gt;
+  &amp;lt;group ns=&quot;ns1&quot;&amp;gt;
+    &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_publisher_josh&quot; name=&quot;topic_publisher&quot;/&amp;gt;
+    &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_subscriber_josh&quot; name=&quot;topic_subscriber&quot;/&amp;gt;
+  &amp;lt;/group&amp;gt;
+  &amp;lt;group ns=&quot;ns2&quot;&amp;gt;
+    &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_publisher_josh&quot; name=&quot;topic_publisher&quot;/&amp;gt;
+    &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_subscriber_josh&quot; name=&quot;topic_subscriber&quot;/&amp;gt;
+  &amp;lt;/group&amp;gt;
+&amp;lt;/launch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-17/roslaunch_group.png&quot; alt=&quot;roslaunch running diagram&quot; /&gt;&lt;/p&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Launch Tag&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;launch&lt;/td&gt;
+      &lt;td&gt;begin and end of the roslaunch statement&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;node&lt;/td&gt;
+      &lt;td&gt;configure the node running specification, such as package, type, name&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;machine&lt;/td&gt;
+      &lt;td&gt;configure the machine specification the node running on, such as machine name, address, ros-root, ros-package-path, etc.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;include&lt;/td&gt;
+      &lt;td&gt;include the other launch files from the same or different packages to be run as one launch file&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;remap&lt;/td&gt;
+      &lt;td&gt;rename the ROS variables used in the running nodes, such as node’s name, topic’s name, etc.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;env&lt;/td&gt;
+      &lt;td&gt;set path and IP, etc. (hardly used)&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;param&lt;/td&gt;
+      &lt;td&gt;set parameter’s name, type, value, etc.&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;rosparam&lt;/td&gt;
+      &lt;td&gt;check and modify parameters in the way how rosparam commands (load, dump, delete, etc.) do&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;group&lt;/td&gt;
+      &lt;td&gt;make groups of nodes&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;test&lt;/td&gt;
+      &lt;td&gt;test node running with additional specifications&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;arg&lt;/td&gt;
+      &lt;td&gt;set or change the value of parameters&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-example.launch&quot;&gt;&amp;lt;launch&amp;gt;
+  &amp;lt;arg name=&quot;update_period&quot; default=&quot;10&quot; /&amp;gt;
+  &amp;lt;param name=&quot;timing&quot; value=&quot;$(arg update_period)&quot; /&amp;gt;
+&amp;lt;/launch&amp;gt;
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roslaunch my_package my_package.launch updaete_period:=30
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;create-service-file-for-service-test&quot;&gt;Create Service File for Service Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_service_josh
+mkdir srv
+cd srv
+vim SrvTutorial.srv
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-SrvTutorial.srv&quot;&gt;int64 a
+int64 b
+---
+int64 result
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Messages are separated by “---” into the set for request and the others for response.&lt;/li&gt;
+  &lt;li&gt;Message type can be not only time and int32, but also
+    &lt;ul&gt;
+      &lt;li&gt;built-in types: bool, int8, int16, float32, string, time, duration, etc.&lt;/li&gt;
+      &lt;li&gt;common_msgs: common messages being used in ROS&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/msg&quot; target=&quot;_blank&quot;&gt;Message reference&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;source-file-creation&quot;&gt;Source File Creation&lt;/h3&gt;
+
+&lt;h4 id=&quot;create-publisher-and-subscriber-nodes-for-topic-test&quot;&gt;Create Publisher and Subscriber Nodes for Topic Test&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Publisher Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_topic_josh/src
+vim topic_publisher.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-topic_publisher.cpp&quot;&gt;#include &quot;ros/ros.h&quot; // ROS 기본 헤더파일
+#include &quot;ros_tutorials_topic_josh/MsgTutorial.h&quot;// MsgTutorial 메시지 파일 헤더(빌드 후 자동 생성됨)
+
+int main(int argc, char **argv) // 노드 메인 함수
+{
+    ros::init(argc, argv, &quot;topic_publisher_josh&quot;); // 노드명 초기화
+  ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언
+
+  // 퍼블리셔 선언, ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지 파일을 이용한
+  // 퍼블리셔 ros_tutorial_pub 를 작성한다. 토픽명은 &quot;ros_tutorial_msg&quot; 이며,
+  // 퍼블리셔 큐(queue) 사이즈를 100개로 설정한다는 것이다
+  ros::Publisher ros_tutorial_pub = nh.advertise&amp;lt;ros_tutorials_topic_josh::MsgTutorial&amp;gt;(&quot;ros_tutorial_msg&quot;, 100);
+
+    // 루프 주기를 설정한다. &quot;10&quot; 이라는 것은 10Hz를 말하는 것으로 0.1초 간격으로 반복된다
+    ros::Rate loop_rate(10);
+
+    // MsgTutorial 메시지 파일 형식으로 msg 라는 메시지를 선언
+    ros_tutorials_topic_josh::MsgTutorial msg;
+
+    // 메시지에 사용될 변수 선언
+    int count = 0;
+    while (ros::ok())
+    {
+        msg.stamp = ros::Time::now(); // 현재 시간을 msg의 하위 stamp 메시지에 담는다
+        msg.data = count; // count라는 변수 값을 msg의 하위 data 메시지에 담는다
+        ROS_INFO(&quot;send msg = %d&quot;, msg.stamp.sec); // stamp.sec 메시지를 표시한다
+        ROS_INFO(&quot;send msg = %d&quot;, msg.stamp.nsec); // stamp.nsec 메시지를 표시한다
+        ROS_INFO(&quot;send msg = %d&quot;, msg.data); // data 메시지를 표시한다
+        ros_tutorial_pub.publish(msg); // 메시지를 발행한다
+        loop_rate.sleep(); // 위에서 정한 루프 주기에 따라 슬립에 들어간다
+        ++count; // count 변수 1씩 증가
+    }
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Subscriber Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_topic_josh/src
+vim topic_subscriber.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-topic_subscriber.cpp&quot;&gt;#include &quot;ros/ros.h&quot; // ROS 기본 헤더파일
+#include &quot;ros_tutorials_topic_josh/MsgTutorial.h&quot;// MsgTutorial 메시지 파일 헤더(빌드 후 자동 생성됨)
+
+// 메시지 콜백 함수로써, 밑에서 설정한 ros_tutorial_msg라는 이름의 토픽
+// 메시지를 수신하였을 때 동작하는 함수이다
+// 입력 메시지로는 ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지를 받도록 되어있다
+void msgCallback(const ros_tutorials_topic_josh::MsgTutorial::ConstPtr&amp;amp; msg)
+{
+    ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;stamp.sec); // stamp.sec 메시지를 표시한다
+    ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;stamp.nsec); // stamp.nsec 메시지를 표시한다
+    ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;data); // data 메시지를 표시한다
+}
+
+int main(int argc, char **argv) // 노드 메인 함수
+{
+    ros::init(argc, argv, &quot;topic_subscriber_josh&quot;); // 노드명 초기화
+    ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언
+
+    // 서브스크라이버 선언, ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지 파일을 이용한
+    // 서브스크라이버 ros_tutorial_sub 를 작성한다. 토픽명은 &quot;ros_tutorial_msg&quot; 이며,
+    // 서브스크라이버 큐(queue) 사이즈를 100개로 설정한다는 것이다
+    ros::Subscriber ros_tutorial_sub = nh.subscribe(&quot;ros_tutorial_msg&quot;, 100, msgCallback);
+
+    // 콜백함수 호출을 위한 함수로써, 메시지가 수신되기를 대기,
+    // 수신되었을 경우 콜백함수를 실행한다
+    ros::spin();
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+    &lt;h4 id=&quot;create-server-and-client-nodes-for-service-test&quot;&gt;Create Server and Client Nodes for Service Test&lt;/h4&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Server Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_service_josh/src
+vim service_server.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-service_server.cpp&quot;&gt;#include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일
+#include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨)
+
+// 서비스 요청이 있을 경우, 아래의 처리를 수행한다
+// 서비스 요청은 req, 서비스 응답은 res로 설정하였다
+bool calculation(ros_tutorials_service_josh::SrvTutorial::Request &amp;amp;req, ros_tutorials_service_josh::SrvTutorial::Response &amp;amp;res)
+{
+    // 서비스 요청시 받은 a와 b 값을 더하여 서비스 응답 값에 저장한다
+    res.result = req.a + req.b;
+
+    // 서비스 요청에 사용된 a, b 값의 표시 및 서비스 응답에 해당되는 result 값을 출력한다
+    ROS_INFO(&quot;request: x=%ld, y=%ld&quot;, (long int)req.a, (long int)req.b);
+    ROS_INFO(&quot;sending back response: %ld&quot;, (long int)res.result);
+
+    return true;
+}
+
+int main(int argc, char **argv) // 노드 메인 함수
+{
+    ros::init(argc, argv, &quot;service_server_josh&quot;); // 노드명 초기화
+
+    ros::NodeHandle nh; // 노드 핸들 선언
+
+    // 서비스 서버 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한
+    // 서비스 서버 ros_tutorials_service_server를 선언한다
+    // 서비스명은 ros_tutorial_srv이며 서비스 요청이 있을 때,
+    // calculation라는 함수를 실행하라는 설정이다
+    ros::ServiceServer ros_tutorials_service_server = nh.advertiseService(&quot;ros_tutorial_srv&quot;, calculation);
+    ROS_INFO(&quot;ready srv server!&quot;);
+    ros::spin(); // 서비스 요청을 대기한다
+
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Client Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_service_josh/src
+vim service_client.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-service_client.cpp&quot;&gt;#include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일
+#include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨)
+#include &amp;lt;cstdlib&amp;gt; // atoll 함수 사용을 위한 라이브러리
+
+int main(int argc, char **argv) // 노드 메인 함수
+{
+    ros::init(argc, argv, &quot;service_client_josh&quot;); // 노드명 초기화
+
+    if (argc != 3) // 입력값 오류 처리
+    {
+        ROS_INFO(&quot;cmd : rosrun ros_tutorials_service_josh service_client_josh arg0 arg1&quot;);
+        ROS_INFO(&quot;arg0: double number, arg1: double number&quot;);
+        return 1;
+    }
+
+    ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언
+
+    // 서비스 클라이언트 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한
+    // 서비스 클라이언트 ros_tutorials_service_client를 선언한다
+    // 서비스명은 &quot;ros_tutorial_srv&quot;이다
+    ros::ServiceClient ros_tutorials_service_client =
+    nh.serviceClient&amp;lt;ros_tutorials_service_josh::SrvTutorial&amp;gt;(&quot;ros_tutorial_srv&quot;);
+
+    // srv라는 이름으로 SrvTutorial 서비스 파일을 이용하는 서비스를 선언한다
+    ros_tutorials_service_josh::SrvTutorial srv;
+
+    // 서비스 요청 값으로 노드가 실행될 때 입력으로 사용된 매개변수를 각각의 a, b에 저장한다
+    srv.request.a = atoll(argv[1]);
+    srv.request.b = atoll(argv[2]);
+
+    // 서비스를 요청하고, 요청이 받아들여졌을 경우, 응답 값을 표시한다
+    if (ros_tutorials_service_client.call(srv))
+    {
+        ROS_INFO(&quot;send srv, srv.Request.a and b: %ld, %ld&quot;, (long int)srv.request.a, (long int)srv.request.b);
+        ROS_INFO(&quot;receive srv, srv.Response.result: %ld&quot;, (long int)srv.response.result);
+    }
+    else
+    {
+        ROS_ERROR(&quot;Failed to call service ros_tutorial_srv&quot;);
+        return 1;
+    }
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h4 id=&quot;create-server-and-client-nodes-for-parameter-test&quot;&gt;Create Server and Client Nodes for Parameter Test&lt;/h4&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Server Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_service_josh/src
+vim service_server.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-service_server.cpp&quot;&gt;#include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일
+#include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨)
+
+// 서비스 요청이 있을 경우, 아래의 처리를 수행한다
+// 서비스 요청은 req, 서비스 응답은 res로 설정하였다
+bool calculation(ros_tutorials_service_josh::SrvTutorial::Request &amp;amp;req, ros_tutorials_service_josh::SrvTutorial::Response &amp;amp;res)
+{
+    // 서비스 요청시 받은 a와 b 값을 파라미터 값에 따라 연산자를 달리한다.
+    // 계산한 후 서비스 응답 값에 저장한다
+    switch(g_operator)
+    {
+        case PLUS:
+            res.result = req.a + req.b; break;
+        case MINUS:
+            res.result = req.a - req.b; break;
+        case MULTIPLICATION:
+            res.result = req.a * req.b; break;
+        case DIVISION:
+            if(req.b == 0){
+                res.result = 0; break;
+            }
+            else{
+                res.result = req.a / req.b; break;
+            }
+        default:
+            res.result = req.a + req.b; break;
+    }
+
+    // 서비스 요청에 사용된 a, b 값의 표시 및 서비스 응답에 해당되는 result 값을 출력한다
+    ROS_INFO(&quot;request: x=%ld, y=%ld&quot;, (long int)req.a, (long int)req.b);
+    ROS_INFO(&quot;sending back response: %ld&quot;, (long int)res.result);
+
+    return true;
+}
+
+int main(int argc, char **argv) // 노드 메인 함수
+{
+    ros::init(argc, argv, &quot;service_server_josh&quot;); // 노드명 초기화
+
+    ros::NodeHandle nh; // 노드 핸들 선언
+
+    // 서비스 서버 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한
+    // 서비스 서버 ros_tutorials_service_server를 선언한다
+    // 서비스명은 ros_tutorial_srv이며 서비스 요청이 있을 때,
+    // calculation라는 함수를 실행하라는 설정이다
+    ros::ServiceServer ros_tutorials_service_server = nh.advertiseService(&quot;ros_tutorial_srv&quot;, calculation);
+    ROS_INFO(&quot;ready srv server!&quot;);
+
+    ros::Rate r(10); // 10 hz
+    while (1)
+    {
+        nh.getParam(&quot;calculation_method&quot;, g_operator); // 연산자를 매개변수로부터 받은 값으로 변경한다
+        ros::spinOnce(); // 콜백함수 처리루틴
+        r.sleep(); // 루틴 반복을 위한 sleep 처리
+    }
+
+    return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Client Node Creation&lt;/p&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;roscd ros_tutorials_service_josh/src
+vim service_client.cpp
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Use the same file as the one in the Service Test&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h3 id=&quot;build-and-run-the-sample-packages&quot;&gt;Build and Run the Sample Packages&lt;/h3&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;cm
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;execute-publisher-and-subscriber-nodes-for-topic-test&quot;&gt;Execute Publisher and Subscriber Nodes for Topic Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;rosrun ros_tutorials_topic_josh topic_publisher_josh
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;rosrun ros_tutorials_topic_josh topic_subscriber_josh
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;execute-server-and-client-nodes-for-service-test&quot;&gt;Execute Server and Client Nodes for Service Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosrun ros_tutorials_service_josh service_server_josh
+&lt;span class=&quot;go&quot;&gt;[ INFO] [1608540574.728446500]: ready srv server!
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosrun ros_tutorials_service_josh service_client_josh 2 3
+&lt;span class=&quot;go&quot;&gt;[ INFO] [1608540608.362758300]: send srv, srv.Request.a and b: 2, 3
+[ INFO] [1608540608.364704800]: receive srv, srv.Response.result: 5
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosservice call /ros_tutorial_srv 10 2
+&lt;span class=&quot;go&quot;&gt;result: 12
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;h4 id=&quot;execute-server-and-client-nodes-for-parameter-test&quot;&gt;Execute Server and Client Nodes for Parameter Test&lt;/h4&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosrun ros_tutorials_service_josh service_server_josh
+&lt;span class=&quot;go&quot;&gt;[ INFO] [1608540574.728446500]: ready srv server!
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosparam list
+&lt;span class=&quot;go&quot;&gt;/calculation_method
+/rosdistro
+/roslaunch/uris/host_localhost__42759
+/rosversion
+/run_id
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosservice call /ros_tutorial_srv 10 2
+&lt;span class=&quot;go&quot;&gt;result: 12
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosparam &lt;span class=&quot;nb&quot;&gt;set&lt;/span&gt; /calculation_method 3
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;rosservice call /ros_tutorial_srv 10 2
+&lt;span class=&quot;go&quot;&gt;result: 20
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>CoolWind</name></author><category term="ROS" /><category term="ros" /><category term="lecture" /><category term="mooc" /><summary type="html">ROS basics Axis Orientation x: forward y: left z: upward SI Unit Quantity Unit angle radian length meter mass kilogram frequency hertz force newton power watt voltage volt current ampere time second temperature celsius Coding Style Object Naming Rule Example Package under_scored first_ros_package Topic, Service under_scored raw_image File under_scored turtlebot3_fake.cpp Namespace under_scored ros_awesome_package Variable under_scored string_table_name Type CamelCased typedef int32_t PropertiesNumber Class CamelCased class UrlTable Structure CamelCased struct UrlTableProperties Enumeration CamelCased enum ChoiceNumber Function camelCased addTableEntry() Method camelCased void setNumEntries(int32_t num_entries) Constant ALL_CAPITALS const uint8_t DAYS_IN_A_WEEK = 7; Macro ALL_CAPITALS #define PI_ROUNDED 3.0 ROS Message Communications Overall Diagram Topic Service Action Parameter ROS Package Creation Create ROS Package for Topic Test cw cd src catkin_create_pkg ros_tutorials_topic_josh message_generation std_msgs roscpp &amp;lt;?xml version=&quot;1.0&quot;?&amp;gt; &amp;lt;package format=&quot;2&quot;&amp;gt; &amp;lt;name&amp;gt;ros_tutorials_topic_josh&amp;lt;/name&amp;gt; &amp;lt;version&amp;gt;0.1.0&amp;lt;/version&amp;gt; &amp;lt;description&amp;gt;The ros_tutorials_topic_josh package&amp;lt;/description&amp;gt; &amp;lt;maintainer email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/maintainer&amp;gt; &amp;lt;license&amp;gt;Apache 2.0&amp;lt;/license&amp;gt; &amp;lt;author email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/author&amp;gt; &amp;lt;url type=&quot;website&quot;&amp;gt;http://www.robotis.com&amp;lt;/url&amp;gt; &amp;lt;url type=&quot;repository&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials.git&amp;lt;/url&amp;gt; &amp;lt;url type=&quot;bugtracker&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials/issues&amp;lt;/url&amp;gt; &amp;lt;buildtool_depend&amp;gt;catkin&amp;lt;/buildtool_depend&amp;gt; &amp;lt;depend&amp;gt;message_generation&amp;lt;/depend&amp;gt; &amp;lt;depend&amp;gt;roscpp&amp;lt;/depend&amp;gt; &amp;lt;depend&amp;gt;std_msgs&amp;lt;/depend&amp;gt; &amp;lt;export&amp;gt; &amp;lt;/export&amp;gt; &amp;lt;/package&amp;gt; cmake_minimum_required(VERSION 2.8.3) project(ros_tutorials_topic_josh) find_package(catkin REQUIRED COMPONENTS message_generation roscpp std_msgs ) add_message_files( FILES MsgTutorial.msg ) generate_messages( DEPENDENCIES std_msgs ) catkin_package( LIBRARIES ros_tutorials_topic_josh CATKIN_DEPENDS roscpp std_msgs ) ########### ## Build ## ########### include_directories( ${catkin_INCLUDE_DIRS} ) add_executable(topic_publisher_josh src/topic_publisher.cpp) add_executable(topic_subscriber_josh src/topic_subscriber.cpp) add_dependencies(topic_publisher_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) add_dependencies(topic_subscriber_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) target_link_libraries(topic_publisher_josh ${catkin_LIBRARIES} ) target_link_libraries(topic_subscriber_josh ${catkin_LIBRARIES} ) Create ROS Package for Service Test cw cd src catkin_create_pkg ros_tutorials_service_josh message_generation std_msgs roscpp &amp;lt;?xml version=&quot;1.0&quot;?&amp;gt; &amp;lt;package format=&quot;2&quot;&amp;gt; &amp;lt;name&amp;gt;ros_tutorials_service_josh&amp;lt;/name&amp;gt; &amp;lt;version&amp;gt;0.1.0&amp;lt;/version&amp;gt; &amp;lt;description&amp;gt;The ros_tutorials_service_josh package&amp;lt;/description&amp;gt; &amp;lt;maintainer email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/maintainer&amp;gt; &amp;lt;license&amp;gt;Apache 2.0&amp;lt;/license&amp;gt; &amp;lt;author email=&quot;coolwind@hotmail.co.kr&quot;&amp;gt;Jo, SeungHyeon&amp;lt;/author&amp;gt; &amp;lt;url type=&quot;website&quot;&amp;gt;http://www.robotis.com&amp;lt;/url&amp;gt; &amp;lt;url type=&quot;repository&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials.git&amp;lt;/url&amp;gt; &amp;lt;url type=&quot;bugtracker&quot;&amp;gt;https://github.com/ROBOTIS-GIT/ros_tutorials/issues&amp;lt;/url&amp;gt; &amp;lt;buildtool_depend&amp;gt;catkin&amp;lt;/buildtool_depend&amp;gt; &amp;lt;depend&amp;gt;message_generation&amp;lt;/depend&amp;gt; &amp;lt;depend&amp;gt;roscpp&amp;lt;/depend&amp;gt; &amp;lt;depend&amp;gt;std_msgs&amp;lt;/depend&amp;gt; &amp;lt;export&amp;gt; &amp;lt;/export&amp;gt; &amp;lt;/package&amp;gt; cmake_minimum_required(VERSION 2.8.3) project(ros_tutorials_service_josh) find_package(catkin REQUIRED COMPONENTS message_generation roscpp std_msgs ) add_service_files( FILES SrvTutorial.srv ) generate_messages( DEPENDENCIES std_msgs ) catkin_package( LIBRARIES ros_tutorials_topic_josh CATKIN_DEPENDS roscpp std_msgs ) ########### ## Build ## ########### include_directories( ${catkin_INCLUDE_DIRS} ) add_executable(service_server_josh src/service_server.cpp) add_executable(service_client_josh src/service_client.cpp) add_dependencies(service_server_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) add_dependencies(service_client_josh ${${PROJECT_NAME}_EXPORTED_TARGETS} ${catkin_EXPORTED_TARGETS}) target_link_libraries(service_server_josh ${catkin_LIBRARIES} ) target_link_libraries(service_client_josh ${catkin_LIBRARIES} ) Message File Creation Create Message File for Topic Test roscd ros_tutorials_topic_josh mkdir msg cd msg vim MsgTutorial.msg time stamp int32 data Message type can be not only time and int32, but also built-in types: bool, int8, int16, float32, string, time, duration, etc. common_msgs: common messages being used in ROS Message reference Create Launch File for Topic Test roscd ros_tutorials_topic_josh mkdir launch cd launch vim union.launch &amp;lt;launch&amp;gt; &amp;lt;group ns=&quot;ns1&quot;&amp;gt; &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_publisher_josh&quot; name=&quot;topic_publisher&quot;/&amp;gt; &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_subscriber_josh&quot; name=&quot;topic_subscriber&quot;/&amp;gt; &amp;lt;/group&amp;gt; &amp;lt;group ns=&quot;ns2&quot;&amp;gt; &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_publisher_josh&quot; name=&quot;topic_publisher&quot;/&amp;gt; &amp;lt;node pkg=&quot;ros_tutorials_topic_josh&quot; type=&quot;topic_subscriber_josh&quot; name=&quot;topic_subscriber&quot;/&amp;gt; &amp;lt;/group&amp;gt; &amp;lt;/launch&amp;gt; Launch Tag Description launch begin and end of the roslaunch statement node configure the node running specification, such as package, type, name machine configure the machine specification the node running on, such as machine name, address, ros-root, ros-package-path, etc. include include the other launch files from the same or different packages to be run as one launch file remap rename the ROS variables used in the running nodes, such as node’s name, topic’s name, etc. env set path and IP, etc. (hardly used) param set parameter’s name, type, value, etc. rosparam check and modify parameters in the way how rosparam commands (load, dump, delete, etc.) do group make groups of nodes test test node running with additional specifications arg set or change the value of parameters &amp;lt;launch&amp;gt; &amp;lt;arg name=&quot;update_period&quot; default=&quot;10&quot; /&amp;gt; &amp;lt;param name=&quot;timing&quot; value=&quot;$(arg update_period)&quot; /&amp;gt; &amp;lt;/launch&amp;gt; roslaunch my_package my_package.launch updaete_period:=30 Create Service File for Service Test roscd ros_tutorials_service_josh mkdir srv cd srv vim SrvTutorial.srv int64 a int64 b --- int64 result Messages are separated by “---” into the set for request and the others for response. Message type can be not only time and int32, but also built-in types: bool, int8, int16, float32, string, time, duration, etc. common_msgs: common messages being used in ROS Message reference Source File Creation Create Publisher and Subscriber Nodes for Topic Test Publisher Node Creation roscd ros_tutorials_topic_josh/src vim topic_publisher.cpp #include &quot;ros/ros.h&quot; // ROS 기본 헤더파일 #include &quot;ros_tutorials_topic_josh/MsgTutorial.h&quot;// MsgTutorial 메시지 파일 헤더(빌드 후 자동 생성됨) int main(int argc, char **argv) // 노드 메인 함수 { ros::init(argc, argv, &quot;topic_publisher_josh&quot;); // 노드명 초기화 ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언 // 퍼블리셔 선언, ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지 파일을 이용한 // 퍼블리셔 ros_tutorial_pub 를 작성한다. 토픽명은 &quot;ros_tutorial_msg&quot; 이며, // 퍼블리셔 큐(queue) 사이즈를 100개로 설정한다는 것이다 ros::Publisher ros_tutorial_pub = nh.advertise&amp;lt;ros_tutorials_topic_josh::MsgTutorial&amp;gt;(&quot;ros_tutorial_msg&quot;, 100); // 루프 주기를 설정한다. &quot;10&quot; 이라는 것은 10Hz를 말하는 것으로 0.1초 간격으로 반복된다 ros::Rate loop_rate(10); // MsgTutorial 메시지 파일 형식으로 msg 라는 메시지를 선언 ros_tutorials_topic_josh::MsgTutorial msg; // 메시지에 사용될 변수 선언 int count = 0; while (ros::ok()) { msg.stamp = ros::Time::now(); // 현재 시간을 msg의 하위 stamp 메시지에 담는다 msg.data = count; // count라는 변수 값을 msg의 하위 data 메시지에 담는다 ROS_INFO(&quot;send msg = %d&quot;, msg.stamp.sec); // stamp.sec 메시지를 표시한다 ROS_INFO(&quot;send msg = %d&quot;, msg.stamp.nsec); // stamp.nsec 메시지를 표시한다 ROS_INFO(&quot;send msg = %d&quot;, msg.data); // data 메시지를 표시한다 ros_tutorial_pub.publish(msg); // 메시지를 발행한다 loop_rate.sleep(); // 위에서 정한 루프 주기에 따라 슬립에 들어간다 ++count; // count 변수 1씩 증가 } return 0; } Subscriber Node Creation roscd ros_tutorials_topic_josh/src vim topic_subscriber.cpp #include &quot;ros/ros.h&quot; // ROS 기본 헤더파일 #include &quot;ros_tutorials_topic_josh/MsgTutorial.h&quot;// MsgTutorial 메시지 파일 헤더(빌드 후 자동 생성됨) // 메시지 콜백 함수로써, 밑에서 설정한 ros_tutorial_msg라는 이름의 토픽 // 메시지를 수신하였을 때 동작하는 함수이다 // 입력 메시지로는 ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지를 받도록 되어있다 void msgCallback(const ros_tutorials_topic_josh::MsgTutorial::ConstPtr&amp;amp; msg) { ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;stamp.sec); // stamp.sec 메시지를 표시한다 ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;stamp.nsec); // stamp.nsec 메시지를 표시한다 ROS_INFO(&quot;recieve msg = %d&quot;, msg-&amp;gt;data); // data 메시지를 표시한다 } int main(int argc, char **argv) // 노드 메인 함수 { ros::init(argc, argv, &quot;topic_subscriber_josh&quot;); // 노드명 초기화 ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언 // 서브스크라이버 선언, ros_tutorials_topic_josh 패키지의 MsgTutorial 메시지 파일을 이용한 // 서브스크라이버 ros_tutorial_sub 를 작성한다. 토픽명은 &quot;ros_tutorial_msg&quot; 이며, // 서브스크라이버 큐(queue) 사이즈를 100개로 설정한다는 것이다 ros::Subscriber ros_tutorial_sub = nh.subscribe(&quot;ros_tutorial_msg&quot;, 100, msgCallback); // 콜백함수 호출을 위한 함수로써, 메시지가 수신되기를 대기, // 수신되었을 경우 콜백함수를 실행한다 ros::spin(); return 0; } Create Server and Client Nodes for Service Test Server Node Creation roscd ros_tutorials_service_josh/src vim service_server.cpp #include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일 #include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨) // 서비스 요청이 있을 경우, 아래의 처리를 수행한다 // 서비스 요청은 req, 서비스 응답은 res로 설정하였다 bool calculation(ros_tutorials_service_josh::SrvTutorial::Request &amp;amp;req, ros_tutorials_service_josh::SrvTutorial::Response &amp;amp;res) { // 서비스 요청시 받은 a와 b 값을 더하여 서비스 응답 값에 저장한다 res.result = req.a + req.b; // 서비스 요청에 사용된 a, b 값의 표시 및 서비스 응답에 해당되는 result 값을 출력한다 ROS_INFO(&quot;request: x=%ld, y=%ld&quot;, (long int)req.a, (long int)req.b); ROS_INFO(&quot;sending back response: %ld&quot;, (long int)res.result); return true; } int main(int argc, char **argv) // 노드 메인 함수 { ros::init(argc, argv, &quot;service_server_josh&quot;); // 노드명 초기화 ros::NodeHandle nh; // 노드 핸들 선언 // 서비스 서버 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한 // 서비스 서버 ros_tutorials_service_server를 선언한다 // 서비스명은 ros_tutorial_srv이며 서비스 요청이 있을 때, // calculation라는 함수를 실행하라는 설정이다 ros::ServiceServer ros_tutorials_service_server = nh.advertiseService(&quot;ros_tutorial_srv&quot;, calculation); ROS_INFO(&quot;ready srv server!&quot;); ros::spin(); // 서비스 요청을 대기한다 return 0; } Client Node Creation roscd ros_tutorials_service_josh/src vim service_client.cpp #include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일 #include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨) #include &amp;lt;cstdlib&amp;gt; // atoll 함수 사용을 위한 라이브러리 int main(int argc, char **argv) // 노드 메인 함수 { ros::init(argc, argv, &quot;service_client_josh&quot;); // 노드명 초기화 if (argc != 3) // 입력값 오류 처리 { ROS_INFO(&quot;cmd : rosrun ros_tutorials_service_josh service_client_josh arg0 arg1&quot;); ROS_INFO(&quot;arg0: double number, arg1: double number&quot;); return 1; } ros::NodeHandle nh; // ROS 시스템과 통신을 위한 노드 핸들 선언 // 서비스 클라이언트 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한 // 서비스 클라이언트 ros_tutorials_service_client를 선언한다 // 서비스명은 &quot;ros_tutorial_srv&quot;이다 ros::ServiceClient ros_tutorials_service_client = nh.serviceClient&amp;lt;ros_tutorials_service_josh::SrvTutorial&amp;gt;(&quot;ros_tutorial_srv&quot;); // srv라는 이름으로 SrvTutorial 서비스 파일을 이용하는 서비스를 선언한다 ros_tutorials_service_josh::SrvTutorial srv; // 서비스 요청 값으로 노드가 실행될 때 입력으로 사용된 매개변수를 각각의 a, b에 저장한다 srv.request.a = atoll(argv[1]); srv.request.b = atoll(argv[2]); // 서비스를 요청하고, 요청이 받아들여졌을 경우, 응답 값을 표시한다 if (ros_tutorials_service_client.call(srv)) { ROS_INFO(&quot;send srv, srv.Request.a and b: %ld, %ld&quot;, (long int)srv.request.a, (long int)srv.request.b); ROS_INFO(&quot;receive srv, srv.Response.result: %ld&quot;, (long int)srv.response.result); } else { ROS_ERROR(&quot;Failed to call service ros_tutorial_srv&quot;); return 1; } return 0; } Create Server and Client Nodes for Parameter Test Server Node Creation roscd ros_tutorials_service_josh/src vim service_server.cpp #include &quot;ros/ros.h&quot; // ROS 기본 헤더 파일 #include &quot;ros_tutorials_service_josh/SrvTutorial.h&quot; // SrvTutorial 서비스 파일 헤더 (빌드후 자동 생성됨) // 서비스 요청이 있을 경우, 아래의 처리를 수행한다 // 서비스 요청은 req, 서비스 응답은 res로 설정하였다 bool calculation(ros_tutorials_service_josh::SrvTutorial::Request &amp;amp;req, ros_tutorials_service_josh::SrvTutorial::Response &amp;amp;res) { // 서비스 요청시 받은 a와 b 값을 파라미터 값에 따라 연산자를 달리한다. // 계산한 후 서비스 응답 값에 저장한다 switch(g_operator) { case PLUS: res.result = req.a + req.b; break; case MINUS: res.result = req.a - req.b; break; case MULTIPLICATION: res.result = req.a * req.b; break; case DIVISION: if(req.b == 0){ res.result = 0; break; } else{ res.result = req.a / req.b; break; } default: res.result = req.a + req.b; break; } // 서비스 요청에 사용된 a, b 값의 표시 및 서비스 응답에 해당되는 result 값을 출력한다 ROS_INFO(&quot;request: x=%ld, y=%ld&quot;, (long int)req.a, (long int)req.b); ROS_INFO(&quot;sending back response: %ld&quot;, (long int)res.result); return true; } int main(int argc, char **argv) // 노드 메인 함수 { ros::init(argc, argv, &quot;service_server_josh&quot;); // 노드명 초기화 ros::NodeHandle nh; // 노드 핸들 선언 // 서비스 서버 선언, ros_tutorials_service_josh 패키지의 SrvTutorial 서비스 파일을 이용한 // 서비스 서버 ros_tutorials_service_server를 선언한다 // 서비스명은 ros_tutorial_srv이며 서비스 요청이 있을 때, // calculation라는 함수를 실행하라는 설정이다 ros::ServiceServer ros_tutorials_service_server = nh.advertiseService(&quot;ros_tutorial_srv&quot;, calculation); ROS_INFO(&quot;ready srv server!&quot;); ros::Rate r(10); // 10 hz while (1) { nh.getParam(&quot;calculation_method&quot;, g_operator); // 연산자를 매개변수로부터 받은 값으로 변경한다 ros::spinOnce(); // 콜백함수 처리루틴 r.sleep(); // 루틴 반복을 위한 sleep 처리 } return 0; } Client Node Creation roscd ros_tutorials_service_josh/src vim service_client.cpp Use the same file as the one in the Service Test Build and Run the Sample Packages cm Execute Publisher and Subscriber Nodes for Topic Test rosrun ros_tutorials_topic_josh topic_publisher_josh rosrun ros_tutorials_topic_josh topic_subscriber_josh Execute Server and Client Nodes for Service Test $ rosrun ros_tutorials_service_josh service_server_josh [ INFO] [1608540574.728446500]: ready srv server! $ rosrun ros_tutorials_service_josh service_client_josh 2 3 [ INFO] [1608540608.362758300]: send srv, srv.Request.a and b: 2, 3 [ INFO] [1608540608.364704800]: receive srv, srv.Response.result: 5 $ rosservice call /ros_tutorial_srv 10 2 result: 12 Execute Server and Client Nodes for Parameter Test $ rosrun ros_tutorials_service_josh service_server_josh [ INFO] [1608540574.728446500]: ready srv server! $ rosparam list /calculation_method /rosdistro /roslaunch/uris/host_localhost__42759 /rosversion /run_id $ rosservice call /ros_tutorial_srv 10 2 result: 12 $ rosparam set /calculation_method 3 $ rosservice call /ros_tutorial_srv 10 2 result: 20</summary></entry><entry><title type="html">Comparison of Simulators for Robotics and Self-driving Vehicles</title><link href="coolwindjo.github.io/ros/2020/12/11/simulator-comparison.html" rel="alternate" type="text/html" title="Comparison of Simulators for Robotics and Self-driving Vehicles" /><published>2020-12-11T00:00:00+00:00</published><updated>2020-12-11T00:00:00+00:00</updated><id>coolwindjo.github.io/ros/2020/12/11/simulator-comparison</id><content type="html" xml:base="coolwindjo.github.io/ros/2020/12/11/simulator-comparison.html">&lt;h2 id=&quot;reference-links&quot;&gt;Reference Links&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;&lt;a href=&quot;https://udacity.github.io/udacidrone/&quot; target=&quot;_blank&quot;&gt;Udacidrone&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/Microsoft/AirSim/&quot; target=&quot;_blank&quot;&gt;AirSim&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://carla.org/&quot; target=&quot;_blank&quot;&gt;CARLA&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://robotics.sciencemag.org/content/4/28/eaaw0863/&quot; target=&quot;_blank&quot;&gt;AADS&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;https://arxiv.org/ftp/arxiv/papers/1901/1901.07849.pdf&quot; target=&quot;_blank&quot;&gt;AADS paper&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/lgsvl/simulator&quot; target=&quot;_blank&quot;&gt;LGSVL&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://gazebosim.org/&quot; target=&quot;_blank&quot;&gt;Gazebo&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://github.com/udacity/self-driving-car-sim&quot; target=&quot;_blank&quot;&gt;Udacity’s Self-Driving Car Simulators&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://www.simonwenkel.com/2019/03/26/list-of-simulation-environments-for-AIML-training.html/&quot; target=&quot;_blank&quot;&gt;List of simulation environments for AI/ML training&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;https://paperswithcode.com/task/autonomous-driving?page=5&quot; target=&quot;_blank&quot;&gt;Autonomous Driving paper with code&lt;/a&gt;&lt;/li&gt;
+&lt;/ul&gt;</content><author><name>CoolWind</name></author><category term="ROS" /><category term="ros" /><category term="robotics" /><category term="self-driving" /><category term="sensor" /><category term="simulator" /><summary type="html">Reference Links Udacidrone AirSim CARLA AADS AADS paper LGSVL Gazebo Udacity’s Self-Driving Car Simulators List of simulation environments for AI/ML training Autonomous Driving paper with code</summary></entry><entry><title type="html">Linux Memory Management</title><link href="coolwindjo.github.io/linux/2020/12/07/memory-management.html" rel="alternate" type="text/html" title="Linux Memory Management" /><published>2020-12-07T00:00:00+00:00</published><updated>2020-12-07T00:00:00+00:00</updated><id>coolwindjo.github.io/linux/2020/12/07/memory-management</id><content type="html" xml:base="coolwindjo.github.io/linux/2020/12/07/memory-management.html">&lt;h2 id=&quot;memory-management-technic-and-virtual-memory&quot;&gt;Memory management technic and virtual memory&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Virtual memory offers maximum sized Virtual Address Space to each Task.&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;CPU&lt;/th&gt;
+          &lt;th&gt;Size&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;32bit&lt;/td&gt;
+          &lt;td&gt;4GB&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;64bit&lt;/td&gt;
+          &lt;td&gt;16EB&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses.
+        &lt;ul&gt;
+          &lt;li&gt;More tasks can run with less physical memory&lt;/li&gt;
+          &lt;li&gt;No need of memory arrange policy&lt;/li&gt;
+          &lt;li&gt;Easy to share or protect memory between tasks&lt;/li&gt;
+          &lt;li&gt;Fast task creation&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;physical-memory-management-data-structure&quot;&gt;Physical memory management data structure&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Linux has the information about entire physical memory.&lt;/li&gt;
+  &lt;li&gt;UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing)
+    &lt;ul&gt;
+      &lt;li&gt;Memory and I/O BUS are shared by entire CPUs&lt;/li&gt;
+      &lt;li&gt;Possible bottleneck on the resource&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;NUMA(Non-Uniform Memory Access)
+    &lt;ul&gt;
+      &lt;li&gt;For the sake of the performance, each CPU should access to the nearest memory to fetch data.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Node
+    &lt;ul&gt;
+      &lt;li&gt;Implementation of Bank(Set of memory with the same access speed)
+        &lt;ul&gt;
+          &lt;li&gt;Zone structure implemented in “/include/linux/mmzone.h”&lt;/li&gt;
+          &lt;li&gt;UMA has one Bank and NUMA has multiple Banks.&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;UMA has one Node
+        &lt;ul&gt;
+          &lt;li&gt;The only Node can be accessed with “contig_page_data”&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;NUMA has multiple Nodes.
+        &lt;ul&gt;
+          &lt;li&gt;They are managed using list called “pgdat_list”&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Linux can access the Physical Memory using consistent Node structure no matter what the system is.
+        &lt;ul&gt;
+          &lt;li&gt;“pg_data_t” structure is used.
+            &lt;ul&gt;
+              &lt;li&gt;“node_present_pages”: actual size of the physical memory in the node&lt;/li&gt;
+              &lt;li&gt;“node_start_pfn”: the index number of the physical memory in the memory map&lt;/li&gt;
+              &lt;li&gt;“node_zones”: zone structure&lt;/li&gt;
+              &lt;li&gt;“nr_zones”: the number of zones&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;For the sake of the performance
+            &lt;ul&gt;
+              &lt;li&gt;Linux tends to allocate the nearest memory from the CPU working on the Task.&lt;/li&gt;
+              &lt;li&gt;Linux tends to reallocate the CPU which have worked on the same task.&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/bank-node.png&quot; alt=&quot;Bank-Node&quot; /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Zone
+    &lt;ul&gt;
+      &lt;li&gt;Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory.&lt;/li&gt;
+      &lt;li&gt;Zones are several regions of the physical memory for the Node.
+        &lt;ul&gt;
+          &lt;li&gt;“/include/linux/mmzone.h”&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;The memory in the same zone has the same properties.&lt;/li&gt;
+      &lt;li&gt;The memory in the different zone should be managed separately.&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Region&lt;/th&gt;
+          &lt;th&gt;Zone name&lt;/th&gt;
+          &lt;th&gt;Description&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;0 ~ 16M&lt;/td&gt;
+          &lt;td&gt;ZONE_DMA or ZONE_DMA32&lt;/td&gt;
+          &lt;td&gt;saved for some ISA BUS-based devices&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;16 ~ 896M&lt;/td&gt;
+          &lt;td&gt;ZONE_NORMAL&lt;/td&gt;
+          &lt;td&gt;mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit)&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;896 ~ end&lt;/td&gt;
+          &lt;td&gt;ZONE_HIGHMEM&lt;/td&gt;
+          &lt;td&gt;dynamically allocated as it is needed&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM)&lt;/li&gt;
+      &lt;li&gt;Zone structure has
+        &lt;ul&gt;
+          &lt;li&gt;Beginning address and the size of physical memory belong to the Zone&lt;/li&gt;
+          &lt;li&gt;free_area structure array for being used by Buddy&lt;/li&gt;
+          &lt;li&gt;“watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage.
+            &lt;ul&gt;
+              &lt;li&gt;On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable.&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/zoneinfo
+&lt;span class=&quot;go&quot;&gt;Node 0, zone      DMA
+  per-node stats
+      nr_inactive_anon 62122
+      nr_active_anon 94246
+      nr_inactive_file 146827
+      nr_active_file 95508
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  pages free     3721
+          min      39
+          low      48
+          high     57
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;          ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;      nr_free_pages 3721
+      nr_zone_inactive_anon 0
+      nr_zone_active_anon 0
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  pagesets
+      cpu: 0
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 8
+      cpu: 1
+              count: 0
+              high:  0
+              batch: 1
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  node_unreclaimable:  0
+  start_pfn:           1
+Node 0, zone    DMA32
+  pages free     988431
+          min      10549
+          low      13186
+          high     15823
+      nr_free_pages 988431
+      nr_zone_inactive_anon 0
+      nr_zone_active_anon 0
+      nr_zone_inactive_file 0
+      nr_zone_active_file 0
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  pagesets
+      cpu: 0
+              count: 11
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 1
+              count: 0
+              high:  378
+              batch: 63
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;              ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  node_unreclaimable:  0
+  start_pfn:           4096
+Node 0, zone   Normal
+  pages free     158188
+          min      6306
+          low      7882
+          high     9458
+          spanned  619520
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;          ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;      nr_free_pages 158188
+      nr_zone_inactive_anon 62122
+      nr_zone_active_anon 94246
+      nr_zone_inactive_file 146827
+      nr_zone_active_file 95508
+      nr_zone_unevictable 0
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  pagesets
+      cpu: 0
+              count: 373
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 1
+              count: 333
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 2
+              count: 317
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 3
+              count: 282
+              high:  378
+              batch: 63
+&lt;/span&gt;&lt;span class=&quot;c&quot;&gt;      ...
+&lt;/span&gt;&lt;span class=&quot;go&quot;&gt;  node_unreclaimable:  0
+  start_pfn:           1048576
+Node 0, zone  Movable
+  pages free     0
+          min      0
+          low      0
+          high     0
+          spanned  0
+          present  0
+          managed  0
+          protection: (0, 0, 0, 0)
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Page frame
+    &lt;ul&gt;
+      &lt;li&gt;Managing unit of physical memory by Zone&lt;/li&gt;
+      &lt;li&gt;Page structure implemented in “/include/linux/mm_types.h”&lt;/li&gt;
+      &lt;li&gt;Pages are supposed to be created for every page frames when the system boots.&lt;/li&gt;
+      &lt;li&gt;Pages can be accessed by the global variable called “mem_map”&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Linux’s physical memory managing units
+    &lt;ul&gt;
+      &lt;li&gt;Physical memory may be composed of one or more Nodes.&lt;/li&gt;
+      &lt;li&gt;Node may be composed of one or more Zones.&lt;/li&gt;
+      &lt;li&gt;Zone may be composed of many Page frames.&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/node-zone.png&quot; alt=&quot;Node-Zone&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;buddy-and-slab&quot;&gt;Buddy and Slab&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Linux allocates physical memory to tasks by the “Page frame” unit.
+    &lt;ul&gt;
+      &lt;li&gt;At least 4KB, which can be changed to be 8KB, 2MB, etc.&lt;/li&gt;
+      &lt;li&gt;External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame.&lt;/li&gt;
+      &lt;li&gt;Internal Fragmentation: When task requests smaller size than one page frame.&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Buddy Allocator
+    &lt;ul&gt;
+      &lt;li&gt;External Fragmentation&lt;/li&gt;
+      &lt;li&gt;Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone)
+        &lt;ul&gt;
+          &lt;li&gt;free_area structure has
+            &lt;ul&gt;
+              &lt;li&gt;free_list&lt;/li&gt;
+              &lt;li&gt;map&lt;/li&gt;
+            &lt;/ul&gt;
+
+            &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/free_area.png&quot; alt=&quot;free_area&quot; /&gt;&lt;/p&gt;
+
+            &lt;ul&gt;
+              &lt;li&gt;The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB)&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;Example
+        &lt;ul&gt;
+          &lt;li&gt;
+            &lt;p&gt;On 2 pages are requested&lt;/p&gt;
+
+            &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/buddy-allocator1.png&quot; alt=&quot;Buddy allocator procedure 1&quot; /&gt;&lt;/p&gt;
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;p&gt;On another 2 pages are requested&lt;/p&gt;
+
+            &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/buddy-allocator2.png&quot; alt=&quot;Buddy allocator procedure 2&quot; /&gt;&lt;/p&gt;
+          &lt;/li&gt;
+          &lt;li&gt;
+            &lt;p&gt;On page 11 are freed&lt;/p&gt;
+
+            &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/buddy-allocator3.png&quot; alt=&quot;Buddy allocator procedure 3&quot; /&gt;&lt;/p&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Lazy Buddy&lt;/p&gt;
+
+        &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/lazy-buddy.png&quot; alt=&quot;Lazy Buddy&quot; /&gt;&lt;/p&gt;
+
+        &lt;ul&gt;
+          &lt;li&gt;“free_area::map” -&amp;gt; “free_area::nr_free”: number of free Page frames&lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;cat&lt;/span&gt; /proc/buddyinfo
+&lt;span class=&quot;go&quot;&gt;Node 0, zone      DMA      1      0      0      1      2      1      1      0      0      1      3
+Node 0, zone    DMA32      3      2      4      3      6      4      4      4      3      1    963
+Node 0, zone   Normal     54    244    185    109     41     22      7      3      2      9    145
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;        &lt;/div&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Slab Allocator
+    &lt;ul&gt;
+      &lt;li&gt;Internal Fragmentation&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;exercise-2-answer-understanding-stack-based-buffer-overflow&quot;&gt;&lt;a href=&quot;https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow&quot; target=&quot;_blank&quot;&gt;Exercise 2. Answer: Understanding Stack based buffer overflow&lt;/a&gt;&lt;/h2&gt;
+
+&lt;div class=&quot;language-cpp highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;cp&quot;&gt;#include &amp;lt;string.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+&lt;/span&gt;
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;function2&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;()&lt;/span&gt; &lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;“&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Execution&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;flow&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;changed&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;”&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;function1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;){&lt;/span&gt;
+  &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;5&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;];&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;strcpy&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;buffer&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;str&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;  &lt;span class=&quot;c1&quot;&gt;// break point 1.&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;                       &lt;span class=&quot;c1&quot;&gt;// break point 2.&lt;/span&gt;
+
+&lt;span class=&quot;kt&quot;&gt;void&lt;/span&gt; &lt;span class=&quot;nf&quot;&gt;main&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;kt&quot;&gt;int&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;argc&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;,&lt;/span&gt; &lt;span class=&quot;kt&quot;&gt;char&lt;/span&gt; &lt;span class=&quot;o&quot;&gt;*&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[])&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;{&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;function1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;argv&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;[&lt;/span&gt;&lt;span class=&quot;mi&quot;&gt;1&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;]);&lt;/span&gt;   &lt;span class=&quot;c1&quot;&gt;// break point 3.&lt;/span&gt;
+  &lt;span class=&quot;n&quot;&gt;printf&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;(&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;“&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;Executed&lt;/span&gt; &lt;span class=&quot;n&quot;&gt;normally&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;\&lt;/span&gt;&lt;span class=&quot;n&quot;&gt;n&lt;/span&gt;&lt;span class=&quot;err&quot;&gt;”&lt;/span&gt;&lt;span class=&quot;p&quot;&gt;);&lt;/span&gt;
+&lt;span class=&quot;p&quot;&gt;}&lt;/span&gt;
+&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;-g tells GCC to add extra information for GDB&lt;/li&gt;
+  &lt;li&gt;-fno-stack-protector flag to turn off stack protection mechanism&lt;/li&gt;
+  &lt;li&gt;-z execstack, it makes stack executable.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./bufferoverflow AAAA
+&lt;span class=&quot;go&quot;&gt;Executed normally
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA
+&lt;span class=&quot;go&quot;&gt;Segmentation fault
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;break point 3.&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/breakpoint3-1.png&quot; alt=&quot;break point 3.&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;break point 1.&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/breakpoint1.png&quot; alt=&quot;break point 1.&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;break point 2.&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/breakpoint2.png&quot; alt=&quot;break point 2.&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Return address, EBP and ESP on function stack frame&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/esp_ebp_on_func_call_stack.png&quot; alt=&quot;EBP and ESP on function stack frame&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;break point 3.&lt;/p&gt;
+
+    &lt;p&gt;When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address.&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/breakpoint3-2.png&quot; alt=&quot;break point 3.&quot; /&gt;&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Hijacking Execution&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;Find the function2 address&lt;/p&gt;
+
+        &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/function2address.png&quot; alt=&quot;function 2 address&quot; /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+      &lt;li&gt;
+        &lt;p&gt;Overwrite the Return address with the function 2 address&lt;/p&gt;
+
+        &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/run_function2address.png&quot; alt=&quot;run with function 2 address&quot; /&gt;&lt;/p&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./bufferoverflow &lt;span class=&quot;si&quot;&gt;$(&lt;/span&gt;python &lt;span class=&quot;nt&quot;&gt;-c&lt;/span&gt; &lt;span class=&quot;s1&quot;&gt;'print &quot;A&quot;*17 + &quot;\x1b\x84\x04\x08&quot;'&lt;/span&gt;&lt;span class=&quot;si&quot;&gt;)&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;Execution flow changed
+Segmentation fault
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>CoolWind</name></author><category term="Linux" /><category term="linux" /><category term="memory" /><summary type="html">Memory management technic and virtual memory Virtual memory offers maximum sized Virtual Address Space to each Task. CPU Size 32bit 4GB 64bit 16EB In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses. More tasks can run with less physical memory No need of memory arrange policy Easy to share or protect memory between tasks Fast task creation Physical memory management data structure Linux has the information about entire physical memory. UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing) Memory and I/O BUS are shared by entire CPUs Possible bottleneck on the resource NUMA(Non-Uniform Memory Access) For the sake of the performance, each CPU should access to the nearest memory to fetch data. Node Implementation of Bank(Set of memory with the same access speed) Zone structure implemented in “/include/linux/mmzone.h” UMA has one Bank and NUMA has multiple Banks. UMA has one Node The only Node can be accessed with “contig_page_data” NUMA has multiple Nodes. They are managed using list called “pgdat_list” Linux can access the Physical Memory using consistent Node structure no matter what the system is. “pg_data_t” structure is used. “node_present_pages”: actual size of the physical memory in the node “node_start_pfn”: the index number of the physical memory in the memory map “node_zones”: zone structure “nr_zones”: the number of zones For the sake of the performance Linux tends to allocate the nearest memory from the CPU working on the Task. Linux tends to reallocate the CPU which have worked on the same task. Zone Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory. Zones are several regions of the physical memory for the Node. “/include/linux/mmzone.h” The memory in the same zone has the same properties. The memory in the different zone should be managed separately. Region Zone name Description 0 ~ 16M ZONE_DMA or ZONE_DMA32 saved for some ISA BUS-based devices 16 ~ 896M ZONE_NORMAL mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit) 896 ~ end ZONE_HIGHMEM dynamically allocated as it is needed Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM) Zone structure has Beginning address and the size of physical memory belong to the Zone free_area structure array for being used by Buddy “watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage. On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable. $ cat /proc/zoneinfo Node 0, zone DMA per-node stats nr_inactive_anon 62122 nr_active_anon 94246 nr_inactive_file 146827 nr_active_file 95508 ... pages free 3721 min 39 low 48 high 57 ... nr_free_pages 3721 nr_zone_inactive_anon 0 nr_zone_active_anon 0 ... pagesets cpu: 0 count: 0 high: 0 batch: 1 vm stats threshold: 8 cpu: 1 count: 0 high: 0 batch: 1 ... node_unreclaimable: 0 start_pfn: 1 Node 0, zone DMA32 pages free 988431 min 10549 low 13186 high 15823 nr_free_pages 988431 nr_zone_inactive_anon 0 nr_zone_active_anon 0 nr_zone_inactive_file 0 nr_zone_active_file 0 ... pagesets cpu: 0 count: 11 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 0 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 4096 Node 0, zone Normal pages free 158188 min 6306 low 7882 high 9458 spanned 619520 ... nr_free_pages 158188 nr_zone_inactive_anon 62122 nr_zone_active_anon 94246 nr_zone_inactive_file 146827 nr_zone_active_file 95508 nr_zone_unevictable 0 ... pagesets cpu: 0 count: 373 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 333 high: 378 batch: 63 vm stats threshold: 48 cpu: 2 count: 317 high: 378 batch: 63 vm stats threshold: 48 cpu: 3 count: 282 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 1048576 Node 0, zone Movable pages free 0 min 0 low 0 high 0 spanned 0 present 0 managed 0 protection: (0, 0, 0, 0) Page frame Managing unit of physical memory by Zone Page structure implemented in “/include/linux/mm_types.h” Pages are supposed to be created for every page frames when the system boots. Pages can be accessed by the global variable called “mem_map” Linux’s physical memory managing units Physical memory may be composed of one or more Nodes. Node may be composed of one or more Zones. Zone may be composed of many Page frames. Buddy and Slab Linux allocates physical memory to tasks by the “Page frame” unit. At least 4KB, which can be changed to be 8KB, 2MB, etc. External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame. Internal Fragmentation: When task requests smaller size than one page frame. Buddy Allocator External Fragmentation Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone) free_area structure has free_list map The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB) Example On 2 pages are requested On another 2 pages are requested On page 11 are freed Lazy Buddy “free_area::map” -&amp;gt; “free_area::nr_free”: number of free Page frames $ cat /proc/buddyinfo Node 0, zone DMA 1 0 0 1 2 1 1 0 0 1 3 Node 0, zone DMA32 3 2 4 3 6 4 4 4 3 1 963 Node 0, zone Normal 54 244 185 109 41 22 7 3 2 9 145 Slab Allocator Internal Fragmentation Exercise 2. Answer: Understanding Stack based buffer overflow #include &amp;lt;string.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; void function2() { printf(“Execution flow changed\n”); } void function1(char *str){ char buffer[5]; strcpy(buffer, str); // break point 1. } // break point 2. void main(int argc, char *argv[]) { function1(argv[1]); // break point 3. printf(“Executed normally\n”); } gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c -g tells GCC to add extra information for GDB -fno-stack-protector flag to turn off stack protection mechanism -z execstack, it makes stack executable. $ ./bufferoverflow AAAA Executed normally $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA Segmentation fault break point 3. break point 1. break point 2. Return address, EBP and ESP on function stack frame break point 3. When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address. Hijacking Execution Find the function2 address Overwrite the Return address with the function 2 address $ ./bufferoverflow $(python -c 'print &quot;A&quot;*17 + &quot;\x1b\x84\x04\x08&quot;') Execution flow changed Segmentation fault</summary></entry><entry><title type="html">Linux Task Management</title><link href="coolwindjo.github.io/linux/2020/12/07/task-management.html" rel="alternate" type="text/html" title="Linux Task Management" /><published>2020-12-07T00:00:00+00:00</published><updated>2020-12-07T00:00:00+00:00</updated><id>coolwindjo.github.io/linux/2020/12/07/task-management</id><content type="html" xml:base="coolwindjo.github.io/linux/2020/12/07/task-management.html">&lt;h2 id=&quot;process-thread-and-task&quot;&gt;Process, Thread and Task&lt;/h2&gt;
+
+&lt;table&gt;
+  &lt;thead&gt;
+    &lt;tr&gt;
+      &lt;th&gt;Managing unit&lt;/th&gt;
+      &lt;th&gt;Description&lt;/th&gt;
+    &lt;/tr&gt;
+  &lt;/thead&gt;
+  &lt;tbody&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Task&lt;/td&gt;
+      &lt;td&gt;Resource acquisition unit&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Thread&lt;/td&gt;
+      &lt;td&gt;Running unit&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Process&lt;/td&gt;
+      &lt;td&gt;Running or runnable program&lt;/td&gt;
+    &lt;/tr&gt;
+    &lt;tr&gt;
+      &lt;td&gt;Program&lt;/td&gt;
+      &lt;td&gt;Executable file stored in disk&lt;/td&gt;
+    &lt;/tr&gt;
+  &lt;/tbody&gt;
+&lt;/table&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;Executable file is compiled to be a set of binary machine instructions and data&lt;/p&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Program and Process&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; &lt;span class=&quot;nb&quot;&gt;test &lt;/span&gt;test.c
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;file &lt;span class=&quot;nb&quot;&gt;test&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;test: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=c1919678864f40218323926252afd86ca1cc01dc, with debug_info, not stripped
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;&lt;span class=&quot;nb&quot;&gt;ls test&lt;/span&gt; &lt;span class=&quot;c&quot;&gt;# Program&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;test
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;ps
+&lt;span class=&quot;go&quot;&gt;  PID TTY          TIME CMD
+  814 pts/3    00:00:00 bash
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt; 6507 pts/3    00:00:00 test    #&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;Process
+&lt;span class=&quot;go&quot;&gt; 6508 pts/3    00:00:00 ps
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Scheduling is determining processes to acquire CPU resource by the Kernel.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;process-structure&quot;&gt;Process structure&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Virtual address space structure
+    &lt;ul&gt;
+      &lt;li&gt;One of the representative resource being allocated by the kernel to run process&lt;/li&gt;
+    &lt;/ul&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;CPU&lt;/th&gt;
+          &lt;th&gt;Virtual memory allocation&lt;/th&gt;
+          &lt;th&gt;User space&lt;/th&gt;
+          &lt;th&gt;Kernel space&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;32bit&lt;/td&gt;
+          &lt;td&gt;4 GB  2^(2+10+10+10)&lt;/td&gt;
+          &lt;td&gt;0 ~ 3 GB&lt;/td&gt;
+          &lt;td&gt;3 ~ 4 GB&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;64bit&lt;/td&gt;
+          &lt;td&gt;16 EB (Exa = 1024^6)&lt;/td&gt;
+          &lt;td&gt;0 ~ 128 TB&lt;/td&gt;
+          &lt;td&gt;128 TB ~ 16 EB&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-07/virtual-address-space.png&quot; alt=&quot;Virtual address space structure&quot; /&gt;&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Segment (Virtual Memory Area Structure)&lt;/th&gt;
+          &lt;th&gt;Location&lt;/th&gt;
+          &lt;th&gt;Contents&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Stack region&lt;/td&gt;
+          &lt;td&gt;Growing down from 3GB(32bit) or 128TB(64bit)&lt;/td&gt;
+          &lt;td&gt;Local variables and arguments for functions&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Heap region&lt;/td&gt;
+          &lt;td&gt;Growing up from the top of Data region&lt;/td&gt;
+          &lt;td&gt;Dynamically allocated memory with malloc() / new()&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Data region&lt;/td&gt;
+          &lt;td&gt;Fixed region on top of Text region&lt;/td&gt;
+          &lt;td&gt;Global variables&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Text region&lt;/td&gt;
+          &lt;td&gt;Fixed region at the beginning of user space&lt;/td&gt;
+          &lt;td&gt;CPU instructions&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;creation-and-execution-of-process-and-thread&quot;&gt;Creation and Execution of Process and Thread&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;fork()&lt;/p&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-Cpp&quot;&gt;#include &amp;lt;sys/types.h&amp;gt;
+#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+
+int global_cnt = 2;
+
+int main(void)
+{
+  pid_t pid;
+  int local_cnt = 3;
+
+  printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt);
+
+  if (pid = fork() &amp;lt; 0) {
+    perror(&quot;fork error&quot;);
+    exit(1);
+  }
+  else if (pid == 0) {
+    global_cnt++
+    local_cnt++
+  }
+  else {
+    wait();
+  }
+
+  printf(&quot;PID(%d): global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt);
+
+  return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; fork fork.c
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./fork
+&lt;span class=&quot;go&quot;&gt;PID(10404): Parent global_cnt=2, local_cnt=3
+PID(10405): global_cnt=3, local_cnt=4
+PID(10404): global_cnt=2, local_cnt=3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;clone()&lt;/p&gt;
+
+    &lt;pre&gt;&lt;code class=&quot;language-Cpp&quot;&gt;// #include &amp;lt;sys/types.h&amp;gt;
+#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+#include &amp;lt;sched.h&amp;gt;
+
+int global_cnt = 2;
+
+int sub_func(void *arg)
+{
+  global_cnt++;
+  printf(&quot;PID(%d): Child global_cnt=%d \n&quot;, getpid(), global_cnt);
+  sleep(2);
+  return 0;
+}
+
+
+int main(void)
+{
+  pid_t pid;
+  int child_stack[4096];
+  int local_cnt = 3;
+
+  printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt);
+
+  clone(sub_func, (void *)(child_stack+4095), CLONE_VM | CLONE_THREAD | CLONE_SIGHAND, NULL);
+  sleep(1);
+
+  printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt);
+
+  return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+    &lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; clone clone.c
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./clone
+&lt;span class=&quot;go&quot;&gt;PID(17351): Parent global_cnt=2, local_cnt=3
+PID(17351): Child global_cnt=3
+PID(17351): Parent global_cnt=3, local_cnt=3
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;    &lt;/div&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt; &lt;/th&gt;
+          &lt;th&gt;Forked Process&lt;/th&gt;
+          &lt;th&gt;Cloned Thread&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Virtual memory address space&lt;/td&gt;
+          &lt;td&gt;Create another&lt;/td&gt;
+          &lt;td&gt;Share the same&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Resource cost&lt;/td&gt;
+          &lt;td&gt;Doubled&lt;/td&gt;
+          &lt;td&gt;Minimized&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Error propagation&lt;/td&gt;
+          &lt;td&gt;Parent is not affected&lt;/td&gt;
+          &lt;td&gt;Parent can be affected&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;execl()&lt;/p&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;pre&gt;&lt;code class=&quot;language-Cpp&quot;&gt;#include &amp;lt;sys/types.h&amp;gt;
+#include &amp;lt;unistd.h&amp;gt;
+#include &amp;lt;stdio.h&amp;gt;
+#include &amp;lt;stdlib.h&amp;gt;
+
+int main(void)
+{
+  pid_t pid;
+  int exit_status;
+
+  if (pid = fork() &amp;lt; 0) {
+    perror(&quot;fork error&quot;);
+    exit(1);
+  }
+  else if (pid == 0) {
+    printf(&quot;Before execl() \n&quot;);
+    execl(&quot;./fork&quot;, &quot;fork&quot;, (char *)0);
+    printf(&quot;After execl() \n&quot;);
+  }
+  else {
+    pid = wait(&amp;amp;exit_status);
+  }
+
+  printf(&quot;Parent \n&quot;);
+
+  return 0;
+}
+&lt;/code&gt;&lt;/pre&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;gcc &lt;span class=&quot;nt&quot;&gt;-o&lt;/span&gt; fork_exec fork_exec.c
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;./fork_exec
+&lt;span class=&quot;go&quot;&gt;Before execl()
+PID(17453): Parent global_cnt=2, local_cnt=3
+PID(17454): global_cnt=3, local_cnt=4
+PID(17453): global_cnt=2, local_cnt=3
+Parent
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;After execl() is not printed because “execl()” replace the process image “fork_exec” (including text, data, stack) with the previous image “fork”.&lt;/li&gt;
+  &lt;li&gt;In this case, “vfork()” can be used for the same address space with parent’s so that redundant memory space does not created before being replaced with the previous image “fork”.&lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;linux-task-model&quot;&gt;Linux task model&lt;/h2&gt;</content><author><name>CoolWind</name></author><category term="Linux" /><category term="linux" /><category term="task" /><summary type="html">Process, Thread and Task Managing unit Description Task Resource acquisition unit Thread Running unit Process Running or runnable program Program Executable file stored in disk Executable file is compiled to be a set of binary machine instructions and data Program and Process $ gcc -o test test.c $ file test test: ELF 64-bit LSB shared object, x86-64, version 1 (SYSV), dynamically linked, interpreter /lib64/ld-linux-x86-64.so.2, for GNU/Linux 3.2.0, BuildID[sha1]=c1919678864f40218323926252afd86ca1cc01dc, with debug_info, not stripped $ ls test # Program test $ ps PID TTY TIME CMD 814 pts/3 00:00:00 bash 6507 pts/3 00:00:00 test # Process 6508 pts/3 00:00:00 ps Scheduling is determining processes to acquire CPU resource by the Kernel. Process structure Virtual address space structure One of the representative resource being allocated by the kernel to run process CPU Virtual memory allocation User space Kernel space 32bit 4 GB 2^(2+10+10+10) 0 ~ 3 GB 3 ~ 4 GB 64bit 16 EB (Exa = 1024^6) 0 ~ 128 TB 128 TB ~ 16 EB Segment (Virtual Memory Area Structure) Location Contents Stack region Growing down from 3GB(32bit) or 128TB(64bit) Local variables and arguments for functions Heap region Growing up from the top of Data region Dynamically allocated memory with malloc() / new() Data region Fixed region on top of Text region Global variables Text region Fixed region at the beginning of user space CPU instructions Creation and Execution of Process and Thread fork() #include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;stdlib.h&amp;gt; int global_cnt = 2; int main(void) { pid_t pid; int local_cnt = 3; printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt); if (pid = fork() &amp;lt; 0) { perror(&quot;fork error&quot;); exit(1); } else if (pid == 0) { global_cnt++ local_cnt++ } else { wait(); } printf(&quot;PID(%d): global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt); return 0; } $ gcc -o fork fork.c $ ./fork PID(10404): Parent global_cnt=2, local_cnt=3 PID(10405): global_cnt=3, local_cnt=4 PID(10404): global_cnt=2, local_cnt=3 clone() // #include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;stdlib.h&amp;gt; #include &amp;lt;sched.h&amp;gt; int global_cnt = 2; int sub_func(void *arg) { global_cnt++; printf(&quot;PID(%d): Child global_cnt=%d \n&quot;, getpid(), global_cnt); sleep(2); return 0; } int main(void) { pid_t pid; int child_stack[4096]; int local_cnt = 3; printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt); clone(sub_func, (void *)(child_stack+4095), CLONE_VM | CLONE_THREAD | CLONE_SIGHAND, NULL); sleep(1); printf(&quot;PID(%d): Parent global_cnt=%d, local_cnt=%d \n&quot;, getpid(), global_cnt, local_cnt); return 0; } $ gcc -o clone clone.c $ ./clone PID(17351): Parent global_cnt=2, local_cnt=3 PID(17351): Child global_cnt=3 PID(17351): Parent global_cnt=3, local_cnt=3   Forked Process Cloned Thread Virtual memory address space Create another Share the same Resource cost Doubled Minimized Error propagation Parent is not affected Parent can be affected execl() #include &amp;lt;sys/types.h&amp;gt; #include &amp;lt;unistd.h&amp;gt; #include &amp;lt;stdio.h&amp;gt; #include &amp;lt;stdlib.h&amp;gt; int main(void) { pid_t pid; int exit_status; if (pid = fork() &amp;lt; 0) { perror(&quot;fork error&quot;); exit(1); } else if (pid == 0) { printf(&quot;Before execl() \n&quot;); execl(&quot;./fork&quot;, &quot;fork&quot;, (char *)0); printf(&quot;After execl() \n&quot;); } else { pid = wait(&amp;amp;exit_status); } printf(&quot;Parent \n&quot;); return 0; } $ gcc -o fork_exec fork_exec.c $ ./fork_exec Before execl() PID(17453): Parent global_cnt=2, local_cnt=3 PID(17454): global_cnt=3, local_cnt=4 PID(17453): global_cnt=2, local_cnt=3 Parent After execl() is not printed because “execl()” replace the process image “fork_exec” (including text, data, stack) with the previous image “fork”. In this case, “vfork()” can be used for the same address space with parent’s so that redundant memory space does not created before being replaced with the previous image “fork”. Linux task model</summary></entry><entry><title type="html">Linux Kernel Structure</title><link href="coolwindjo.github.io/linux/2020/12/05/linux-kernel.html" rel="alternate" type="text/html" title="Linux Kernel Structure" /><published>2020-12-05T00:00:00+00:00</published><updated>2020-12-05T00:00:00+00:00</updated><id>coolwindjo.github.io/linux/2020/12/05/linux-kernel</id><content type="html" xml:base="coolwindjo.github.io/linux/2020/12/05/linux-kernel.html">&lt;h2 id=&quot;linux-kernel-structure&quot;&gt;Linux kernel structure&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;Operating System is a resource manager&lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Resource&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt;Physical resource&lt;/th&gt;
+          &lt;th&gt;Abstract resource&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;CPU&lt;/td&gt;
+          &lt;td&gt;Task&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Memory&lt;/td&gt;
+          &lt;td&gt;Segment, Page&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Disk&lt;/td&gt;
+          &lt;td&gt;File&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;Network&lt;/td&gt;
+          &lt;td&gt;Communication protocol, Packet&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+
+    &lt;ul&gt;
+      &lt;li&gt;Abstract resource only
+        &lt;ul&gt;
+          &lt;li&gt;Security&lt;/li&gt;
+          &lt;li&gt;Access control&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;Linux kernel’s conceptual structure&lt;/p&gt;
+
+    &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-05/linux-conceptual-structure.png&quot; alt=&quot;Linux kernel conceptual structure&quot; /&gt;&lt;/p&gt;
+
+    &lt;p&gt;Linux kernel offers services in the user space with system calls through the system call interfaces.&lt;/p&gt;
+    &lt;ul&gt;
+      &lt;li&gt;Linux Kernel (Conceptual Structure)
+        &lt;ul&gt;
+          &lt;li&gt;Task Manager
+            &lt;ul&gt;
+              &lt;li&gt;Task creation&lt;/li&gt;
+              &lt;li&gt;Task execution&lt;/li&gt;
+              &lt;li&gt;State transition&lt;/li&gt;
+              &lt;li&gt;Scheduling&lt;/li&gt;
+              &lt;li&gt;Signal Handling&lt;/li&gt;
+              &lt;li&gt;Inter Process Communication&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;Memory Manager
+            &lt;ul&gt;
+              &lt;li&gt;Physical memory management&lt;/li&gt;
+              &lt;li&gt;Virtual memory management&lt;/li&gt;
+              &lt;li&gt;Segmentation&lt;/li&gt;
+              &lt;li&gt;Paging&lt;/li&gt;
+              &lt;li&gt;Page fault handling&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;File System
+            &lt;ul&gt;
+              &lt;li&gt;File creation&lt;/li&gt;
+              &lt;li&gt;Access control&lt;/li&gt;
+              &lt;li&gt;inode management&lt;/li&gt;
+              &lt;li&gt;Directory management&lt;/li&gt;
+              &lt;li&gt;Super block management&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;Network Manager
+            &lt;ul&gt;
+              &lt;li&gt;Socket interface&lt;/li&gt;
+              &lt;li&gt;TCP/IP communication protocol&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;Device Drive Manager
+            &lt;ul&gt;
+              &lt;li&gt;Manage device drivers for Disk, Terminal, CD, Network card, etc.&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;Linux kernel source level structure
+    &lt;ul&gt;
+      &lt;li&gt;
+        &lt;p&gt;Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”)&lt;/p&gt;
+
+        &lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-12-05/linux-kernel-source-4.19.y_root.png&quot; alt=&quot;Linux kernel source tree linux-4.19.y&quot; /&gt;&lt;/p&gt;
+
+        &lt;ul&gt;
+          &lt;li&gt;/kernel directory
+            &lt;ul&gt;
+              &lt;li&gt;Implementation of the Task manager&lt;/li&gt;
+              &lt;li&gt;HW dependent task managing logics are in /arch/$(ARCH)/kernel.
+                &lt;ul&gt;
+                  &lt;li&gt;$(ARCH) is i386, arm, etc.&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/arch directory
+            &lt;ul&gt;
+              &lt;li&gt;Acronym of “architecture”&lt;/li&gt;
+              &lt;li&gt;/arch/$(ARCH)/kernel
+                &lt;ul&gt;
+                  &lt;li&gt;$(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc.
+                    &lt;ul&gt;
+                      &lt;li&gt;/arch/x86&lt;/li&gt;
+                    &lt;/ul&gt;
+
+                    &lt;table&gt;
+                      &lt;thead&gt;
+                        &lt;tr&gt;
+                          &lt;th&gt;Source Directory&lt;/th&gt;
+                          &lt;th&gt;Description&lt;/th&gt;
+                        &lt;/tr&gt;
+                      &lt;/thead&gt;
+                      &lt;tbody&gt;
+                        &lt;tr&gt;
+                          &lt;td&gt;/arch/x86/boot&lt;/td&gt;
+                          &lt;td&gt;bootstrap code for system booting&lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;tr&gt;
+                          &lt;td&gt;/arch/x86/kernel&lt;/td&gt;
+                          &lt;td&gt;HW dependent task manage code like context switch&lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;tr&gt;
+                          &lt;td&gt;/arch/x86/mm&lt;/td&gt;
+                          &lt;td&gt;HW dependent memory manage code like page fault handling&lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;tr&gt;
+                          &lt;td&gt;/arch/x86/lib&lt;/td&gt;
+                          &lt;td&gt;library function code used by the kernel&lt;/td&gt;
+                        &lt;/tr&gt;
+                        &lt;tr&gt;
+                          &lt;td&gt;/arch/x86/math-emu&lt;/td&gt;
+                          &lt;td&gt;FPU(Floating Point Unit) emulator&lt;/td&gt;
+                        &lt;/tr&gt;
+                      &lt;/tbody&gt;
+                    &lt;/table&gt;
+                  &lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/fs directory
+            &lt;ul&gt;
+              &lt;li&gt;System call implementation like open(), read(), write()&lt;/li&gt;
+              &lt;li&gt;At least 60 different file systems are available for Linux
+                &lt;ul&gt;
+                  &lt;li&gt;Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc.&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+              &lt;li&gt;Virtual File System for offering consistent interface for user&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/mm directory
+            &lt;ul&gt;
+              &lt;li&gt;Implementation of the Memory manager&lt;/li&gt;
+              &lt;li&gt;Physical memory management&lt;/li&gt;
+              &lt;li&gt;Virtual memory management&lt;/li&gt;
+              &lt;li&gt;Memory object allocated for each task management&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/driver directory
+            &lt;ul&gt;
+              &lt;li&gt;Implementation of the Device manager&lt;/li&gt;
+              &lt;li&gt;Management and virtualization of Disk, Terminal, Network card, etc.&lt;/li&gt;
+              &lt;li&gt;3 different device drivers
+                &lt;ul&gt;
+                  &lt;li&gt;Block Device Driver accessed by the file system&lt;/li&gt;
+                  &lt;li&gt;Character Device Driver accessed by user application program through its device file&lt;/li&gt;
+                  &lt;li&gt;Network Device Driver accessed by TCP/IP&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+              &lt;li&gt;Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc.&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/net directory
+            &lt;ul&gt;
+              &lt;li&gt;Decent portion of the whole linux kernel source amount&lt;/li&gt;
+              &lt;li&gt;Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc.&lt;/li&gt;
+              &lt;li&gt;Implementation of Abstract layer of many different communication protocol&lt;/li&gt;
+              &lt;li&gt;Implementation of Socket offering user interface&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/ipc directory
+            &lt;ul&gt;
+              &lt;li&gt;Implementation of Inter-Process Communication supported by linux kernel&lt;/li&gt;
+              &lt;li&gt;Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc.&lt;/li&gt;
+              &lt;li&gt;Implementation of message passing, shared memory, semaphore, etc.&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/init directory
+            &lt;ul&gt;
+              &lt;li&gt;Implementation of main start function to initialize the kernel&lt;/li&gt;
+              &lt;li&gt;/arch/$(ARCH)/kernel:
+                &lt;ul&gt;
+                  &lt;li&gt;HW dependent initialization at “head.S” and “mics.c”&lt;/li&gt;
+                  &lt;li&gt;Global kernel initialization at start_kernel()&lt;/li&gt;
+                &lt;/ul&gt;
+              &lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;/include directory
+            &lt;ul&gt;
+              &lt;li&gt;Linux kernel headers at /include/linux&lt;/li&gt;
+              &lt;li&gt;HW dependent headers at /include/asm-$(ARCH)&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+          &lt;li&gt;other directory
+            &lt;ul&gt;
+              &lt;li&gt;/Documentation directory for descriptions&lt;/li&gt;
+              &lt;li&gt;/lib directory for implementation of kernel library functions&lt;/li&gt;
+              &lt;li&gt;/scripts directory for scripts used when configure and compile the kernel&lt;/li&gt;
+            &lt;/ul&gt;
+          &lt;/li&gt;
+        &lt;/ul&gt;
+
+        &lt;table&gt;
+          &lt;thead&gt;
+            &lt;tr&gt;
+              &lt;th&gt;Physical resource&lt;/th&gt;
+              &lt;th&gt;Abstract resource&lt;/th&gt;
+              &lt;th&gt;Conceptual Manager&lt;/th&gt;
+              &lt;th&gt;Source directory&lt;/th&gt;
+            &lt;/tr&gt;
+          &lt;/thead&gt;
+          &lt;tbody&gt;
+            &lt;tr&gt;
+              &lt;td&gt;CPU&lt;/td&gt;
+              &lt;td&gt;Task&lt;/td&gt;
+              &lt;td&gt;Task Manager&lt;/td&gt;
+              &lt;td&gt;/kernel&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Memory&lt;/td&gt;
+              &lt;td&gt;Segment, Page&lt;/td&gt;
+              &lt;td&gt;Memory Manager&lt;/td&gt;
+              &lt;td&gt;/mm&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Disk&lt;/td&gt;
+              &lt;td&gt;File&lt;/td&gt;
+              &lt;td&gt;File System&lt;/td&gt;
+              &lt;td&gt;/fs&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Network&lt;/td&gt;
+              &lt;td&gt;Communication protocol, Packet&lt;/td&gt;
+              &lt;td&gt;Network Manager&lt;/td&gt;
+              &lt;td&gt;/ipc&lt;/td&gt;
+            &lt;/tr&gt;
+            &lt;tr&gt;
+              &lt;td&gt;Devices&lt;/td&gt;
+              &lt;td&gt;Device drivers for each devices&lt;/td&gt;
+              &lt;td&gt;Device Manager&lt;/td&gt;
+              &lt;td&gt;/driver&lt;/td&gt;
+            &lt;/tr&gt;
+          &lt;/tbody&gt;
+        &lt;/table&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;
+
+&lt;h2 id=&quot;linux-kernel-compile&quot;&gt;Linux kernel compile&lt;/h2&gt;
+
+&lt;ul&gt;
+  &lt;li&gt;
+    &lt;p&gt;For new version of linux kernel, just compile and reboot the new kernel.&lt;/p&gt;
+
+    &lt;table&gt;
+      &lt;thead&gt;
+        &lt;tr&gt;
+          &lt;th&gt; &lt;/th&gt;
+          &lt;th&gt;hello.out&lt;/th&gt;
+          &lt;th&gt;kernel&lt;/th&gt;
+        &lt;/tr&gt;
+      &lt;/thead&gt;
+      &lt;tbody&gt;
+        &lt;tr&gt;
+          &lt;td&gt;executable&lt;/td&gt;
+          &lt;td&gt;hello.out&lt;/td&gt;
+          &lt;td&gt;bzImage or zImage&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;stored at&lt;/td&gt;
+          &lt;td&gt;file system&lt;/td&gt;
+          &lt;td&gt;memory&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;access level&lt;/td&gt;
+          &lt;td&gt;user level&lt;/td&gt;
+          &lt;td&gt;kernel level&lt;/td&gt;
+        &lt;/tr&gt;
+        &lt;tr&gt;
+          &lt;td&gt;compile&lt;/td&gt;
+          &lt;td&gt;gcc&lt;/td&gt;
+          &lt;td&gt;gcc with make file&lt;/td&gt;
+        &lt;/tr&gt;
+      &lt;/tbody&gt;
+    &lt;/table&gt;
+  &lt;/li&gt;
+  &lt;li&gt;
+    &lt;p&gt;3 steps for making linux kernel&lt;/p&gt;
+    &lt;ol&gt;
+      &lt;li&gt;Kernel configuration&lt;/li&gt;
+      &lt;li&gt;Kernel compile&lt;/li&gt;
+      &lt;li&gt;Kernel installation&lt;/li&gt;
+    &lt;/ol&gt;
+  &lt;/li&gt;
+&lt;/ul&gt;</content><author><name>CoolWind</name></author><category term="Linux" /><category term="linux" /><category term="kernel" /><summary type="html">Linux kernel structure Operating System is a resource manager Resource Physical resource Abstract resource CPU Task Memory Segment, Page Disk File Network Communication protocol, Packet Abstract resource only Security Access control Linux kernel’s conceptual structure Linux kernel offers services in the user space with system calls through the system call interfaces. Linux Kernel (Conceptual Structure) Task Manager Task creation Task execution State transition Scheduling Signal Handling Inter Process Communication Memory Manager Physical memory management Virtual memory management Segmentation Paging Page fault handling File System File creation Access control inode management Directory management Super block management Network Manager Socket interface TCP/IP communication protocol Device Drive Manager Manage device drivers for Disk, Terminal, CD, Network card, etc. Linux kernel source level structure Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”) /kernel directory Implementation of the Task manager HW dependent task managing logics are in /arch/$(ARCH)/kernel. $(ARCH) is i386, arm, etc. /arch directory Acronym of “architecture” /arch/$(ARCH)/kernel $(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc. /arch/x86 Source Directory Description /arch/x86/boot bootstrap code for system booting /arch/x86/kernel HW dependent task manage code like context switch /arch/x86/mm HW dependent memory manage code like page fault handling /arch/x86/lib library function code used by the kernel /arch/x86/math-emu FPU(Floating Point Unit) emulator /fs directory System call implementation like open(), read(), write() At least 60 different file systems are available for Linux Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc. Virtual File System for offering consistent interface for user /mm directory Implementation of the Memory manager Physical memory management Virtual memory management Memory object allocated for each task management /driver directory Implementation of the Device manager Management and virtualization of Disk, Terminal, Network card, etc. 3 different device drivers Block Device Driver accessed by the file system Character Device Driver accessed by user application program through its device file Network Device Driver accessed by TCP/IP Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc. /net directory Decent portion of the whole linux kernel source amount Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc. Implementation of Abstract layer of many different communication protocol Implementation of Socket offering user interface /ipc directory Implementation of Inter-Process Communication supported by linux kernel Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc. Implementation of message passing, shared memory, semaphore, etc. /init directory Implementation of main start function to initialize the kernel /arch/$(ARCH)/kernel: HW dependent initialization at “head.S” and “mics.c” Global kernel initialization at start_kernel() /include directory Linux kernel headers at /include/linux HW dependent headers at /include/asm-$(ARCH) other directory /Documentation directory for descriptions /lib directory for implementation of kernel library functions /scripts directory for scripts used when configure and compile the kernel Physical resource Abstract resource Conceptual Manager Source directory CPU Task Task Manager /kernel Memory Segment, Page Memory Manager /mm Disk File File System /fs Network Communication protocol, Packet Network Manager /ipc Devices Device drivers for each devices Device Manager /driver Linux kernel compile For new version of linux kernel, just compile and reboot the new kernel.   hello.out kernel executable hello.out bzImage or zImage stored at file system memory access level user level kernel level compile gcc gcc with make file 3 steps for making linux kernel Kernel configuration Kernel compile Kernel installation</summary></entry><entry><title type="html">GUI from Docker Container</title><link href="coolwindjo.github.io/skillorknowhow/2020/11/14/gui-from-docker.html" rel="alternate" type="text/html" title="GUI from Docker Container" /><published>2020-11-14T00:00:00+00:00</published><updated>2020-11-14T00:00:00+00:00</updated><id>coolwindjo.github.io/skillorknowhow/2020/11/14/gui-from-docker</id><content type="html" xml:base="coolwindjo.github.io/skillorknowhow/2020/11/14/gui-from-docker.html">&lt;h2 id=&quot;add-xhost-access-permission-for-the-docker&quot;&gt;Add xhost access permission for the docker&lt;/h2&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;xhost +local:docker
+&lt;span class=&quot;go&quot;&gt;non-network local connections being added to access control list
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;docker run &lt;span class=&quot;nt&quot;&gt;-it&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;-e&lt;/span&gt; &lt;span class=&quot;nv&quot;&gt;DISPLAY&lt;/span&gt;&lt;span class=&quot;o&quot;&gt;=&lt;/span&gt;&lt;span class=&quot;nv&quot;&gt;$DISPLAY&lt;/span&gt; &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        &lt;span class=&quot;nt&quot;&gt;-v&lt;/span&gt; /tmp/.X11-unix:/tmp/.X11-unix:ro &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+        IMAGE_NAME
+&lt;span class=&quot;gp&quot;&gt;$&lt;/span&gt;&lt;span class=&quot;w&quot;&gt; &lt;/span&gt;xhost &lt;span class=&quot;nt&quot;&gt;-local&lt;/span&gt;:docker
+&lt;span class=&quot;go&quot;&gt;non-network local connections being removed from access control list
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>CoolWind</name></author><category term="SkillOrKnowhow" /><category term="gui" /><category term="docker" /><summary type="html">Add xhost access permission for the docker $ xhost +local:docker non-network local connections being added to access control list $ docker run -it \ -e DISPLAY=$DISPLAY \ -v /tmp/.X11-unix:/tmp/.X11-unix:ro \ IMAGE_NAME $ xhost -local:docker non-network local connections being removed from access control list</summary></entry><entry><title type="html">Setting ROS Environment</title><link href="coolwindjo.github.io/ros/2020/10/25/setting-ros-evironment.html" rel="alternate" type="text/html" title="Setting ROS Environment" /><published>2020-10-25T00:00:00+00:00</published><updated>2020-10-25T00:00:00+00:00</updated><id>coolwindjo.github.io/ros/2020/10/25/setting-ros-evironment</id><content type="html" xml:base="coolwindjo.github.io/ros/2020/10/25/setting-ros-evironment.html">&lt;h2 id=&quot;ros-official-tutorial&quot;&gt;ROS Official Tutorial&lt;/h2&gt;
+
+&lt;ol&gt;
+  &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/docker/Tutorials/Docker&quot; target=&quot;_blank&quot;&gt;ROS + Docker&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/docker/Tutorials/Compose&quot; target=&quot;_blank&quot;&gt;Getting started with ROS and Docker Compose&lt;/a&gt;&lt;/li&gt;
+      &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/docker/Tutorials/GUI&quot; target=&quot;_blank&quot;&gt;Using GUI’s with Docker&lt;/a&gt;
+        &lt;ul&gt;
+          &lt;li&gt;&lt;a href=&quot;https://github.com/mviereck/x11docker&quot; target=&quot;_blank&quot;&gt;x11docker&lt;/a&gt;: A simple way to run GUI appas in Docker&lt;/li&gt;
+        &lt;/ul&gt;
+      &lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/melodic/Installation/Ubuntu&quot; target=&quot;_blank&quot;&gt;Ubuntu install of ROS Melodic&lt;/a&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/ROS/Tutorials&quot; target=&quot;_blank&quot;&gt;ROS Tutorials&lt;/a&gt;
+    &lt;ul&gt;
+      &lt;li&gt;&lt;a href=&quot;http://wiki.ros.org/jade/Installation/Source&quot; target=&quot;_blank&quot;&gt;Installing from source&lt;/a&gt;&lt;/li&gt;
+    &lt;/ul&gt;
+  &lt;/li&gt;
+&lt;/ol&gt;
+
+&lt;h2 id=&quot;install-dependent-libraries&quot;&gt;Install Dependent Libraries&lt;/h2&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-10-25/error_ros_dependent_lib.png&quot; alt=&quot;Build error for a dependent library&quot; /&gt;&lt;/p&gt;
+
+&lt;p&gt;&lt;img src=&quot;/assets/images/posts/2020-10-25/two_ways_to_install_library.png&quot; alt=&quot;Two ways to install a dependent library&quot; /&gt;&lt;/p&gt;
+
+&lt;div class=&quot;language-terminal highlighter-rouge&quot;&gt;&lt;div class=&quot;highlight&quot;&gt;&lt;pre class=&quot;highlight&quot;&gt;&lt;code&gt;&lt;span class=&quot;go&quot;&gt;
+sudo apt-get install -y vim apt-utils \
+ros-melodic-desktop-full \
+libmuparser-dev \
+ros-melodic-costmap-converter \
+ros-melodic-costmap-2d
+&lt;/span&gt;&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;cmake &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#pkg-config \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#python-rospkg \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#python-rosdep \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#python-rosinstall-generator \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#python-wstool \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#python-rosinstall build-essential \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-cv-bridge \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-controller-manager \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-diagnostic-updater \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-dynamic-reconfigure \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-geometry-msgs \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-message-generation \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-message-runtime \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-nav-msgs \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-pluginlib \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-roscpp \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-roscpp-git \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-std-msgs \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-roslint \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-filters \ &lt;/span&gt;
+&lt;span class=&quot;gp&quot;&gt;#&lt;/span&gt;ros-melodic-joint-limits-interface &lt;span class=&quot;se&quot;&gt;\&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-catkin \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-build-tools \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-tf2-geometry-msgs \&lt;/span&gt;
+&lt;span class=&quot;c&quot;&gt;#ros-melodic-rviz \&lt;/span&gt;
+
+&lt;span class=&quot;gp&quot;&gt;sudo apt-get install ros-$&lt;/span&gt;ROS_DISTRO-turtle-tf2 ros-&lt;span class=&quot;nv&quot;&gt;$ROS_DISTRO&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-tf2-tools&lt;/span&gt; ros-&lt;span class=&quot;nv&quot;&gt;$ROS_DISTRO&lt;/span&gt;&lt;span class=&quot;nt&quot;&gt;-tf&lt;/span&gt;
+&lt;span class=&quot;go&quot;&gt;roslaunch turtle_tf2 turtle_tf2_demo.launch
+
+
+&lt;/span&gt;&lt;/code&gt;&lt;/pre&gt;&lt;/div&gt;&lt;/div&gt;</content><author><name>CoolWind</name></author><category term="ROS" /><category term="ros" /><category term="official" /><category term="tutorial" /><summary type="html">ROS Official Tutorial ROS + Docker Getting started with ROS and Docker Compose Using GUI’s with Docker x11docker: A simple way to run GUI appas in Docker Ubuntu install of ROS Melodic ROS Tutorials Installing from source Install Dependent Libraries sudo apt-get install -y vim apt-utils \ ros-melodic-desktop-full \ libmuparser-dev \ ros-melodic-costmap-converter \ ros-melodic-costmap-2d #cmake \ #pkg-config \ #python-rospkg \ #python-rosdep \ #python-rosinstall-generator \ #python-wstool \ #python-rosinstall build-essential \ #ros-melodic-cv-bridge \ #ros-melodic-controller-manager \ #ros-melodic-diagnostic-updater \ #ros-melodic-dynamic-reconfigure \ #ros-melodic-geometry-msgs \ #ros-melodic-message-generation \ #ros-melodic-message-runtime \ #ros-melodic-nav-msgs \ #ros-melodic-pluginlib \ #ros-melodic-roscpp \ #ros-melodic-roscpp-git \ #ros-melodic-std-msgs \ #ros-melodic-roslint \ #ros-melodic-filters \ #ros-melodic-joint-limits-interface \ #ros-melodic-catkin \ #ros-build-tools \ #ros-melodic-tf2-geometry-msgs \ #ros-melodic-rviz \ sudo apt-get install ros-$ROS_DISTRO-turtle-tf2 ros-$ROS_DISTRO-tf2-tools ros-$ROS_DISTRO-tf roslaunch turtle_tf2 turtle_tf2_demo.launch</summary></entry></feed>
