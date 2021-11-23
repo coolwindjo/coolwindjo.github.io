@@ -1,8 +1,8 @@
-# coding: utf-8
+# frozen_string_literal: true
 
 Gem::Specification.new do |spec|
   spec.name          = "coolwindjo"
-  spec.version       = "1.0.0"
+  spec.version       = "1.8.0"
   spec.authors       = ["CoolWind"]
   spec.email         = ["coolwind@hotmail.co.kr"]
 
@@ -11,12 +11,10 @@ Gem::Specification.new do |spec|
   spec.homepage      = "https://github.com/coolwindjo/coolwindjo.github.io"
   spec.license       = "MIT"
 
-  spec.rdoc_options            = ["--charset=UTF-8"]
-  spec.extra_rdoc_files        = %w(README.md LICENSE)
   spec.metadata["plugin_type"] = "theme"
 
-  spec.files                   = `git ls-files -z`.split("\x0").select do |f|
-    f.match(%r!^(assets/(js|css|fonts|data)/|_(includes|layouts|sass)/|_data/language.yml|(LICENSE|README.md))!i)
+  spec.files         = `git ls-files -z`.split("\x0").select do |f|
+    f.match(%r!^(assets|_data|_layouts|_includes|_sass|LICENSE|README)!i)
   end
 
   spec.add_development_dependency "bundler", ">= 1.6", "< 3.0"
