@@ -1,17 +1,22 @@
 ---
 layout: post
+title: Docker in Docker and Docker out of Docker for Jenkins
 categories: SkillOrKnowhow
-tags: [jenkins, docker]
+tags: [jenkins, docker, dind, dood]
 ---
 
 ## Reference Links
 
-- [Blog - Docker Client - Server Arhitecture](<https://aidanbae.github.io/code/docker/docker-overview/>){:target="_blank"} Docker Client - Server Arhitecture
-- [Blog - DinD vs. DooD (Korean)](<https://mns010.tistory.com/25>){:target="_blank"} Simple descriptions of DinD and DooD with refer to the nastybox blog
-- [Blog - DinD vs DooD by NastyBox](<https://blog.nestybox.com/2019/09/14/dind.html>){:target="_blank"} Good explaination about DinD and DooD while introducing their own secure dind solution
-- [Blog - DooD rather than DinD by jpetazzo](<https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/>){:target="_blank"} Most quoted blog that explains the drawbacks of Docker in Docker
-- [Blog - DinD rather than DooD on K8s by applatix](<https://applatix.com/case-docker-docker-kubernetes-part/>){:target="_blank"} DinD can be better structure when you use kubernetes
-- [Official Docs - Runtime privilege and Linux capabilities](<https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities>){:target="_blank"} Explains several options for running docker container
+- Background knowledges
+  - [Blog - Docker Client - Server Arhitecture](<https://aidanbae.github.io/code/docker/docker-overview/>){:target="_blank"} Docker Client - Server Arhitecture
+  - [Official Docs - Runtime privilege and Linux capabilities](<https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities>){:target="_blank"} Explains several options for running docker container
+  - [Github - NVIDIA DinD Container (not for jenkins)](<https://github.com/ehfd/nvidia-dind>){:target="_blank"} Simple dind container for general purposes
+- Comparisons of DinD vs DooD
+  - [Blog - DinD vs. DooD (Korean)](<https://mns010.tistory.com/25>){:target="_blank"} Simple descriptions of DinD and DooD with refer to the nastybox blog
+  - [Blog - DinD vs DooD by NastyBox](<https://blog.nestybox.com/2019/09/14/dind.html>){:target="_blank"} Good explaination about DinD and DooD while introducing their own secure dind solution
+- Which one should I use? DinD or DooD?
+  - [Blog - DooD rather than DinD by jpetazzo](<https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/>){:target="_blank"} Most quoted blog that explains the drawbacks of Docker in Docker
+  - [Blog - DinD rather than DooD on K8s by applatix](<https://applatix.com/case-docker-docker-kubernetes-part/>){:target="_blank"} DinD can be better structure when you use kubernetes
 
 
 ## Docker Client - Server Arhitecture
