@@ -1,7 +1,7 @@
 ---
 layout: post
 title: "This post demonstrates post content styles"
-categories: Sample
+categories: Blogging
 tags: [styles]
 author: "Bart Simpson"
 meta: "Springfield"

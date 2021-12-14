@@ -2,7 +2,7 @@
 layout: post
 title: Linux Task Management
 categories: Linux
-tags: [linux, task]
+tags: [task]
 ---
 
 ## Process, Thread and Task
@@ -44,7 +44,7 @@ $ ps
   | 64bit | 16 EB (Exa = 1024^6)      | 0 ~ 128 TB | 128 TB ~ 16 EB
 
   ![Virtual address space structure]({{ "/assets/images/posts/2020-12-07/virtual-address-space.png" | relative_url }})
-  
+
   | Segment (Virtual Memory Area Structure) | Location                                     | Contents
   | --------------------------------------- | -------------------------------------------- | --------
   | Stack region                            | Growing down from 3GB(32bit) or 128TB(64bit) | Local variables and arguments for functions

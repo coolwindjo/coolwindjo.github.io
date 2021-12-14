@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Jekins in Docker
-categories: SkillOrKnowhow
-tags: [jenkins, docker, getting-started]
+categories: Jenkins
+tags: [docker, getting-started]
 ---
 
 ## Reference Links
@@ -21,4 +21,4 @@ tags: [jenkins, docker, getting-started]
   - [Official Manaual - Pipeline & Groovy Snippet Generator](<https://www.jenkins.io/doc/book/pipeline/getting-started/#built-in-documentation>){:target="_blank"} Useful guide for writing pipeline syntax and groovy
   - [Official Manual - Groovy](<https://groovy-lang.org/>){:target="_blank"} Useful guide for writing groovy file to be loaded by Jenkinsfile
   - [Blog - Groovy Working with Lines in Strings](<https://blog.mrhaki.com/2009/11/groovy-goodness-working-with-lines-in.html>){:target="_blank"} When you want to write multiple lines of strings
-
+  - [Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile](<https://wilsonmar.github.io/jenkins2-pipeline/#unicode-icons>){:target="_blank"} Miscellaneous knowledges about Jenkinsfile

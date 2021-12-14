@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Linux Memory Management
-categories: Linux 
-tags: [linux, memory]
+categories: Linux
+tags: [memory]
 ---
 
 ## Memory management technic and virtual memory
@@ -60,7 +60,7 @@ tags: [linux, memory]
   | 0 ~ 16M   | ZONE_DMA or ZONE_DMA32 | saved for some ISA BUS-based devices
   | 16 ~ 896M | ZONE_NORMAL            | mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit)
   | 896 ~ end | ZONE_HIGHMEM           | dynamically allocated as it is needed
-  
+
   - Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM)
   - Zone structure has
     - Beginning address and the size of physical memory belong to the Zone
@@ -269,7 +269,7 @@ Segmentation fault
 - break point 3.
 
   ![break point 3.]({{ "/assets/images/posts/2020-12-07/breakpoint3-1.png" | relative_url }})
-  
+
 - break point 1.
 
   ![break point 1.]({{ "/assets/images/posts/2020-12-07/breakpoint1.png" | relative_url }})

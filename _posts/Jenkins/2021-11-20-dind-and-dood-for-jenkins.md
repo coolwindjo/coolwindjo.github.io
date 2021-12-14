@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Docker in Docker and Docker out of Docker for Jenkins
-categories: SkillOrKnowhow
-tags: [jenkins, docker, dind, dood]
+categories: Jenkins
+tags: [docker, dind, dood]
 ---
 
 ## Reference Links
@@ -34,11 +34,11 @@ tags: [jenkins, docker, dind, dood]
   - One on the host
   - The other on a container (e.g. dind) on a host
 - Requires "--privieged" option
-- System-level program does not run inside a regular Docker container because 
+- System-level program does not run inside a regular Docker container because
   - Container does not expose sufficient kernel resources and appropriate permissions
-  - Issues related to 
-    - Docker’s use of overlay filesystems, 
-    - security profiles, 
+  - Issues related to
+    - Docker’s use of overlay filesystems,
+    - security profiles,
     - etc.
 
 ## Docker out of Docker
@@ -53,12 +53,12 @@ tags: [jenkins, docker, dind, dood]
 - Benefits
   - One key benefit: it bypasses the complexities of running the Docker daemon inside a container and does not require an unsecure privileged container.
   - Avoids having multiple Docker image caches in the system
-    - since there is only one Docker daemon on the host 
+    - since there is only one Docker daemon on the host
     - if your system is constrained on storage space
 
 - Drawbacks.
   - Main drawback: it results in poor context isolation because the Docker CLI runs within a different context than the Docker daemon.
-    - While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as: 
+    - While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as:
       - Container naming collisions
       - Mount paths confusion:
         - Container running the Docker CLI creates a container with a bind mount, the mount path must be relative to the host (as otherwise the host Docker daemon on the host won’t be able to perform the mount correctly).
@@ -68,5 +68,5 @@ tags: [jenkins, docker, dind, dood]
     - Any containers created by the containerized Docker CLI will not be encapsulated within the associated Kubernetes pod, and will thus be outside of Kubernetes’ visibility and control.
   - Finally, there are security concerns too:
     - Container running the Docker CLI can manipulate any containers running on the host.
-      - It can remove containers created by other entities on the host, or 
+      - It can remove containers created by other entities on the host, or
       - even create unsecure privileged containers putting the host at risk.

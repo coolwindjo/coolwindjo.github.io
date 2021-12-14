@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Jekins using Docker in Docker
-categories: SkillOrKnowhow
-tags: [jenkins, docker, dind]
+categories: Jenkins
+tags: [docker, dind]
 ---
 
 ## Reference Links
@@ -14,7 +14,7 @@ tags: [jenkins, docker, dind]
 
 ## Sample Source Codes
 
-- [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/main/.devcontainer>){:target="_blank"} 
+- [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/main/.devcontainer>){:target="_blank"}
 
 ### Dockerfile
 
@@ -26,11 +26,11 @@ USER root
 
 # install packages
 RUN apt-get update && apt-get install -q -y --no-install-recommends \
-	apt-transport-https \ 
-	ca-certificates curl gnupg2 \ 
-	software-properties-common \ 
-	tar \ 
-	xz-utils \ 
+	apt-transport-https \
+	ca-certificates curl gnupg2 \
+	software-properties-common \
+	tar \
+	xz-utils \
 	bash-completion \
 	vim \
 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -49,7 +49,7 @@ RUN jenkins-plugin-cli --plugins \
 	"docker-workflow:1.26" \
 	"extended-choice-parameter" \
 	"role-strategy" \
-	"pipeline-model-definition" 
+	"pipeline-model-definition"
 
 COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 ```
@@ -120,4 +120,3 @@ docker stop jenkins-container
 
 docker rmi jenkins-image
 ```
-

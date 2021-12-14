@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Linux Kernel Structure
-categories: Linux 
-tags: [linux, kernel]
+categories: Linux
+tags: [kernel]
 ---
 
 ## Linux kernel structure
@@ -16,7 +16,7 @@ tags: [linux, kernel]
   Memory            | Segment, Page
   Disk              | File
   Network           | Communication protocol, Packet
-  
+
   - Abstract resource only
     - Security
     - Access control
@@ -138,4 +138,3 @@ tags: [linux, kernel]
   1. Kernel configuration
   2. Kernel compile
   3. Kernel installation
-  

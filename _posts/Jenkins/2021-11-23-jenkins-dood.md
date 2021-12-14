@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Jekins using Docker out of Docker
-categories: SkillOrKnowhow
-tags: [jenkins, docker, dood]
+categories: Jenkins
+tags: [docker, dood]
 ---
 
 ## Reference Links
@@ -12,21 +12,25 @@ tags: [jenkins, docker, dood]
 
 ## Sample Source Codes
 
-- [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/main/.devcontainer>){:target="_blank"} 
+- [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/main/.devcontainer>){:target="_blank"}
 
 ### Dockerfile
 
 ```dockerfile
+
+
+
+
 FROM jenkins/jenkins:lts
 # FROM jenkins/jenkins:2.303.2-jdk11
-MAINTAINER onisuly <onisuly@gmail.com>
+MAINTAINER JoSH <seunghyeon.jo@lge.com>
 
 # if we want to install via apt
 USER root
 
 # Add jenkins user to docker group
 ARG dockerGid=999
-RUN echo "docker:x:${dockerGid}:jenkins" >> /etc/group \ 
+RUN echo "docker:x :${dockerGid}:jenkins" >> /etc/group \
     && apt-get update && apt-get install -y libltdl7 \
     && rm -rf /var/lib/apt/list/*
 
@@ -37,11 +41,11 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 
 # # install packages
 # RUN apt-get update && apt-get install -q -y --no-install-recommends \
-# 	apt-transport-https \ 
-# 	ca-certificates curl gnupg2 \ 
-# 	software-properties-common \ 
-# 	tar \ 
-# 	xz-utils \ 
+# 	apt-transport-https \
+# 	ca-certificates curl gnupg2 \
+# 	software-properties-common \
+# 	tar \
+# 	xz-utils \
 # 	bash-completion \
 # 	vim \
 # 	&& apt-get clean && rm -rf /var/lib/apt/lists/*
@@ -60,10 +64,9 @@ RUN /usr/local/bin/install-plugins.sh < /usr/share/jenkins/ref/plugins.txt
 # 	"docker-workflow:1.26" \
 # 	"extended-choice-parameter" \
 # 	"role-strategy" \
-# 	"pipeline-model-definition" 
+# 	"pipeline-model-definition"
 
 # COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
-
 ```
 
 ### Run Jenkins Docker
@@ -77,7 +80,7 @@ docker network create jenkins
 
 docker build -t jenkins-dood-image . && \
 docker run \
-	--name jenkins-dood \
+	--name jenkins-dood-container \
 	--detach \
 	--publish 8080:8080 \
 	--publish 50000:50000 \
@@ -87,6 +90,7 @@ docker run \
 	--volume ${JENKINS_DATA}:/var/jenkins_home \	# --volume $HOME/jenkins:/var/jenkins_home would map the container’s /var/jenkins_home directory to the jenkins subdirectory within the $HOME directory on your local machine, which would typically be /Users/<your-username>/jenkins or /home/<your-username>/jenkins. Note that if you change the source volume or directory for this, the volume from the docker:dind container above needs to be updated to match this.
 	--volume /mnt/motional_database:/mnt/motional_database \
 	--workdir=/var/jenkins_home \
+	# -e "TZ=America/Chicago"
 	jenkins-dood-image
 
 	# --rm \
@@ -99,13 +103,13 @@ docker run \
 	# --env DOCKER_HOST=tcp://docker:2376 \	# 	Specifies the environment variables used by docker, docker-compose, and other Docker tools to connect to the Docker daemon from the previous step.
 	# --volume jenkins-docker-certs:/certs/client \
 	# --publish 2376:2376 \	# ( Optional ) Exposes the Docker daemon port on the host machine. This is useful for executing docker commands on the host machine to control this inner Docker daemon.
-	docker:dind
+	# docker:dind
 ```
 
 ### Stop Jenkins Docker
 
 ```bash
-docker stop jenkins-dood
+docker stop jenkins-dood-container
 
 docker network rm jenkins
 
@@ -113,4 +117,3 @@ docker volume rm jenkins-docker-certs
 
 docker rmi jenkins-dood-image
 ```
-

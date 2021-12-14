@@ -2,7 +2,7 @@
 layout: post
 title: Linux File System and Virtual File System
 categories: Linux
-tags: [linux, file-system, virtual-file-system]
+tags: [file-system, virtual-file-system]
 ---
 
 ## File System
