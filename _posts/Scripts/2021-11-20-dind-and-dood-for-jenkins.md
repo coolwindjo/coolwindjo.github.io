@@ -1,8 +1,8 @@
 ---
 layout: post
 title: Docker in Docker and Docker out of Docker for Jenkins
-categories: SkillOrKnowhow
-tags: [jenkins, docker, dind, dood]
+categories: Scripts
+tags: [dockerfile, jenkins, docker, dind, dood]
 ---
 
 
@@ -75,7 +75,7 @@ tags: [jenkins, docker, dind, dood]
 
 ##### Dockerfiles
 
-```dockerfile
+```Dockerfile
 FROM jenkins/jenkins:2.303.2-jdk11
 
 # if we want to install via apt
@@ -111,7 +111,7 @@ RUN jenkins-plugin-cli --plugins \
 COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy
 ```
 
-```dockerfile
+```Dockerfile
 FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04
 
 RUN apt-get update && apt-get install -y \
@@ -262,7 +262,7 @@ docker rmi jenkins-image
 
 ##### Dockerfile
 
-```dockerfile
+```Dockerfile
 ARG tag=${DOCKER_TAG:-lts}
 FROM jenkins/jenkins:${tag}
 

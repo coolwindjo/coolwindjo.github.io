@@ -16,7 +16,7 @@ tags: [python, selenium, docker]
 
 ### Dockerfile
 
-```dockerfile
+```Dockerfile
 # FROM python:3.9
 FROM continuumio/anaconda3
 RUN apt-get --allow-releaseinfo-change update
@@ -83,8 +83,8 @@ RUN pip install selenium
 	"build": {
 		"dockerfile": "Dockerfile",
 		// "context": "..",
-		// Update 'VARIANT' to pick a Python version. Rebuild the container 
-		// if it already exists to update. Available variants: 3, 3.6, 3.7, 3.8 
+		// Update 'VARIANT' to pick a Python version. Rebuild the container
+		// if it already exists to update. Available variants: 3, 3.6, 3.7, 3.8
 		// "args": { "VARIANT": "3" }
 	},
 
@@ -105,7 +105,7 @@ RUN pip install selenium
 		// "--volume=/dev/shm:/dev/shm",
 		"--name=python-selenuim"
 	],
-	"settings": { 
+	"settings": {
 		"terminal.integrated.shell.linux": "/bin/bash",
 		"python.pythonPath": "/opt/conda/bin/python",
 		"python.linting.enabled": true,
