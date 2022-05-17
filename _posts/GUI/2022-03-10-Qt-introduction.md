@@ -124,7 +124,7 @@ tags: [qt, ]
   }
   ```
 
-### How a Qt program is compiled
+## How a Qt program is compiled
 
 - Qt apps are compiled in 3 steps
   - A .pro file is written to describe the project to compile
