@@ -86,9 +86,157 @@ emit mySignal(firstParameter, secondParameter ...);
 - Let's start with our window with the button:
 
 ```window.h
+#ifndef WINDOW_H
+#define WINDOW_H
 
+#include <QWidget>
+
+class QPushButton;
+class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+signals:
+};
+
+#endif // WINDOW_H
 ```
 
 ```window.cpp
+#include "window.h"
 
+#include <QPushButton>
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton->setGeometry(10, 10, 80, 30);
+
+    // New: Do the connection
+    // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+    m_pButton->setCheckable(true);
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton->setText("Checked");
+  } else {
+    m_pButton->setText("Hello World");
+  }
+}
 ```
+
+- New Button Action
+  - can be checked
+    - when checked, it displays "checked"
+    - when unchecked, it restores "Hello World"
+  ```cpp
+  signals:
+    void QPushButton::clicked(bool checked)
+  private slots:
+    void Window::slotButtonClicked(bool checked);
+  ```
+  - Implement private and protected slots by prefixing them with "slot"
+
+#### Emitting custom signals
+
+- New Button Action
+  - close the app. after clicking 10 times
+    - implement a counter that count the number of clicks
+
+```window.h
+class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+signals:
+    void counterReached();
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+    int m_nCounter;
+};
+```
+- add "signals" section in the header
+  - Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this.
+  - Now we need to emit the signal when the counter reaches 10.
+
+```window.cpp
+#include <QPushButton>
+#include <QApplication>
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton->setGeometry(10, 10, 80, 30);
+    m_pButton->setCheckable(true);
+
+    m_nCounter = 0;
+
+    // New: Do the connection
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+    connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit()));
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton->setText("Checked");
+  } else {
+    m_pButton->setText("Hello World");
+  }
+
+  m_nCounter++;
+  if (m_nCounter == 10){
+      emit counterReached();
+  }
+}
+```
+- We need t o write the keyword emit to send the signal.
+
+### Troubleshooting
+
+While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error.
+
+```bash
+main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vtable for Window'
+```
+
+This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build > Run qmake.
+
+### Widgets
+
+#### QRadioButton
+
+- Radio button is a standard GUI component being used to make a unique choice from a list.
+- QRadioButton behaves just like QPushButton thanks to a nice inheritance.
+- By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the "exclusive" behaviour of many radio buttons, we need to use QButtonGroup.
+- QButtonGroup
+  - Allocate a new button group
+  - Attach it to the parent object
+    - e.g.)
+      - MainWindow
+      - this
+  ```cpp
+  QButtonGroup* pButtonGroup = new QButtonGroup(object);
+  // Add buttons in the button group
+  pButtonGroup->addButton(button1);
+  pButtonGroup->addButton(button2);
+  pButtonGroup->addButton(button3);
+  ```

@@ -137,6 +137,7 @@ tags: [qt, observer-pattern, signal, slot]
   void QProgressBar::setValue(int value);
   ```
   - QSlider automatically emits the signal `valueChanged` with the new value passed as a parameter when the value is changed, and the method `setValue` of QProgressBar, is used to set the value of the progress bar.
+
   ```cpp
   #include <QApplication>
   #include <QProgressBar>
