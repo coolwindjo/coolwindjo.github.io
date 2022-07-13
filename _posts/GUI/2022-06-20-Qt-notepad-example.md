@@ -22,6 +22,13 @@ tags: [qt, notepad, qt-example]
 - [Main Window Examples](<https://doc.qt.io/qt-6/examples-mainwindow.html>){:target="_blank"}
 - [Object Model](<https://doc.qt.io/qt-6/object.html>){:target="_blank"}
 - [qmake Model](<https://doc.qt.io/qt-6/qmake-manual.html>){:target="_blank"}
+- [MDI applications - QMdiArea](<https://doc.qt.io/qt-6/qmdiarea.html>){:target="_blank"}
+- [MDI applications - MDI Example](<https://doc.qt.io/qt-6/qtwidgets-mainwindows-mdi-example.html>){:target="_blank"}
+- [Files and I/O devices - QFile](<https://doc.qt.io/qt-6/qfile.html>){:target="_blank"}
+- [Files and I/O devices - QIODevice](<https://doc.qt.io/qt-6/qiodevice.html>){:target="_blank"}
+- [tr() and internationalization - Qt Linguist Manual](<https://doc.qt.io/qt-6/qtlinguist-index.html>){:target="_blank"}
+- [tr() and internationalization - Writing Source Code for Translation](<https://doc.qt.io/qt-6/i18n-source-translation.html>){:target="_blank"}
+- [tr() and internationalization - Internationalization with Qt](<https://doc.qt.io/qt-6/internationalization.html>){:target="_blank"}
 
 ## Goals
 
@@ -320,5 +327,194 @@ endif()
 
 - To add functionality to the editor, we start by adding menu items and buttons on a toolbar.
 - Click on "Type Here", and add the options New, Open, Save, Save as, Print and Exit.
-  - This creates 5 lines in the Action Editor below.
-  
+  - This creates 6 lines in the Action Editor below.
+  - To connect the actions to slots, right-click an action and select **Go to slot** > **triggered()**, and complete the code for that given slot by changing the name of the function.
+
+![qtcreator_ui_action_slot]({{"/assets/images/posts/2022-06-20/qtc_ui_action_slot.png"}})
+
+- If we also want to add the actions to a toolbar, we can assign an icon to each [QAction](<https://doc.qt.io/qt-6/qaction.html>){:target="_blank"}, and then drag the **QAction** to the toolbar.
+
+![qtcreator_ui_add_icon_toolbar]({{"/assets/images/posts/2022-06-20/qtc_ui_add_icon_toolbar.png"}})
+
+- You assign an icon by entering an icon name in the icon property of the action concerned.
+  - When the **QAction** has been dragged to the toolbar, clicking the icon will launch the associated slot.
+  - If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a [QRC file](<http://doc.qt.io/qt-5/resources.html>){:target="_blank"}.
+  - Add the notepad.qrc file to CMakeLists.txt.
+
+![qtcreator_ui_add_icon_resource]({{"/assets/images/posts/2022-06-20/qtc_ui_add_icon_resource.png"}})
+
+- Complete the method newDocument():
+
+```notepad.cpp
+void Notepad::on_actionNew_triggered()
+{
+    currentFile.clear();
+    ui->textEdit->setText(QString());
+}
+```
+
+- The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer.
+- The currentFile variable is defined in the private part of notepad.h:
+
+```notepad.h
+private:
+  Ui::Notepad *ui;
+  QString currentFile;
+```
+
+### Opening a file
+
+- In notepad.ui, right click on actionOpen and select **Go to Slot**
+- Complete method open().
+
+```notepad.cpp
+void Notepad::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Open the file");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+
+    QTextStream in(&file);
+    QString text = in.readAll();
+    ui->textEdit->setText(text);
+    file.close();
+}
+```
+
+- QFileDialog::getOpenFileName opens a dialog enabling you to select a file. [QFile](<https://doc.qt.io/qt-6/qfile.html>){:target="_blank"} object *myfile* has the selected *file_name* as parameter.
+  - We store the selected file also into the global variable *currentFile* for later purposes.
+  - We open the file with *file.open* as a readonly text file.
+  - If it cannot be opened, a warning is issued, and the program stops.
+
+- We define a [QTextStream](<https://doc.qt.io/qt-6/qtextstream.html>){:target="_blank"} instream for parameter *myfile*.
+  - The contents of file *myfile* is copied into [QString](<https://doc.qt.io/qt-6/qstring.html>){:target="_blank"} text.
+  - *setText(text)* fills the buffer of out editor with text.
+
+### Saving a file
+
+- We create the method for saving a file in the same way as for [Opening a file](<https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#opening-a-file>){:target="_blank"}, by right clinking on *actionSave*, and selecting **Go to Slot**.
+
+```notepad.cpp
+void Notepad::on_actionSave_triggered()
+{
+    QString fileName;
+
+    // If we don't have a filename from before, get one.
+    if (currentFile.isEmpty()) {
+        fileName = QFileDialog::getSaveFileName(this, "Save");
+        if (fileName.isEmpty()) return;
+        currentFile = fileName;
+    }
+    else {
+        fileName = currentFile;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    QTextStream out(&file);
+    QString text = ui->textEdit->toPlainText();
+    out << text;
+    file.close();
+}
+```
+
+- **QFile** object *myfile* is linked to a member variable *current_file*, the variable that contains the file we were working with.
+  - If we cannot open *myfile*, an error message is issued and the method stops.
+  - We create a **QTextStream** *outstream*.
+  - The contents of the editor buffer is converted to plain text, and then written to *outstream*.
+
+### Saving a file under another name
+
+```notepad.cpp
+void Notepad::on_actionSave_as_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save as");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    currentFile = fileName;
+    setWindowTitle(fileName);
+    QTextStream out(&file);
+    QString text = ui->textEdit->toPlainText();
+    out << text;
+    file.close();
+}
+```
+
+- This is the same procedure as for [Saving a file](<https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#saving-a-file>){:target="_blank"}, the only difference being that here you need to enter a new file name for the file to be created.
+
+### Printing a File
+
+If you want to use print functionalities, you need to add *PrintSupport* to the project file:
+
+```CMakeLists.txt
+find_package(Qt${QT_VERSION_MAJOR}
+  REQUIRED COMPONENTS Core Gui Widgets
+  OPTIONAL_COMPONENTS PrintSupport
+)
+```
+
+In *notepad.cpp*, we declare a QPrinter object called *printDev*:
+
+```notepad.cpp
+void Notepad::on_actionPrint_triggered()
+{
+#if defined(QT_PRINTSUPPORT_LIB) && QT_CONFIG(printer)
+    QPrinter printDev;
+#if QTCONFIG(printdialog)
+    QPrintDialog dialog(&printDev, this);
+    if (dialog.exec() == QDialog::Rejected)
+        return;
+#endif	// QT_CONFIG(printdialog)
+    ui->textEdit->print(&printDev);
+#endif	// QT_CONFIG(printer)
+}
+```
+
+- We launch a printer dialog box and store the selected printer in object *printDev*.
+  - If we clicked on *Cancel* and did not select a printer, the methods returns.
+  - The actual printer command is given with *ui->textEdit->print* with our QPrinter object as parameter.
+
+### Select a Font
+
+```notepad.cpp
+void Notepad::on_actionFont_triggered()
+{
+    bool fontSelected;
+    QFont font = QFontDialog::getFont(&fontSelected, this);
+    if (fontSelected)
+        ui->textEdit->setFont(font);
+}
+```
+
+- We declare a boolean indicating  if we did select a font with [QFontDialog](<https://doc.qt.io/qt-6/qfontdialog.html>){:target="_blank"}.
+  - If so, we set the font with *ui->textEdit->setFont(myfont)*.
+
+### Copy, Cut, Paste, Undo and Redo
+
+- If you select some text, and want to copy it to the clipboard, you call the appropriate method of *ui->textEdit*. The same counts for cut, paste, undo and redo.
+
+- This table shows the method name to use.
+
+| Task | Method called |
+| ------ | ----------------- |
+| Copy | ui->textEdit->copy() |
+| Cut | ui->textEdit->cut() |
+| Paste | ui->textEdit->paste() |
+| Undo | ui->textEdit->undo() |
+| Redo | ui->textEdit->redo() |
