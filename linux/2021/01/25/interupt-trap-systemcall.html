@@ -1,0 +1,1248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Interupt, Trap and System Call | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Interupt, Trap and System Call">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Interupt Handling Procedure System Call Handling Procedure Additional System Call Implementation Adding a new system call Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file. Add the new system call declaration in the “~/include/linux/syscall.h”. Add the new system call definition in the “kernel/” or “fs/”(for file system related system call). #include &lt;linux/unistd.h&gt; #include &lt;linux/errno.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; asmlinkage long sys_newsyscall(void) { printk(&quot;&lt;0&gt;Hello Linux, I'm in Kernel! \n&quot;); return 0; } EXPORT_SYMBOL_GPL(sys_newsyscall); Conventional prefix “sys_” Return value is “long” Keyword “asmlinkage” Do nothing with Intel CPU Several preprocessing with Alpha CPU Kernel print function “printk” Add the object file name in the “kernel/Makefile” to be compiled together Implement an user application using the added system call Without using a library With using a library - Make the library with &quot;ar&quot; command - Use gcc option &quot;-l&quot; for linking the library - Use gcc option &quot;-L&quot; for specifying the directory includes the library System Call Implementation Extended Two major objectives for using system call Ask kernel to execute a kernel service Ask kernel to offer kernel information to an user application “getpid()”, “stat()”, etc. Kernel information output “current” is the pointer to the “task_struct” of the running task. asmlinkage long sys_gettaskinfo(void) { printk(&quot;&lt;0&gt; PID: %d \n&quot;, current-&gt;pid); printk(&quot;&lt;0&gt; TGID: %d \n&quot;, current-&gt;tgid); printk(&quot;&lt;0&gt; PPID: %d \n&quot;, current-&gt;parent-&gt;pid); printk(&quot;&lt;0&gt; STATE: %d \n&quot;, current-&gt;state); printk(&quot;&lt;0&gt; PRIORITY: %d \n&quot;, current-&gt;prio); printk(&quot;&lt;0&gt; POLICY: %d \n&quot;, current-&gt;policy); printk(&quot;&lt;0&gt; Number of MAJOR FAULT: %d \n&quot;, current-&gt;maj_flt); printk(&quot;&lt;0&gt; Number of MINOR FAULT: %d \n&quot;, current-&gt;min_flt); return 0; } - Argument passing #include &lt;linux/unistd.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;asm/uaccess.h&gt; asmlinkage int sys_show_mult(int x, int y, int* res) { int error, compute; int i; error = access_ok(VERIFY_WRITE, res, sizeof(*res)); if (error &lt; 0) { printk(&quot;error in cdang \n&quot;); printk(&quot;error is %d \n&quot;, error); return error; } compute = x*y; printk(&quot;compute is %d \n&quot;, compute); i = copy_to_user(res, &amp;compute, sizeof(int)); // include/asm/uaccess.h return 0; } #include &lt;stdio.h&gt; #include &lt;linux/unistd.h&gt; int main(void) { int mult_ret = 0; int x = 2, y = 5; int i; i = syscall(318, x, y, &amp;mult_ret); printf(&quot;x is %d \n&quot;, x); printf(&quot;y is %d \n&quot;, y); printf(&quot;ret is %d \n&quot;, mult_ret); return 0; } Argument passing using struct Maximum size of arguments for system call 32 bit or 64 bit Maximum number of arguments for system call 6 for Intel CPU // mystat.h #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; #include &lt;linux/slab.h&gt; #include &lt;linux/uaccess.h&gt; #include &lt;linux/fs.h&gt; #include &lt;linux/fdtable.h&gt; struct mystat { pid_t pid; pid_t ppid; int stat; int priority; int policy; long utime; long stime; long starttime; unsigned long min_flt; unsigned long maj_flt; long open_files; } #include &quot;mystat.h&quot; asmlinkage int sys_gettaskinfo(int id, struct mystat* user_buf) { struct mystat* buf; int i, cnt = 0; struct task_struct *search; struct file *fp; // pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process. // If the call returns NULL then the process does not exist. // pid_task() searches task with specified PID, sequentially from the init_task search = pid_task(id, PIDTYPE_PID); if(search == NULL) return -1; buf = (char*)kmalloc(sizeof(struct mystat), GFP_KERNEL); if(buf == NULL) { printk(&quot;buf is NULL \n&quot;); return -1; } buf-&gt;pid = search-&gt;pid; buf-&gt;ppid = search-&gt;parent-&gt;pid; buf-&gt;stat = search-&gt;state; buf-&gt;priority = search-&gt;prio; buf-&gt;policy = search-&gt;policy; buf-&gt;utime = search-&gt;utime; buf-&gt;stime = search-&gt;stime; buf-&gt;starttime = search-&gt;start_time.tv_sec; buf-&gt;min_flt = search-&gt;min_flt; buf-&gt;maj_flt = search-&gt;maj_flt; for (i = 0; i&lt;32; i++) { if ((search-&gt;files-&gt;fd_array[i]) != NULL) { cnt++; } } buf-&gt;open_files = cnt; copy_to_user(user_buf, buf, sizeof(struct mystat)); return 0; } #include &quot;mystat.h&quot; #include &lt;linux/unistd.h&gt; #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; int main(int argc, char* argv[]) { int task_number; struct mystat* mybuf; if (argc != 2) { printf(&quot;Usage: a.out pid \n&quot;); exit(1); } task_number = atoi(argv[1]); mybuf = (char*)malloc(sizeof(struct mystat)); if (mybuf == NULL) exit(1); syscall(319, task_number, mybuf); printf(&quot;pid is %d \n&quot;, (int)mybuf-&gt;pid); printf(&quot;ppid is %d \n&quot;, (int)mybuf-&gt;ppid); printf(&quot;state is %d \n&quot;, (int)mybuf-&gt;stat); printf(&quot;Policy is %d \n&quot;, (int)mybuf-&gt;policy); printf(&quot;File count is %d \n&quot;, (int)mybuf-&gt;open_files); printf(&quot;Start time is %d \n&quot;, (int)mybuf-&gt;starttime); return 0; }">
+<meta property="og:description" content="Interupt Handling Procedure System Call Handling Procedure Additional System Call Implementation Adding a new system call Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file. Add the new system call declaration in the “~/include/linux/syscall.h”. Add the new system call definition in the “kernel/” or “fs/”(for file system related system call). #include &lt;linux/unistd.h&gt; #include &lt;linux/errno.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; asmlinkage long sys_newsyscall(void) { printk(&quot;&lt;0&gt;Hello Linux, I'm in Kernel! \n&quot;); return 0; } EXPORT_SYMBOL_GPL(sys_newsyscall); Conventional prefix “sys_” Return value is “long” Keyword “asmlinkage” Do nothing with Intel CPU Several preprocessing with Alpha CPU Kernel print function “printk” Add the object file name in the “kernel/Makefile” to be compiled together Implement an user application using the added system call Without using a library With using a library - Make the library with &quot;ar&quot; command - Use gcc option &quot;-l&quot; for linking the library - Use gcc option &quot;-L&quot; for specifying the directory includes the library System Call Implementation Extended Two major objectives for using system call Ask kernel to execute a kernel service Ask kernel to offer kernel information to an user application “getpid()”, “stat()”, etc. Kernel information output “current” is the pointer to the “task_struct” of the running task. asmlinkage long sys_gettaskinfo(void) { printk(&quot;&lt;0&gt; PID: %d \n&quot;, current-&gt;pid); printk(&quot;&lt;0&gt; TGID: %d \n&quot;, current-&gt;tgid); printk(&quot;&lt;0&gt; PPID: %d \n&quot;, current-&gt;parent-&gt;pid); printk(&quot;&lt;0&gt; STATE: %d \n&quot;, current-&gt;state); printk(&quot;&lt;0&gt; PRIORITY: %d \n&quot;, current-&gt;prio); printk(&quot;&lt;0&gt; POLICY: %d \n&quot;, current-&gt;policy); printk(&quot;&lt;0&gt; Number of MAJOR FAULT: %d \n&quot;, current-&gt;maj_flt); printk(&quot;&lt;0&gt; Number of MINOR FAULT: %d \n&quot;, current-&gt;min_flt); return 0; } - Argument passing #include &lt;linux/unistd.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;asm/uaccess.h&gt; asmlinkage int sys_show_mult(int x, int y, int* res) { int error, compute; int i; error = access_ok(VERIFY_WRITE, res, sizeof(*res)); if (error &lt; 0) { printk(&quot;error in cdang \n&quot;); printk(&quot;error is %d \n&quot;, error); return error; } compute = x*y; printk(&quot;compute is %d \n&quot;, compute); i = copy_to_user(res, &amp;compute, sizeof(int)); // include/asm/uaccess.h return 0; } #include &lt;stdio.h&gt; #include &lt;linux/unistd.h&gt; int main(void) { int mult_ret = 0; int x = 2, y = 5; int i; i = syscall(318, x, y, &amp;mult_ret); printf(&quot;x is %d \n&quot;, x); printf(&quot;y is %d \n&quot;, y); printf(&quot;ret is %d \n&quot;, mult_ret); return 0; } Argument passing using struct Maximum size of arguments for system call 32 bit or 64 bit Maximum number of arguments for system call 6 for Intel CPU // mystat.h #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; #include &lt;linux/slab.h&gt; #include &lt;linux/uaccess.h&gt; #include &lt;linux/fs.h&gt; #include &lt;linux/fdtable.h&gt; struct mystat { pid_t pid; pid_t ppid; int stat; int priority; int policy; long utime; long stime; long starttime; unsigned long min_flt; unsigned long maj_flt; long open_files; } #include &quot;mystat.h&quot; asmlinkage int sys_gettaskinfo(int id, struct mystat* user_buf) { struct mystat* buf; int i, cnt = 0; struct task_struct *search; struct file *fp; // pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process. // If the call returns NULL then the process does not exist. // pid_task() searches task with specified PID, sequentially from the init_task search = pid_task(id, PIDTYPE_PID); if(search == NULL) return -1; buf = (char*)kmalloc(sizeof(struct mystat), GFP_KERNEL); if(buf == NULL) { printk(&quot;buf is NULL \n&quot;); return -1; } buf-&gt;pid = search-&gt;pid; buf-&gt;ppid = search-&gt;parent-&gt;pid; buf-&gt;stat = search-&gt;state; buf-&gt;priority = search-&gt;prio; buf-&gt;policy = search-&gt;policy; buf-&gt;utime = search-&gt;utime; buf-&gt;stime = search-&gt;stime; buf-&gt;starttime = search-&gt;start_time.tv_sec; buf-&gt;min_flt = search-&gt;min_flt; buf-&gt;maj_flt = search-&gt;maj_flt; for (i = 0; i&lt;32; i++) { if ((search-&gt;files-&gt;fd_array[i]) != NULL) { cnt++; } } buf-&gt;open_files = cnt; copy_to_user(user_buf, buf, sizeof(struct mystat)); return 0; } #include &quot;mystat.h&quot; #include &lt;linux/unistd.h&gt; #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; int main(int argc, char* argv[]) { int task_number; struct mystat* mybuf; if (argc != 2) { printf(&quot;Usage: a.out pid \n&quot;); exit(1); } task_number = atoi(argv[1]); mybuf = (char*)malloc(sizeof(struct mystat)); if (mybuf == NULL) exit(1); syscall(319, task_number, mybuf); printf(&quot;pid is %d \n&quot;, (int)mybuf-&gt;pid); printf(&quot;ppid is %d \n&quot;, (int)mybuf-&gt;ppid); printf(&quot;state is %d \n&quot;, (int)mybuf-&gt;stat); printf(&quot;Policy is %d \n&quot;, (int)mybuf-&gt;policy); printf(&quot;File count is %d \n&quot;, (int)mybuf-&gt;open_files); printf(&quot;Start time is %d \n&quot;, (int)mybuf-&gt;starttime); return 0; }">
+<link rel="canonical" href="coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html">
+<meta property="og:url" content="coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-01-25T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Interupt, Trap and System Call">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2021-01-25T00:00:00+00:00","datePublished":"2021-01-25T00:00:00+00:00","description":"Interupt Handling Procedure System Call Handling Procedure Additional System Call Implementation Adding a new system call Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file. Add the new system call declaration in the “~/include/linux/syscall.h”. Add the new system call definition in the “kernel/” or “fs/”(for file system related system call). #include &lt;linux/unistd.h&gt; #include &lt;linux/errno.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; asmlinkage long sys_newsyscall(void) { printk(&quot;&lt;0&gt;Hello Linux, I&#39;m in Kernel! \\n&quot;); return 0; } EXPORT_SYMBOL_GPL(sys_newsyscall); Conventional prefix “sys_” Return value is “long” Keyword “asmlinkage” Do nothing with Intel CPU Several preprocessing with Alpha CPU Kernel print function “printk” Add the object file name in the “kernel/Makefile” to be compiled together Implement an user application using the added system call Without using a library With using a library - Make the library with &quot;ar&quot; command - Use gcc option &quot;-l&quot; for linking the library - Use gcc option &quot;-L&quot; for specifying the directory includes the library System Call Implementation Extended Two major objectives for using system call Ask kernel to execute a kernel service Ask kernel to offer kernel information to an user application “getpid()”, “stat()”, etc. Kernel information output “current” is the pointer to the “task_struct” of the running task. asmlinkage long sys_gettaskinfo(void) { printk(&quot;&lt;0&gt; PID: %d \\n&quot;, current-&gt;pid); printk(&quot;&lt;0&gt; TGID: %d \\n&quot;, current-&gt;tgid); printk(&quot;&lt;0&gt; PPID: %d \\n&quot;, current-&gt;parent-&gt;pid); printk(&quot;&lt;0&gt; STATE: %d \\n&quot;, current-&gt;state); printk(&quot;&lt;0&gt; PRIORITY: %d \\n&quot;, current-&gt;prio); printk(&quot;&lt;0&gt; POLICY: %d \\n&quot;, current-&gt;policy); printk(&quot;&lt;0&gt; Number of MAJOR FAULT: %d \\n&quot;, current-&gt;maj_flt); printk(&quot;&lt;0&gt; Number of MINOR FAULT: %d \\n&quot;, current-&gt;min_flt); return 0; } - Argument passing #include &lt;linux/unistd.h&gt; #include &lt;linux/kernel.h&gt; #include &lt;asm/uaccess.h&gt; asmlinkage int sys_show_mult(int x, int y, int* res) { int error, compute; int i; error = access_ok(VERIFY_WRITE, res, sizeof(*res)); if (error &lt; 0) { printk(&quot;error in cdang \\n&quot;); printk(&quot;error is %d \\n&quot;, error); return error; } compute = x*y; printk(&quot;compute is %d \\n&quot;, compute); i = copy_to_user(res, &amp;compute, sizeof(int)); // include/asm/uaccess.h return 0; } #include &lt;stdio.h&gt; #include &lt;linux/unistd.h&gt; int main(void) { int mult_ret = 0; int x = 2, y = 5; int i; i = syscall(318, x, y, &amp;mult_ret); printf(&quot;x is %d \\n&quot;, x); printf(&quot;y is %d \\n&quot;, y); printf(&quot;ret is %d \\n&quot;, mult_ret); return 0; } Argument passing using struct Maximum size of arguments for system call 32 bit or 64 bit Maximum number of arguments for system call 6 for Intel CPU // mystat.h #include &lt;linux/kernel.h&gt; #include &lt;linux/sched.h&gt; #include &lt;linux/slab.h&gt; #include &lt;linux/uaccess.h&gt; #include &lt;linux/fs.h&gt; #include &lt;linux/fdtable.h&gt; struct mystat { pid_t pid; pid_t ppid; int stat; int priority; int policy; long utime; long stime; long starttime; unsigned long min_flt; unsigned long maj_flt; long open_files; } #include &quot;mystat.h&quot; asmlinkage int sys_gettaskinfo(int id, struct mystat* user_buf) { struct mystat* buf; int i, cnt = 0; struct task_struct *search; struct file *fp; // pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process. // If the call returns NULL then the process does not exist. // pid_task() searches task with specified PID, sequentially from the init_task search = pid_task(id, PIDTYPE_PID); if(search == NULL) return -1; buf = (char*)kmalloc(sizeof(struct mystat), GFP_KERNEL); if(buf == NULL) { printk(&quot;buf is NULL \\n&quot;); return -1; } buf-&gt;pid = search-&gt;pid; buf-&gt;ppid = search-&gt;parent-&gt;pid; buf-&gt;stat = search-&gt;state; buf-&gt;priority = search-&gt;prio; buf-&gt;policy = search-&gt;policy; buf-&gt;utime = search-&gt;utime; buf-&gt;stime = search-&gt;stime; buf-&gt;starttime = search-&gt;start_time.tv_sec; buf-&gt;min_flt = search-&gt;min_flt; buf-&gt;maj_flt = search-&gt;maj_flt; for (i = 0; i&lt;32; i++) { if ((search-&gt;files-&gt;fd_array[i]) != NULL) { cnt++; } } buf-&gt;open_files = cnt; copy_to_user(user_buf, buf, sizeof(struct mystat)); return 0; } #include &quot;mystat.h&quot; #include &lt;linux/unistd.h&gt; #include &lt;stdio.h&gt; #include &lt;stdlib.h&gt; int main(int argc, char* argv[]) { int task_number; struct mystat* mybuf; if (argc != 2) { printf(&quot;Usage: a.out pid \\n&quot;); exit(1); } task_number = atoi(argv[1]); mybuf = (char*)malloc(sizeof(struct mystat)); if (mybuf == NULL) exit(1); syscall(319, task_number, mybuf); printf(&quot;pid is %d \\n&quot;, (int)mybuf-&gt;pid); printf(&quot;ppid is %d \\n&quot;, (int)mybuf-&gt;ppid); printf(&quot;state is %d \\n&quot;, (int)mybuf-&gt;stat); printf(&quot;Policy is %d \\n&quot;, (int)mybuf-&gt;policy); printf(&quot;File count is %d \\n&quot;, (int)mybuf-&gt;open_files); printf(&quot;Start time is %d \\n&quot;, (int)mybuf-&gt;starttime); return 0; }","headline":"Interupt, Trap and System Call","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html"},"url":"coolwindjo.github.io/linux/2021/01/25/interupt-trap-systemcall.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Interupt, Trap and System Call</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-01-25T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jan 25, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#interupt">#interupt</a><a class="post-tag" href="/tags.html#trap">#trap</a><a class="post-tag" href="/tags.html#system-call">#system-call</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="interupt-handling-procedure">Interupt Handling Procedure</h2>
+
+<h2 id="system-call-handling-procedure">System Call Handling Procedure</h2>
+
+<h2 id="additional-system-call-implementation">Additional System Call Implementation</h2>
+
+<ul>
+  <li>Adding a new system call
+    <ol>
+      <li>Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file.</li>
+    </ol>
+
+    <p><img src="/assets/images/posts/2021-01-25/adding_system_call_sys_call_table.png" alt="adding_system_call_sys_call_table"></p>
+
+    <ol>
+      <li>Add the new system call declaration in the “~/include/linux/syscall.h”.</li>
+    </ol>
+
+    <p><img src="/assets/images/posts/2021-01-25/adding_system_call_syscalls_h.png" alt="adding_system_call_syscalls_h"></p>
+
+    <ol>
+      <li>Add the new system call definition in the “kernel/” or “fs/”(for file system related system call).</li>
+    </ol>
+
+    <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>  <span class="cp">#include</span> <span class="cpf">&lt;linux/unistd.h&gt;</span><span class="cp">
+</span>  <span class="cp">#include</span> <span class="cpf">&lt;linux/errno.h&gt;</span><span class="cp">
+</span>  <span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span>  <span class="cp">#include</span> <span class="cpf">&lt;linux/sched.h&gt;</span><span class="cp">
+</span>
+  <span class="n">asmlinkage</span> <span class="kt">long</span> <span class="nf">sys_newsyscall</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt;Hello Linux, I'm in Kernel! </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">EXPORT_SYMBOL_GPL</span><span class="p">(</span><span class="n">sys_newsyscall</span><span class="p">);</span>
+</code></pre></div>    </div>
+
+    <ul>
+      <li>Conventional prefix “sys_”</li>
+      <li>Return value is “long”</li>
+      <li>Keyword “asmlinkage”
+        <ul>
+          <li>Do nothing with Intel CPU</li>
+          <li>Several preprocessing with Alpha CPU</li>
+        </ul>
+      </li>
+      <li>Kernel print function “printk”</li>
+    </ul>
+
+    <ol>
+      <li>Add the object file name in the “kernel/Makefile” to be compiled together</li>
+    </ol>
+
+    <p><img src="/assets/images/posts/2021-01-25/adding_system_call_makefile.png" alt="adding_system_call_makefile"></p>
+
+    <ol>
+      <li>Implement an user application using the added system call
+        <ul>
+          <li>Without using a library</li>
+          <li>With using a library</li>
+        </ul>
+      </li>
+    </ol>
+
+    <p><img src="/assets/images/posts/2021-01-25/adding_system_call_using_library.png" alt="adding_system_call_using_library"></p>
+
+    <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>- Make the library with "ar" command
+- Use gcc option "-l" for linking the library
+- Use gcc option "-L" for specifying the directory includes the library
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h2 id="system-call-implementation-extended">System Call Implementation Extended</h2>
+
+<ul>
+  <li>Two major objectives for using system call
+    <ol>
+      <li>Ask kernel to execute a kernel service</li>
+      <li>Ask kernel to offer kernel information to an user application
+        <ul>
+          <li>“getpid()”, “stat()”, etc.</li>
+          <li>Kernel information output</li>
+        </ul>
+        <ul>
+          <li>“current” is the pointer to the “task_struct” of the running task.</li>
+        </ul>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="n">asmlinkage</span> <span class="kt">long</span> <span class="nf">sys_gettaskinfo</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+ <span class="p">{</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; PID: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; TGID: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">tgid</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; PPID: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">parent</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; STATE: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; PRIORITY: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">prio</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; POLICY: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">policy</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; Number of MAJOR FAULT: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">maj_flt</span><span class="p">);</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"&lt;0&gt; Number of MINOR FAULT: %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">current</span><span class="o">-&gt;</span><span class="n">min_flt</span><span class="p">);</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre></div>        </div>
+        <div class="language-plaintext highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>     - Argument passing
+</code></pre></div>        </div>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="cp">#include</span> <span class="cpf">&lt;linux/unistd.h&gt;</span><span class="cp">
+</span> <span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+</span> <span class="cp">#include</span> <span class="cpf">&lt;asm/uaccess.h&gt;</span><span class="cp">
+</span>
+ <span class="n">asmlinkage</span> <span class="kt">int</span> <span class="nf">sys_show_mult</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span><span class="o">*</span> <span class="n">res</span><span class="p">)</span>
+ <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">error</span><span class="p">,</span> <span class="n">compute</span><span class="p">;</span>
+   <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+   <span class="n">error</span> <span class="o">=</span> <span class="n">access_ok</span><span class="p">(</span><span class="n">VERIFY_WRITE</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="o">*</span><span class="n">res</span><span class="p">));</span>
+   <span class="k">if</span> <span class="p">(</span><span class="n">error</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)</span>
+   <span class="p">{</span>
+     <span class="n">printk</span><span class="p">(</span><span class="s">"error in cdang </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+     <span class="n">printk</span><span class="p">(</span><span class="s">"error is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">error</span><span class="p">);</span>
+     <span class="k">return</span> <span class="n">error</span><span class="p">;</span>
+   <span class="p">}</span>
+   <span class="n">compute</span> <span class="o">=</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span><span class="p">;</span>
+   <span class="n">printk</span><span class="p">(</span><span class="s">"compute is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">compute</span><span class="p">);</span>
+   <span class="n">i</span> <span class="o">=</span> <span class="n">copy_to_user</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">compute</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="kt">int</span><span class="p">));</span> <span class="c1">// include/asm/uaccess.h</span>
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre></div>        </div>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code> <span class="cp">#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span> <span class="cp">#include</span> <span class="cpf">&lt;linux/unistd.h&gt;</span><span class="cp">
+</span>
+ <span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">void</span><span class="p">)</span>
+ <span class="p">{</span>
+   <span class="kt">int</span> <span class="n">mult_ret</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+   <span class="kt">int</span> <span class="n">x</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">y</span> <span class="o">=</span> <span class="mi">5</span><span class="p">;</span>
+   <span class="kt">int</span> <span class="n">i</span><span class="p">;</span>
+   <span class="n">i</span> <span class="o">=</span> <span class="n">syscall</span><span class="p">(</span><span class="mi">318</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">mult_ret</span><span class="p">);</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">"x is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">x</span><span class="p">);</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">"y is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">y</span><span class="p">);</span>
+   <span class="n">printf</span><span class="p">(</span><span class="s">"ret is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="n">mult_ret</span><span class="p">);</span>
+
+   <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+ <span class="p">}</span>
+</code></pre></div>        </div>
+      </li>
+    </ol>
+
+    <ul>
+      <li>Argument passing using struct
+        <ul>
+          <li>Maximum size of arguments for system call
+            <ul>
+              <li>32 bit or 64 bit</li>
+            </ul>
+          </li>
+          <li>Maximum number of arguments for system call
+            <ul>
+              <li>6 for Intel CPU</li>
+            </ul>
+          </li>
+        </ul>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="c1">// mystat.h</span>
+<span class="cp">#include</span> <span class="cpf">&lt;linux/kernel.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/sched.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/slab.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/uaccess.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/fs.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/fdtable.h&gt;</span><span class="cp">
+</span><span class="k">struct</span> <span class="n">mystat</span>
+<span class="p">{</span>
+  <span class="n">pid_t</span> <span class="n">pid</span><span class="p">;</span>
+  <span class="n">pid_t</span> <span class="n">ppid</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">stat</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">priority</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">policy</span><span class="p">;</span>
+  <span class="kt">long</span> <span class="n">utime</span><span class="p">;</span>
+  <span class="kt">long</span> <span class="n">stime</span><span class="p">;</span>
+  <span class="kt">long</span> <span class="n">starttime</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">min_flt</span><span class="p">;</span>
+  <span class="kt">unsigned</span> <span class="kt">long</span> <span class="n">maj_flt</span><span class="p">;</span>
+  <span class="kt">long</span> <span class="n">open_files</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"mystat.h"</span><span class="cp">
+</span>
+<span class="n">asmlinkage</span> <span class="kt">int</span> <span class="nf">sys_gettaskinfo</span><span class="p">(</span><span class="kt">int</span> <span class="n">id</span><span class="p">,</span> <span class="k">struct</span> <span class="n">mystat</span><span class="o">*</span> <span class="n">user_buf</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="k">struct</span> <span class="n">mystat</span><span class="o">*</span> <span class="n">buf</span><span class="p">;</span>
+  <span class="kt">int</span> <span class="n">i</span><span class="p">,</span> <span class="n">cnt</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">task_struct</span> <span class="o">*</span><span class="n">search</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">file</span> <span class="o">*</span><span class="n">fp</span><span class="p">;</span>
+
+  <span class="c1">// pid_task() or get_pid_task() to get a pointer to the struct task_struct of the process.</span>
+  <span class="c1">// If the call returns NULL then the process does not exist.</span>
+  <span class="c1">// pid_task() searches task with specified PID, sequentially from the init_task</span>
+  <span class="n">search</span> <span class="o">=</span> <span class="n">pid_task</span><span class="p">(</span><span class="n">id</span><span class="p">,</span> <span class="n">PIDTYPE_PID</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">search</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+  <span class="n">buf</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">kmalloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">mystat</span><span class="p">),</span> <span class="n">GFP_KERNEL</span><span class="p">);</span>
+  <span class="k">if</span><span class="p">(</span><span class="n">buf</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span>
+  <span class="p">{</span>
+    <span class="n">printk</span><span class="p">(</span><span class="s">"buf is NULL </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="k">return</span> <span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+  <span class="p">}</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">pid</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">ppid</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">parent</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">stat</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">state</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">priority</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">prio</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">policy</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">policy</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">utime</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">utime</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">stime</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">stime</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">starttime</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">start_time</span><span class="p">.</span><span class="n">tv_sec</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">min_flt</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">min_flt</span><span class="p">;</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">maj_flt</span> <span class="o">=</span> <span class="n">search</span><span class="o">-&gt;</span><span class="n">maj_flt</span><span class="p">;</span>
+  <span class="k">for</span> <span class="p">(</span><span class="n">i</span> <span class="o">=</span> <span class="mi">0</span><span class="p">;</span> <span class="n">i</span><span class="o">&lt;</span><span class="mi">32</span><span class="p">;</span> <span class="n">i</span><span class="o">++</span><span class="p">)</span> <span class="p">{</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">search</span><span class="o">-&gt;</span><span class="n">files</span><span class="o">-&gt;</span><span class="n">fd_array</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="o">!=</span> <span class="nb">NULL</span><span class="p">)</span> <span class="p">{</span>
+      <span class="n">cnt</span><span class="o">++</span><span class="p">;</span>
+    <span class="p">}</span>
+  <span class="p">}</span>
+  <span class="n">buf</span><span class="o">-&gt;</span><span class="n">open_files</span> <span class="o">=</span> <span class="n">cnt</span><span class="p">;</span>
+  <span class="n">copy_to_user</span><span class="p">(</span><span class="n">user_buf</span><span class="p">,</span> <span class="n">buf</span><span class="p">,</span> <span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">mystat</span><span class="p">));</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+
+        <div class="language-c highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"mystat.h"</span><span class="cp">
+#include</span> <span class="cpf">&lt;linux/unistd.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdlib.h&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span><span class="o">*</span> <span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="kt">int</span> <span class="n">task_number</span><span class="p">;</span>
+  <span class="k">struct</span> <span class="n">mystat</span><span class="o">*</span> <span class="n">mybuf</span><span class="p">;</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">argc</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">)</span> <span class="p">{</span>
+    <span class="n">printf</span><span class="p">(</span><span class="s">"Usage: a.out pid </span><span class="se">\n</span><span class="s">"</span><span class="p">);</span>
+    <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+  <span class="p">}</span>
+  <span class="n">task_number</span> <span class="o">=</span> <span class="n">atoi</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>
+  <span class="n">mybuf</span> <span class="o">=</span> <span class="p">(</span><span class="kt">char</span><span class="o">*</span><span class="p">)</span><span class="n">malloc</span><span class="p">(</span><span class="k">sizeof</span><span class="p">(</span><span class="k">struct</span> <span class="n">mystat</span><span class="p">));</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">mybuf</span> <span class="o">==</span> <span class="nb">NULL</span><span class="p">)</span> <span class="n">exit</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+  <span class="n">syscall</span><span class="p">(</span><span class="mi">319</span><span class="p">,</span> <span class="n">task_number</span><span class="p">,</span> <span class="n">mybuf</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"pid is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">pid</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"ppid is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">ppid</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"state is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">stat</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Policy is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">policy</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"File count is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">open_files</span><span class="p">);</span>
+  <span class="n">printf</span><span class="p">(</span><span class="s">"Start time is %d </span><span class="se">\n</span><span class="s">"</span><span class="p">,</span> <span class="p">(</span><span class="kt">int</span><span class="p">)</span><span class="n">mybuf</span><span class="o">-&gt;</span><span class="n">starttime</span><span class="p">);</span>
+  <span class="k">return</span> <span class="mi">0</span><span class="p">;</span>
+<span class="p">}</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/linux/2020/12/28/linux-file-system.html" title="Linux File System and Virtual File System">Linux File System and Virtual File...</a><a class="next" href="/raspberrypi/2021/03/30/build-linux-for-raspberry-pi.html" title="Linux Kernel Building for Raspberry Pi 4">Linux Kernel Building for Raspberry Pi...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/blogging/2016/01/01/another-test-markdown.html" title="Linux Kernel Building for Raspberry Pi 4">Another test markdown</a></li>
+<li><a class="post-link" href="/ros/2020/10/25/setting-ros-evironment.html" title="Linux Kernel Building for Raspberry Pi 4">Setting ROS Environment</a></li>
+<li><a class="post-link" href="/linux/2020/12/07/memory-management.html" title="Linux Kernel Building for Raspberry Pi 4">Linux Memory Management</a></li>
+<li><a class="post-link" href="/gui/2022/03/10/Qt-introduction.html" title="Linux Kernel Building for Raspberry Pi 4">Qt Introduction</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

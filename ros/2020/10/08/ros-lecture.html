@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>ROS - ROBOTIS Lecture 1, 2, 4 (with Links) | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="ROS - ROBOTIS Lecture 1, 2, 4 (with Links)">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="ROS References ROS Robotis Lecture Youtube Material Github ROS 한글책 Github 로열모 (로봇공학을 위한 열린모임) Facebook ROS (Robot Operating System) ROS Wiki - Message ROS Wiki - Common Messages ROS Wiki - Standard Messages OPROS (Open Platform for Robotic Services) OpenRTM-aist 오로카 Naver Cafe Robotics OS 종류 Communication b/w Heterogeneous Multi-devices Structure of ROS Features of ROS Communication Function Node 간 Data 통신을 제공 통상적 Middleware로 지칭되는 Message 전달 Interface 지원 Message parsing Robot 개발 시에 빈번히 사용되는 통신 System 제공 Capsulation 및 Code reuse 를 위한 Node 간 Message 전달 Interface Message의 기록 및 재생 Node 간 송/수신되는 Data인 Message를 저장하고 필요시에 재사용가능 저장된 Message를 기반으로 반복적인 실험 가능, Algorithm 개발에 용이함 Message 사용으로 인한 다양한 Programming 언어 사용 가능 Node 간의 Data 교환이 Message로 이루어지므로 각 Node는 서로 다른 언어로 작성 가능 분산 매개 변수 System System에서 사용되는 변수를 Global key value로 작성하여 공유 및 수정하여 실시간으로 반영 가능 Others for Robots Standard Message Definition for Robot Camera, IMU, Laser 등의 Sensor/Odometer, 경로 및 지도 등의 Navigation Data 등의 표준 Message를 정의 하여 Module화, 협업 작업을 유도, 효율성 향상 Robot Geometry library Robot, Sensor 등의 상대적 좌표를 Tree화 하는 TF(TransForm) 제공 Robot Descriptive Language Robot의 물리적 특성을 설명하느 XML 문서 기술 E.g. URDF 진단 System Robot의 Status를 한 눈에 파악할 수 있는 진단 System 제공 Sensing/Recognition Sensor driver, Sensing/Recognition Level의 Library 제공 Navigation Robot에서 많이 사용되는 Robot의 Pose(위치,자세) 추정, 지도상의 자기 위치 추정 Function 제ㅑ 지도 작성에 필요한 SLAM, 작성된 지도 내에서 목적지를 찾아가는 Navigation Library를 제공 Manipulation Robot Arm에 사용되는 IK, FK는 물론, 응용단의 Pick and Place를 지원하는 다양한 Manipulation Library 제공 GUI 형태의 Manipulation Tools 제공(MoveIt!) Various development tools Robot 개발에 필요한 다양한 개발 도구를 제공 Robot의 개발 효율성 향상 Command-Line Tools GUI 없이 ROS에서 제공되는 명령어로만 로봇 Access 및 거의 모든 ROS 기능 소화 RViz 강력한 3D 시각화 Tool 제공 Laser, Camera 등의 Sensor Data를 시각화 Robot 외형과 계획된 동작을 표현 RQT Graphic Interface 개발을 위한 Qt 기반 Framework 제공 Node와 Node간 연결 정보 표시 (rqt_graph) Encoder, 전압, 또는 시간이 지남에 따라 변화하는 숫자를 Plotting(rqt_plot) Data를 Message 형태로 기록하고 재생(rqt_bag) Gazebo 3D Simulator Physics Engine을 탑재, Robot, Sensor, 환경 Model 등을 지원 ROS와의 높은 호환성 ROS Release Schedule과 Version 선택 ROS Releases 2020.05.23 - Noetic Ninjemys (LTS) Noetic Ninjemys (EOL=May 2025) 2018.05.23 - Melodic Morenia (LTS) Melodic Morenia (EOL=May 2023) 2017.05.23 - Lunar Loggerhead Lunar Loggerhead (EOL=May, 2019) 2016.05.23 - Kinetic Kame (LTS) 추천 Kinetic Kame (EOL=April, 2021) 2015.05.23 - Jade Turtle Jade Turtle (EOL=May, 2017) 2014.07.22 - Indigo Igloo (LTS) Indigo Igloo (EOL=April, 2019) 2013.09.04 - Hydro Medusa 2012.12.31 - Groovy Galapagos 2012.04.23 - Fuerte Turtle 2011.08.30 - Electric Emys 2011.03.02 - Diamondback 2010.08.02 - C Turtle 2010.03.02 - Box Turtle 2010.01.22 - ROS 1.0 Version selection Linux 5년간 기술 지원되는 최신 LTS Version의 Ubuntu 선택 2년마다 매년 4월 LTS Version Release, Release 3개월 이 후 16.04, 18.04 ROS 2년마다 매년 5월 LTS Version Release, Release 3개월 이 후 Gazebo “gazebosim.org” 에서 ROS 호환성 정보 검토 후 사용 2019년 상반기 시점 추천 버전 Ubuntu 16.04 ROS Kinetic Kame Gazebo 7.x">
+<meta property="og:description" content="ROS References ROS Robotis Lecture Youtube Material Github ROS 한글책 Github 로열모 (로봇공학을 위한 열린모임) Facebook ROS (Robot Operating System) ROS Wiki - Message ROS Wiki - Common Messages ROS Wiki - Standard Messages OPROS (Open Platform for Robotic Services) OpenRTM-aist 오로카 Naver Cafe Robotics OS 종류 Communication b/w Heterogeneous Multi-devices Structure of ROS Features of ROS Communication Function Node 간 Data 통신을 제공 통상적 Middleware로 지칭되는 Message 전달 Interface 지원 Message parsing Robot 개발 시에 빈번히 사용되는 통신 System 제공 Capsulation 및 Code reuse 를 위한 Node 간 Message 전달 Interface Message의 기록 및 재생 Node 간 송/수신되는 Data인 Message를 저장하고 필요시에 재사용가능 저장된 Message를 기반으로 반복적인 실험 가능, Algorithm 개발에 용이함 Message 사용으로 인한 다양한 Programming 언어 사용 가능 Node 간의 Data 교환이 Message로 이루어지므로 각 Node는 서로 다른 언어로 작성 가능 분산 매개 변수 System System에서 사용되는 변수를 Global key value로 작성하여 공유 및 수정하여 실시간으로 반영 가능 Others for Robots Standard Message Definition for Robot Camera, IMU, Laser 등의 Sensor/Odometer, 경로 및 지도 등의 Navigation Data 등의 표준 Message를 정의 하여 Module화, 협업 작업을 유도, 효율성 향상 Robot Geometry library Robot, Sensor 등의 상대적 좌표를 Tree화 하는 TF(TransForm) 제공 Robot Descriptive Language Robot의 물리적 특성을 설명하느 XML 문서 기술 E.g. URDF 진단 System Robot의 Status를 한 눈에 파악할 수 있는 진단 System 제공 Sensing/Recognition Sensor driver, Sensing/Recognition Level의 Library 제공 Navigation Robot에서 많이 사용되는 Robot의 Pose(위치,자세) 추정, 지도상의 자기 위치 추정 Function 제ㅑ 지도 작성에 필요한 SLAM, 작성된 지도 내에서 목적지를 찾아가는 Navigation Library를 제공 Manipulation Robot Arm에 사용되는 IK, FK는 물론, 응용단의 Pick and Place를 지원하는 다양한 Manipulation Library 제공 GUI 형태의 Manipulation Tools 제공(MoveIt!) Various development tools Robot 개발에 필요한 다양한 개발 도구를 제공 Robot의 개발 효율성 향상 Command-Line Tools GUI 없이 ROS에서 제공되는 명령어로만 로봇 Access 및 거의 모든 ROS 기능 소화 RViz 강력한 3D 시각화 Tool 제공 Laser, Camera 등의 Sensor Data를 시각화 Robot 외형과 계획된 동작을 표현 RQT Graphic Interface 개발을 위한 Qt 기반 Framework 제공 Node와 Node간 연결 정보 표시 (rqt_graph) Encoder, 전압, 또는 시간이 지남에 따라 변화하는 숫자를 Plotting(rqt_plot) Data를 Message 형태로 기록하고 재생(rqt_bag) Gazebo 3D Simulator Physics Engine을 탑재, Robot, Sensor, 환경 Model 등을 지원 ROS와의 높은 호환성 ROS Release Schedule과 Version 선택 ROS Releases 2020.05.23 - Noetic Ninjemys (LTS) Noetic Ninjemys (EOL=May 2025) 2018.05.23 - Melodic Morenia (LTS) Melodic Morenia (EOL=May 2023) 2017.05.23 - Lunar Loggerhead Lunar Loggerhead (EOL=May, 2019) 2016.05.23 - Kinetic Kame (LTS) 추천 Kinetic Kame (EOL=April, 2021) 2015.05.23 - Jade Turtle Jade Turtle (EOL=May, 2017) 2014.07.22 - Indigo Igloo (LTS) Indigo Igloo (EOL=April, 2019) 2013.09.04 - Hydro Medusa 2012.12.31 - Groovy Galapagos 2012.04.23 - Fuerte Turtle 2011.08.30 - Electric Emys 2011.03.02 - Diamondback 2010.08.02 - C Turtle 2010.03.02 - Box Turtle 2010.01.22 - ROS 1.0 Version selection Linux 5년간 기술 지원되는 최신 LTS Version의 Ubuntu 선택 2년마다 매년 4월 LTS Version Release, Release 3개월 이 후 16.04, 18.04 ROS 2년마다 매년 5월 LTS Version Release, Release 3개월 이 후 Gazebo “gazebosim.org” 에서 ROS 호환성 정보 검토 후 사용 2019년 상반기 시점 추천 버전 Ubuntu 16.04 ROS Kinetic Kame Gazebo 7.x">
+<link rel="canonical" href="coolwindjo.github.io/ros/2020/10/08/ros-lecture.html">
+<meta property="og:url" content="coolwindjo.github.io/ros/2020/10/08/ros-lecture.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-10-08T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="ROS - ROBOTIS Lecture 1, 2, 4 (with Links)">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2020-10-08T00:00:00+00:00","datePublished":"2020-10-08T00:00:00+00:00","description":"ROS References ROS Robotis Lecture Youtube Material Github ROS 한글책 Github 로열모 (로봇공학을 위한 열린모임) Facebook ROS (Robot Operating System) ROS Wiki - Message ROS Wiki - Common Messages ROS Wiki - Standard Messages OPROS (Open Platform for Robotic Services) OpenRTM-aist 오로카 Naver Cafe Robotics OS 종류 Communication b/w Heterogeneous Multi-devices Structure of ROS Features of ROS Communication Function Node 간 Data 통신을 제공 통상적 Middleware로 지칭되는 Message 전달 Interface 지원 Message parsing Robot 개발 시에 빈번히 사용되는 통신 System 제공 Capsulation 및 Code reuse 를 위한 Node 간 Message 전달 Interface Message의 기록 및 재생 Node 간 송/수신되는 Data인 Message를 저장하고 필요시에 재사용가능 저장된 Message를 기반으로 반복적인 실험 가능, Algorithm 개발에 용이함 Message 사용으로 인한 다양한 Programming 언어 사용 가능 Node 간의 Data 교환이 Message로 이루어지므로 각 Node는 서로 다른 언어로 작성 가능 분산 매개 변수 System System에서 사용되는 변수를 Global key value로 작성하여 공유 및 수정하여 실시간으로 반영 가능 Others for Robots Standard Message Definition for Robot Camera, IMU, Laser 등의 Sensor/Odometer, 경로 및 지도 등의 Navigation Data 등의 표준 Message를 정의 하여 Module화, 협업 작업을 유도, 효율성 향상 Robot Geometry library Robot, Sensor 등의 상대적 좌표를 Tree화 하는 TF(TransForm) 제공 Robot Descriptive Language Robot의 물리적 특성을 설명하느 XML 문서 기술 E.g. URDF 진단 System Robot의 Status를 한 눈에 파악할 수 있는 진단 System 제공 Sensing/Recognition Sensor driver, Sensing/Recognition Level의 Library 제공 Navigation Robot에서 많이 사용되는 Robot의 Pose(위치,자세) 추정, 지도상의 자기 위치 추정 Function 제ㅑ 지도 작성에 필요한 SLAM, 작성된 지도 내에서 목적지를 찾아가는 Navigation Library를 제공 Manipulation Robot Arm에 사용되는 IK, FK는 물론, 응용단의 Pick and Place를 지원하는 다양한 Manipulation Library 제공 GUI 형태의 Manipulation Tools 제공(MoveIt!) Various development tools Robot 개발에 필요한 다양한 개발 도구를 제공 Robot의 개발 효율성 향상 Command-Line Tools GUI 없이 ROS에서 제공되는 명령어로만 로봇 Access 및 거의 모든 ROS 기능 소화 RViz 강력한 3D 시각화 Tool 제공 Laser, Camera 등의 Sensor Data를 시각화 Robot 외형과 계획된 동작을 표현 RQT Graphic Interface 개발을 위한 Qt 기반 Framework 제공 Node와 Node간 연결 정보 표시 (rqt_graph) Encoder, 전압, 또는 시간이 지남에 따라 변화하는 숫자를 Plotting(rqt_plot) Data를 Message 형태로 기록하고 재생(rqt_bag) Gazebo 3D Simulator Physics Engine을 탑재, Robot, Sensor, 환경 Model 등을 지원 ROS와의 높은 호환성 ROS Release Schedule과 Version 선택 ROS Releases 2020.05.23 - Noetic Ninjemys (LTS) Noetic Ninjemys (EOL=May 2025) 2018.05.23 - Melodic Morenia (LTS) Melodic Morenia (EOL=May 2023) 2017.05.23 - Lunar Loggerhead Lunar Loggerhead (EOL=May, 2019) 2016.05.23 - Kinetic Kame (LTS) 추천 Kinetic Kame (EOL=April, 2021) 2015.05.23 - Jade Turtle Jade Turtle (EOL=May, 2017) 2014.07.22 - Indigo Igloo (LTS) Indigo Igloo (EOL=April, 2019) 2013.09.04 - Hydro Medusa 2012.12.31 - Groovy Galapagos 2012.04.23 - Fuerte Turtle 2011.08.30 - Electric Emys 2011.03.02 - Diamondback 2010.08.02 - C Turtle 2010.03.02 - Box Turtle 2010.01.22 - ROS 1.0 Version selection Linux 5년간 기술 지원되는 최신 LTS Version의 Ubuntu 선택 2년마다 매년 4월 LTS Version Release, Release 3개월 이 후 16.04, 18.04 ROS 2년마다 매년 5월 LTS Version Release, Release 3개월 이 후 Gazebo “gazebosim.org” 에서 ROS 호환성 정보 검토 후 사용 2019년 상반기 시점 추천 버전 Ubuntu 16.04 ROS Kinetic Kame Gazebo 7.x","headline":"ROS - ROBOTIS Lecture 1, 2, 4 (with Links)","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/ros/2020/10/08/ros-lecture.html"},"url":"coolwindjo.github.io/ros/2020/10/08/ros-lecture.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">ROS - ROBOTIS Lecture 1, 2, 4 (with Links)</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-10-08T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 08, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#lecture">#lecture</a><a class="post-tag" href="/tags.html#mooc">#mooc</a><a class="post-tag" href="/tags.html#robotis">#robotis</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="ros-references">ROS References</h2>
+
+<ul>
+  <li>
+<a href="https://www.youtube.com/playlist?list=PLRG6WP3c31_VIFtFAxSke2NG_DumVZPgw" target="_blank">ROS Robotis Lecture</a> Youtube
+    <ul>
+      <li>
+<a href="https://github.com/robotpilot/ros-seminar" target="_blank">Material</a> Github</li>
+    </ul>
+  </li>
+  <li>
+<a href="https://github.com/robotpilot/rosbook_kr" target="_blank">ROS 한글책</a> Github</li>
+  <li>
+<a href="https://www.facebook.com/groups/KoreanRobotics" target="_blank">로열모</a> (로봇공학을 위한 열린모임) Facebook</li>
+  <li>
+<a href="https://ros.org" target="_blank">ROS</a> (Robot Operating System)
+    <ul>
+      <li><a href="https://wiki.ros.org/msg" target="_blank">ROS Wiki - Message</a></li>
+      <li><a href="https://wiki.ros.org/common_msgs" target="_blank">ROS Wiki - Common Messages</a></li>
+      <li><a href="https://wiki.ros.org/std_msgs" target="_blank">ROS Wiki - Standard Messages</a></li>
+    </ul>
+  </li>
+  <li>
+<a href="https://github.com/opros-wiki/OPRoS_v1.1_Components/wiki/Open-Platform-for-Robotic-Services" target="_blank">OPROS</a> (Open Platform for Robotic Services)</li>
+  <li><a href="https://www.openrtm.org/openrtm/" target="_blank">OpenRTM-aist</a></li>
+  <li>
+<a href="https://cafe.naver.com/openrt/23862" target="_blank">오로카</a> Naver Cafe</li>
+</ul>
+
+<h2 id="robotics-os-종류">Robotics OS 종류</h2>
+
+<p><img src="/assets/images/posts/2020-10-08/robotis-lec-1_1.png" alt="Image of Robotics OSes"></p>
+
+<h2 id="communication-bw-heterogeneous-multi-devices">Communication b/w Heterogeneous Multi-devices</h2>
+
+<p><img src="/assets/images/posts/2020-10-08/robotis-lec-1_3.png" alt="Image of communication b/w multi-devices"></p>
+
+<h2 id="structure-of-ros">Structure of ROS</h2>
+
+<p><img src="/assets/images/posts/2020-10-08/robotis-lec-1_4.png" alt="Image of Structure of ROS"></p>
+
+<h2 id="features-of-ros">Features of ROS</h2>
+
+<ol>
+  <li>Communication Function
+    <ul>
+      <li>Node 간 Data 통신을 제공</li>
+      <li>통상적 Middleware로 지칭되는 Message 전달 Interface 지원</li>
+      <li>Message parsing
+        <ul>
+          <li>Robot 개발 시에 빈번히 사용되는 통신 System 제공</li>
+          <li>Capsulation 및 Code reuse 를 위한 Node 간 Message 전달 Interface</li>
+        </ul>
+      </li>
+      <li>Message의 기록 및 재생
+        <ul>
+          <li>Node 간 송/수신되는 Data인 Message를 저장하고 필요시에 재사용가능</li>
+          <li>저장된 Message를 기반으로 반복적인 실험 가능, Algorithm 개발에 용이함</li>
+        </ul>
+      </li>
+      <li>Message 사용으로 인한 다양한 Programming 언어 사용 가능
+        <ul>
+          <li>Node 간의 Data 교환이 Message로 이루어지므로 각 Node는 서로 다른 언어로 작성 가능</li>
+        </ul>
+      </li>
+      <li>분산 매개 변수 System
+        <ul>
+          <li>System에서 사용되는 변수를 Global key value로 작성하여 공유 및 수정하여 실시간으로 반영 가능</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Others for Robots</p>
+
+    <ul>
+      <li>Standard Message Definition for Robot
+        <ul>
+          <li>Camera, IMU, Laser 등의 Sensor/Odometer, 경로 및 지도 등의 Navigation Data 등의 표준 Message를 정의 하여 Module화, 협업 작업을 유도, 효율성 향상</li>
+        </ul>
+      </li>
+      <li>Robot Geometry library
+        <ul>
+          <li>Robot, Sensor 등의 상대적 좌표를 Tree화 하는 TF(TransForm) 제공</li>
+        </ul>
+      </li>
+      <li>Robot Descriptive Language
+        <ul>
+          <li>Robot의 물리적 특성을 설명하느 XML 문서 기술</li>
+          <li>E.g. URDF</li>
+        </ul>
+      </li>
+      <li>진단 System
+        <ul>
+          <li>Robot의 Status를 한 눈에 파악할 수 있는 진단 System 제공</li>
+        </ul>
+      </li>
+      <li>Sensing/Recognition
+        <ul>
+          <li>Sensor driver, Sensing/Recognition Level의 Library 제공</li>
+        </ul>
+      </li>
+      <li>Navigation
+        <ul>
+          <li>Robot에서 많이 사용되는 Robot의 Pose(위치,자세) 추정, 지도상의 자기 위치 추정 Function 제ㅑ</li>
+          <li>지도 작성에 필요한 SLAM, 작성된 지도 내에서 목적지를 찾아가는 Navigation Library를 제공</li>
+        </ul>
+      </li>
+      <li>Manipulation
+        <ul>
+          <li>Robot Arm에 사용되는 IK, FK는 물론, 응용단의 Pick and Place를 지원하는 다양한 Manipulation Library 제공</li>
+          <li>GUI 형태의 Manipulation Tools 제공(MoveIt!)</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Various development tools</p>
+
+    <ul>
+      <li>Robot 개발에 필요한 다양한 개발 도구를 제공</li>
+      <li>Robot의 개발 효율성 향상</li>
+      <li>Command-Line Tools
+        <ul>
+          <li>GUI 없이 ROS에서 제공되는 명령어로만 로봇 Access 및 거의 모든 ROS 기능 소화</li>
+        </ul>
+      </li>
+      <li>RViz
+        <ul>
+          <li>강력한 3D 시각화 Tool 제공</li>
+          <li>Laser, Camera 등의 Sensor Data를 시각화</li>
+          <li>Robot 외형과  계획된 동작을 표현</li>
+        </ul>
+      </li>
+      <li>RQT
+        <ul>
+          <li>Graphic Interface 개발을 위한 Qt 기반 Framework 제공</li>
+          <li>Node와 Node간 연결 정보 표시 (rqt_graph)</li>
+          <li>Encoder, 전압, 또는 시간이 지남에 따라  변화하는 숫자를 Plotting(rqt_plot)</li>
+          <li>Data를 Message 형태로 기록하고 재생(rqt_bag)</li>
+        </ul>
+      </li>
+      <li>Gazebo
+        <ul>
+          <li>3D Simulator
+            <ul>
+              <li>Physics Engine을 탑재, Robot, Sensor, 환경 Model 등을 지원</li>
+            </ul>
+          </li>
+          <li>ROS와의 높은 호환성</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ol>
+
+<h2 id="ros-release-schedule과-version-선택">ROS Release Schedule과 Version 선택</h2>
+
+<ul>
+  <li>ROS Releases
+    <ul>
+      <li>2020.05.23 - Noetic Ninjemys (LTS)
+        <ul>
+          <li>Noetic Ninjemys (EOL=May 2025)</li>
+        </ul>
+      </li>
+      <li>2018.05.23 - Melodic Morenia (LTS)
+        <ul>
+          <li>Melodic Morenia (EOL=May 2023)</li>
+        </ul>
+      </li>
+      <li>2017.05.23 - Lunar Loggerhead
+        <ul>
+          <li>Lunar Loggerhead (EOL=May, 2019)</li>
+        </ul>
+      </li>
+      <li>2016.05.23 - Kinetic Kame (LTS) 추천
+        <ul>
+          <li>Kinetic Kame (EOL=April, 2021)</li>
+        </ul>
+      </li>
+      <li>2015.05.23 - Jade Turtle
+        <ul>
+          <li>Jade Turtle (EOL=May, 2017)</li>
+        </ul>
+      </li>
+      <li>2014.07.22 - Indigo Igloo (LTS)
+        <ul>
+          <li>Indigo Igloo (EOL=April, 2019)</li>
+        </ul>
+      </li>
+      <li>2013.09.04 - Hydro Medusa</li>
+      <li>2012.12.31 - Groovy Galapagos</li>
+      <li>2012.04.23 - Fuerte Turtle</li>
+      <li>2011.08.30 - Electric Emys</li>
+      <li>2011.03.02 - Diamondback</li>
+      <li>2010.08.02 - C Turtle</li>
+      <li>2010.03.02 - Box Turtle</li>
+      <li>2010.01.22 - ROS 1.0</li>
+    </ul>
+  </li>
+  <li>Version selection
+    <ul>
+      <li>Linux
+        <ul>
+          <li>5년간 기술 지원되는 최신 LTS Version의 Ubuntu 선택
+            <ul>
+              <li>2년마다 매년 4월 LTS Version Release, Release 3개월 이 후
+                <ul>
+                  <li>16.04, 18.04</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>ROS
+        <ul>
+          <li>2년마다 매년 5월 LTS Version Release, Release 3개월 이 후</li>
+        </ul>
+      </li>
+      <li>Gazebo
+        <ul>
+          <li>“gazebosim.org” 에서 ROS 호환성 정보 검토 후 사용</li>
+        </ul>
+      </li>
+      <li>2019년 상반기 시점 추천 버전
+        <ul>
+          <li>Ubuntu 16.04</li>
+          <li>ROS Kinetic Kame</li>
+          <li>Gazebo 7.x</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/blogging/2018/12/07/welcome-to-jekyll.html" title="Welcome to Jekyll!">Welcome to Jekyll!</a><a class="next" href="/ros/2020/10/09/ros-tech-terms.html" title="ROS Technical Terms">ROS Technical Terms</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/raspberrypi/2020/10/15/ros-yocto-raspberrypi4.html" title="ROS Technical Terms">ROS with Yocto for Raspberry Pi 4</a></li>
+<li><a class="post-link" href="/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html" title="ROS Technical Terms">Qt Bryan Lecture Episode 3 ~ 6</a></li>
+<li><a class="post-link" href="/ros/2020/10/08/ros-lecture.html" title="ROS Technical Terms">ROS - ROBOTIS Lecture 1, 2, 4 (with Links)</a></li>
+<li><a class="post-link" href="/skillorknowhow/2020/11/14/gui-from-docker.html" title="ROS Technical Terms">GUI from Docker Container</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

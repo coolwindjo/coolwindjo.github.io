@@ -1,0 +1,2707 @@
+<?xml version="1.0" encoding="utf-8"?><feed xmlns="http://www.w3.org/2005/Atom" ><generator uri="https://jekyllrb.com/" version="4.2.2">Jekyll</generator><link href="coolwindjo.github.io/feed.xml" rel="self" type="application/atom+xml" /><link href="coolwindjo.github.io/" rel="alternate" type="text/html" /><updated>2022-07-15T17:38:21+00:00</updated><id>coolwindjo.github.io/feed.xml</id><title type="html">Cool Wind on Study</title><subtitle>Archive what I learned, what I experienced, what I felt.</subtitle><author><name>CoolWind</name></author><entry><title type="html">Qt Recipe Example</title><link href="coolwindjo.github.io/gui/2022/07/14/Qt-recipe-example.html" rel="alternate" type="text/html" title="Qt Recipe Example" /><published>2022-07-14T00:00:00+00:00</published><updated>2022-07-14T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/07/14/Qt-recipe-example</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/07/14/Qt-recipe-example.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-5/qtxmlpatterns-recipes-example.html" target="_blank">Qt Documentation - Recipe Example</a></li>
+  <li><a href="https://doc.qt.io/qt-5/qtextedit.html" target="_blank">Qt Documentation - text viewer</a></li>
+  <li><a href="https://doc.qt.io/qt-5/qcombobox.html" target="_blank">Qt Documentation - combo box</a></li>
+  <li><a href="https://doc.qt.io/qt-5/xquery-introduction.html" target="_blank">Qt Documentation - XQuery</a></li>
+  <li><a href="https://doc.qt.io/qt-5/qtdesigner-manual.html" target="_blank">Qt Documentation - Qt Desinger</a></li>
+</ul>
+
+<h2 id="recipes-example">Recipes Example</h2>
+
+<ul>
+  <li>Using Qt XML Patterns to query XML data loaded from a file.</li>
+  <li>This Recipes example shows how to use Qt XML Patterns to query XML data loaded from a file.</li>
+</ul>
+
+<h3 id="introduction">Introduction</h3>
+
+<ul>
+  <li>In this case, the XML data represents a <em>cookbook.xml</em>, which contains &lt;cookbook&gt; as its document element,
+    <ul>
+      <li>which in turn contains a sequence of &lt;recipe&gt; elements.</li>
+    </ul>
+  </li>
+  <li>This XML data is searched using queries stored in <strong>XQuery</strong> files (*.xq).</li>
+</ul>
+
+<h3 id="the-user-interface">The User Interface</h3>
+
+<ul>
+  <li>The UI for this example was created using <strong>Qt Desinger</strong>:</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-07-14/recipes_exmple.png" alt="recipes_example" /></p>
+
+<ul>
+  <li>The UI consists of three <a href="https://doc.qt.io/qt-5/qgroupbox.html" target="_blank">group boxes</a> arranged vertically.
+    <ul>
+      <li>The top one contains
+        <ul>
+          <li>a <strong>text viewer</strong> that displays the XML text from the cookbook file.</li>
+        </ul>
+      </li>
+      <li>The middle group box contains
+        <ul>
+          <li>a <strong>combo box</strong> for choosing the <strong>XQuery</strong> to run and
+            <ul>
+              <li>The <strong>.xq</strong> files in the file list above are shown in the combo box menu.
+                <ul>
+                  <li>Choosing an <strong>XQuery</strong> loads, parses, and runs the selected <strong>XQuery</strong>.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>a <strong>text viewer</strong> for displaying the text of the selected <strong>XQuery</strong>.</li>
+        </ul>
+      </li>
+      <li>The query result is shown in the bottom group box’s <strong>text viewer</strong>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="running-your-own-xqueries">Running your own XQueries</h3>
+
+<ul>
+  <li>You can write your own <strong>XQuery</strong> files and run them in the example program.</li>
+  <li>The file <em>xmlpatterns/recipes/recipes.qrc</em> is the resource file for this example.
+    <ul>
+      <li>It is used in <em>main.cpp (Q_INIT_RESOURCE(recipes);)</em>.</li>
+      <li>It lists the <strong>XQuery</strong> files(<strong>.xq</strong>) that can be selected in the combo box.
+```qrc
+&lt;!DOCTYPE RCC&gt;<RCC version="1.0"></RCC></li>
+    </ul>
+    <qresource>
+  <file>files/cookbook.xml</file>
+  <file>files/allRecipes.xq</file>
+  <file>files/liquidIngredientsInSoup.xq</file>
+  <file>files/mushroomSoup.xq</file>
+  <file>files/preparationLessThan30.xq</file>
+  <file>files/preparationTimes.xq</file>
+</qresource>
+    <p>&lt;/RCC&gt;
+```</p>
+    <ul>
+      <li>To add your own queries to the example’s combo box, store your <strong>.xq</strong> files in the <em>example/xmlpatterns/recipes/files</em> directory and add them to <strong>recipes.qrc</strong> as shown above.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="code-walk-through">Code Walk-Through</h3>
+
+<ul>
+  <li>The example’s main() function creates the standard instance of <a href="https://doc.qt.io/qt-5/qapplication.html" target="_blank">QApplication</a>.
+    <ul>
+      <li>Then it creates an instance of the UI class, shows it, and starts the Qt event loop:</li>
+    </ul>
+
+    <pre><code class="language-main.cpp">int main(int argc, char *argv[])
+{
+    Q_INIT_RESOURCE(recipes);
+    QApplication app(argc, argv);
+    QueryMainWindow* const queryW = new QueryMainWindow;
+    queryW-&gt;show();
+    return app.exec();
+}
+</code></pre>
+  </li>
+</ul>
+
+<h4 id="the-ui-class-querymainwindow">The UI Class: QueryMainWindow</h4>
+
+<ul>
+  <li>The example’s UI is a conventional Qt GUI application inheriting <a href="https://doc.qt.io/qt-5/qmainwindow.html" target="_blank">QMainWindow</a> and the class generated by <strong>Qt Designer</strong>:</li>
+</ul>
+
+<pre><code class="language-querymainwindow.h">class QueryMainWindow : public QMainWindow,
+                        private Ui::QueryWidget
+{
+    Q_OBJECT
+
+public:
+    QueryMainWindow();
+
+public slots:
+    void displayQuery(int index);
+
+private:
+    QComboBox* ui_defaultQueries;
+
+    void evaluate(const QString&amp; str);
+    void loadInputFile();
+};
+</code></pre>
+
+<ul>
+  <li>The constructor finds the window’s <strong>combo box</strong> child widget and connects its <a href="https://doc.qt.io/qt-5/qcombobox.html#currentIndexChanged" target="_blank">currentIndexChanged</a>() signal to the window’s <em>dispalyQuery()</em> slot.</li>
+  <li>It then calls <em>loadInputFile()</em> to load <strong>cookbook.xml</strong> and
+    <ul>
+      <li>display its contents in the top group box’s <strong>text viewer</strong>.</li>
+    </ul>
+  </li>
+  <li>Finally, it finds the <strong>XQuery</strong> files(<strong>.xq</strong>) and adds each one to the <strong>combo box</strong> menu.</li>
+</ul>
+
+<pre><code class="language-querymainwindow.cpp">QueryMainWindow::QueryMainWindow()	:
+    ui_defaultQueries(0)
+{
+    setupUi(this);
+
+    new XmlSyntaxHighlighter(findChild&lt;QTextEdit*&gt;("inputTextEdit")-&gt;document());
+    new XmlSyntaxHighlighter(findChild&lt;QTextEdit*&gt;("outputTextEdit")-&gt;document());
+
+    ui_defaultQueries = findChild&lt;QComboBox*&gt;("defaultQueries");
+    QMetaObject::connectSlotsByName(this);
+
+    // connect(ui_defaultQueries, SIGNAL(currentIndexChanged(int)), SLOT(displayQuery(int)));
+    connect(ui_defaultQueries, (QOverload&lt;int&gt;::of(&amp;QComboBox::currentIndexChanged)),
+            this, (&amp;QueryMainWindow::displayQuery));
+
+    loadInputFile();
+    const QStringList queries(QDir(":/files/", "*.xq").entryList());
+    for (const auto&amp; query : queries)
+        ui_defaultQueries-&gt;addItem(query);
+    if (queries.count() &gt; 0)
+        displayQuery(0);
+}
+</code></pre>
+
+<ul>
+  <li>The work is done in the <a href="https://doc.qt.io/qt-5/qtxmlpatterns-recipes-example.html#displayquery-slot" target="_blank">displayQuery</a>() slot and the <a href="https://doc.qt.io/qt-5/qtxmlpatterns-recipes-example.html#evaluate-function" target="_blank">evaluate</a>() function it calls, <strong>displayQuery</strong>() loads and displays the selected query file and passes the <strong>XQuery</strong> text to <strong>evaluate</strong>()</li>
+</ul>
+
+<pre><code class="language-querymainwindow.cpp">void QueryMainWindow::displayQuery(int index)
+{
+    QFile queryFile(QString(":files/") + ui_defaultQueries-&gt;itemText(index));
+    queryFile.open(QIODevice::ReadOnly);
+    const QString query(QString::fromLatin1(queryFile.readAll()));
+    findChild&lt;QTextEdit*&gt;("queryTextEdit")-&gt;setPlainText(query);
+
+    evaluate(query);
+}
+</code></pre>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="xml" /><category term="qt-example" /><summary type="html"><![CDATA[Reference Links Qt Documentation - Recipe Example Qt Documentation - text viewer Qt Documentation - combo box Qt Documentation - XQuery Qt Documentation - Qt Desinger Recipes Example Using Qt XML Patterns to query XML data loaded from a file. This Recipes example shows how to use Qt XML Patterns to query XML data loaded from a file. Introduction In this case, the XML data represents a cookbook.xml, which contains &lt;cookbook&gt; as its document element, which in turn contains a sequence of &lt;recipe&gt; elements. This XML data is searched using queries stored in XQuery files (*.xq). The User Interface The UI for this example was created using Qt Desinger: The UI consists of three group boxes arranged vertically. The top one contains a text viewer that displays the XML text from the cookbook file. The middle group box contains a combo box for choosing the XQuery to run and The .xq files in the file list above are shown in the combo box menu. Choosing an XQuery loads, parses, and runs the selected XQuery. a text viewer for displaying the text of the selected XQuery. The query result is shown in the bottom group box’s text viewer. Running your own XQueries You can write your own XQuery files and run them in the example program. The file xmlpatterns/recipes/recipes.qrc is the resource file for this example. It is used in main.cpp (Q_INIT_RESOURCE(recipes);). It lists the XQuery files(.xq) that can be selected in the combo box. ```qrc &lt;!DOCTYPE RCC&gt; files/cookbook.xml files/allRecipes.xq files/liquidIngredientsInSoup.xq files/mushroomSoup.xq files/preparationLessThan30.xq files/preparationTimes.xq &lt;/RCC&gt; ``` To add your own queries to the example’s combo box, store your .xq files in the example/xmlpatterns/recipes/files directory and add them to recipes.qrc as shown above. Code Walk-Through The example’s main() function creates the standard instance of QApplication. Then it creates an instance of the UI class, shows it, and starts the Qt event loop: int main(int argc, char *argv[]) { Q_INIT_RESOURCE(recipes); QApplication app(argc, argv); QueryMainWindow* const queryW = new QueryMainWindow; queryW-&gt;show(); return app.exec(); } The UI Class: QueryMainWindow The example’s UI is a conventional Qt GUI application inheriting QMainWindow and the class generated by Qt Designer: class QueryMainWindow : public QMainWindow, private Ui::QueryWidget { Q_OBJECT public: QueryMainWindow(); public slots: void displayQuery(int index); private: QComboBox* ui_defaultQueries; void evaluate(const QString&amp; str); void loadInputFile(); }; The constructor finds the window’s combo box child widget and connects its currentIndexChanged() signal to the window’s dispalyQuery() slot. It then calls loadInputFile() to load cookbook.xml and display its contents in the top group box’s text viewer. Finally, it finds the XQuery files(.xq) and adds each one to the combo box menu. QueryMainWindow::QueryMainWindow() : ui_defaultQueries(0) { setupUi(this); new XmlSyntaxHighlighter(findChild&lt;QTextEdit*&gt;("inputTextEdit")-&gt;document()); new XmlSyntaxHighlighter(findChild&lt;QTextEdit*&gt;("outputTextEdit")-&gt;document()); ui_defaultQueries = findChild&lt;QComboBox*&gt;("defaultQueries"); QMetaObject::connectSlotsByName(this); // connect(ui_defaultQueries, SIGNAL(currentIndexChanged(int)), SLOT(displayQuery(int))); connect(ui_defaultQueries, (QOverload&lt;int&gt;::of(&amp;QComboBox::currentIndexChanged)), this, (&amp;QueryMainWindow::displayQuery)); loadInputFile(); const QStringList queries(QDir(":/files/", "*.xq").entryList()); for (const auto&amp; query : queries) ui_defaultQueries-&gt;addItem(query); if (queries.count() &gt; 0) displayQuery(0); } The work is done in the displayQuery() slot and the evaluate() function it calls, displayQuery() loads and displays the selected query file and passes the XQuery text to evaluate() void QueryMainWindow::displayQuery(int index) { QFile queryFile(QString(":files/") + ui_defaultQueries-&gt;itemText(index)); queryFile.open(QIODevice::ReadOnly); const QString query(QString::fromLatin1(queryFile.readAll())); findChild&lt;QTextEdit*&gt;("queryTextEdit")-&gt;setPlainText(query); evaluate(query); }]]></summary></entry><entry><title type="html">Qt Implicit Sharing</title><link href="coolwindjo.github.io/gui/2022/07/11/Qt-implicit-sharing.html" rel="alternate" type="text/html" title="Qt Implicit Sharing" /><published>2022-07-11T00:00:00+00:00</published><updated>2022-07-11T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/07/11/Qt-implicit-sharing</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/07/11/Qt-implicit-sharing.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-6/implicit-sharing.html" target="_blank">Qt - Implicit Sharing</a></li>
+  <li><a href="https://doc.qt.io/qt-6/containers.html#implicit-sharing-iterator-problem" target="_blank">Qt - Implicit Sharing iterator problem</a></li>
+  <li><a href="https://doc.qt.io/qt-6/threads-modules.html#threads-and-implicitly-shared-classes" target="_blank">Qt - Threads and Implicitly Shared Classes</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qshareddata.html" target="_blank">Qt - QSharedData</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qshareddatapointer.html" target="_blank">Qt - QSharedDataPointer</a></li>
+</ul>
+
+<h2 id="implicit-sharing">Implicit Sharing</h2>
+
+<ul>
+  <li>Many C++ classes in Qt use implicit data sharing to
+    <ul>
+      <li>maximize resource usage and</li>
+      <li>minimize copying.</li>
+    </ul>
+  </li>
+  <li>Implicitly shared classes are both safe and efficient when passed as arguments,
+    <ul>
+      <li>because only a pointer to the data is passed around, and</li>
+      <li>the data is copied only if and when a function writes to it,
+        <ul>
+          <li>i.e., copy-on-write</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="overview">Overview</h3>
+
+<ul>
+  <li>A shared class consists of
+    <ul>
+      <li>a pointer to a shared data block that contains
+        <ul>
+          <li>a reference count and the data.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>When a shared object is created, it sets the reference count to 1.
+    <ul>
+      <li>The reference count is
+        <ul>
+          <li>incremented whenever a new object references the shared data,</li>
+          <li>decremented when the object dereferences the shared data.
+            <ul>
+              <li>The shared data is deleted when the reference count becomes zero.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>When dealing with shared objects, there are two ways of copying an object.
+    <ul>
+      <li>We usually speak about deep and shallow copies.
+        <ul>
+          <li>A deep copy implies duplicating and an object.</li>
+          <li>A shallow copy is a reference copy,
+            <ul>
+              <li>i.e. just a pointer to a shared data block.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Making a deep copy can be expensive in terms of memory and CPU.</li>
+      <li>Making a shallow copy is very fast, because it only involves setting a pointer and incrementing the reference count.</li>
+    </ul>
+  </li>
+  <li>Object assignment (with operator=()) for implicitly shared objects is implemented using shallow copies.</li>
+  <li>The benefit of sharing is that a program does not need to duplicate data unnecessarily,
+    <ul>
+      <li>which results in lower memory use and less copying of data.
+        <ul>
+          <li>Objects can easily be assigned,
+            <ul>
+              <li>sent as function arguments, and</li>
+              <li>returned from functions.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Implicit sharing mostly takes place behind the scenes; the programmer rarely needs to worry about it.
+    <ul>
+      <li>However, Qt’s container iterators have different behaviour than those from the STL. Read <strong>Qt - Implicit Sharing iterator problem</strong>.</li>
+    </ul>
+  </li>
+  <li>In multithreaded applications implicit sharing takes place, as explained in <strong>Qt - Threads and Implicitly Shared Classes</strong>.</li>
+  <li>When implementing your own implicitly shared classes, use the <strong>QSharedData</strong>, and <strong>QSharedDataPointer</strong> classes.</li>
+</ul>
+
+<h3 id="implicit-sharing-in-detail">Implicit Sharing in Detail</h3>
+
+<ul>
+  <li>Copy-On-Write or Value semantics
+    <ul>
+      <li>Implicit sharing automatically detaches the object from a shared block
+        <ul>
+          <li>if the object is about to change and the reference count is greater than one.</li>
+        </ul>
+      </li>
+      <li>An implicitly shared class has control of its internal data.
+        <ul>
+          <li>In any member functions that modify its data,
+            <ul>
+              <li>it automatically detaches before modifying the data.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li><strong>Qt - Implicit Sharing iterator problem</strong> is the special case.</li>
+    </ul>
+  </li>
+  <li>The <a href="https://doc.qt.io/qt-6/qpen.html" target="_blank">QPen</a> class, which uses implicit sharing, detaches from the shared data in all member functions that change the internal data.</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">QPen</span><span class="o">::</span><span class="n">setStyle</span><span class="p">(</span><span class="n">Qt</span><span class="o">::</span><span class="n">PenStyle</span> <span class="n">style</span><span class="p">)</span>
+<span class="p">{</span>
+  <span class="n">detach</span><span class="p">();</span>         <span class="c1">// detach from common data</span>
+  <span class="n">d</span><span class="o">-</span><span class="n">style</span> <span class="o">=</span> <span class="n">style</span><span class="p">;</span>  <span class="c1">// set the style member</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="n">QPen</span><span class="o">::</span><span class="n">detach</span><span class="p">()</span>
+<span class="p">{</span>
+  <span class="k">if</span> <span class="p">(</span><span class="n">d</span><span class="o">-&gt;</span><span class="n">ref</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">)</span> <span class="p">{</span>
+    <span class="p">...</span>             <span class="c1">// perform a deep copy</span>
+  <span class="p">}</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<h3 id="list-of-classes">List of Classes</h3>
+
+<ul>
+  <li>The classes listed below automatically detach from common data if an object is about to be changed.
+    <ul>
+      <li>The programmer will not even notice that the objects are shared.</li>
+      <li>Thus you should treat separated instances of them as separate objects.
+        <ul>
+          <li>They will always behave as separate objects
+            <ul>
+              <li>but with the added benefit of sharing data whenever possible.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>For this reason, you can pass instances of these classes as arguments to functions by value without concern for the copying overhead.</li>
+    </ul>
+  </li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">QPixmap</span> <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">;</span>
+<span class="n">p1</span><span class="p">.</span><span class="n">load</span><span class="p">(</span><span class="s">"image.bmp"</span><span class="p">);</span>
+<span class="n">p2</span> <span class="o">=</span> <span class="n">p1</span><span class="p">;</span>                      <span class="c1">// p1 and p2 share data</span>
+
+<span class="n">QPainter</span> <span class="n">paint</span><span class="p">;</span>
+<span class="n">paint</span><span class="p">.</span><span class="n">begin</span><span class="p">(</span><span class="o">&amp;</span><span class="n">p2</span><span class="p">);</span>             <span class="c1">// cuts p2 loose from p1</span>
+<span class="n">paint</span><span class="p">.</span><span class="n">drawText</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="s">"Hi"</span><span class="p">);</span>
+<span class="n">paint</span><span class="p">.</span><span class="n">end</span><span class="p">();</span>
+</code></pre></div></div>
+
+<ul>
+  <li>In this example, <em>p1</em> and <em>p2</em> share data until <a href="https://doc.qt.io/qt-6/qpainter.html#begin" target="_blank">QPainter::begin()</a> is called for <em>p2</em>. because painting a pixmap will modify it.
+    <blockquote>
+      <p>Warning: Be careful with copying an implicitly shared container(<a href="https://doc.qt.io/qt-6/qmap.html" target="_blank">QMap</a>, <a href="https://doc.qt.io/qt-6/qlist.html" target="_blank">QList</a>, etc.) while you use <a href="https://doc.qt.io/qt-6/containers.html#stl-style-iterators" target="_blank">STL-style iterator</a>. See <a href="https://doc.qt.io/qt-6/containers.html#implicit-sharing-iterator-problem" target="_blank">Implicit sharing iterator problem</a>.</p>
+    </blockquote>
+  </li>
+</ul>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="memory-management" /><category term="copy-on-write" /><category term="shared-data" /><summary type="html"><![CDATA[Reference Links Qt - Implicit Sharing Qt - Implicit Sharing iterator problem Qt - Threads and Implicitly Shared Classes Qt - QSharedData Qt - QSharedDataPointer Implicit Sharing Many C++ classes in Qt use implicit data sharing to maximize resource usage and minimize copying. Implicitly shared classes are both safe and efficient when passed as arguments, because only a pointer to the data is passed around, and the data is copied only if and when a function writes to it, i.e., copy-on-write Overview A shared class consists of a pointer to a shared data block that contains a reference count and the data. When a shared object is created, it sets the reference count to 1. The reference count is incremented whenever a new object references the shared data, decremented when the object dereferences the shared data. The shared data is deleted when the reference count becomes zero. When dealing with shared objects, there are two ways of copying an object. We usually speak about deep and shallow copies. A deep copy implies duplicating and an object. A shallow copy is a reference copy, i.e. just a pointer to a shared data block. Making a deep copy can be expensive in terms of memory and CPU. Making a shallow copy is very fast, because it only involves setting a pointer and incrementing the reference count. Object assignment (with operator=()) for implicitly shared objects is implemented using shallow copies. The benefit of sharing is that a program does not need to duplicate data unnecessarily, which results in lower memory use and less copying of data. Objects can easily be assigned, sent as function arguments, and returned from functions. Implicit sharing mostly takes place behind the scenes; the programmer rarely needs to worry about it. However, Qt’s container iterators have different behaviour than those from the STL. Read Qt - Implicit Sharing iterator problem. In multithreaded applications implicit sharing takes place, as explained in Qt - Threads and Implicitly Shared Classes. When implementing your own implicitly shared classes, use the QSharedData, and QSharedDataPointer classes. Implicit Sharing in Detail Copy-On-Write or Value semantics Implicit sharing automatically detaches the object from a shared block if the object is about to change and the reference count is greater than one. An implicitly shared class has control of its internal data. In any member functions that modify its data, it automatically detaches before modifying the data. Qt - Implicit Sharing iterator problem is the special case. The QPen class, which uses implicit sharing, detaches from the shared data in all member functions that change the internal data. void QPen::setStyle(Qt::PenStyle style) { detach(); // detach from common data d-style = style; // set the style member } void QPen::detach() { if (d-&gt;ref != 1) { ... // perform a deep copy } } List of Classes The classes listed below automatically detach from common data if an object is about to be changed. The programmer will not even notice that the objects are shared. Thus you should treat separated instances of them as separate objects. They will always behave as separate objects but with the added benefit of sharing data whenever possible. For this reason, you can pass instances of these classes as arguments to functions by value without concern for the copying overhead. QPixmap p1, p2; p1.load("image.bmp"); p2 = p1; // p1 and p2 share data QPainter paint; paint.begin(&amp;p2); // cuts p2 loose from p1 paint.drawText(0, 50, "Hi"); paint.end(); In this example, p1 and p2 share data until QPainter::begin() is called for p2. because painting a pixmap will modify it. Warning: Be careful with copying an implicitly shared container(QMap, QList, etc.) while you use STL-style iterator. See Implicit sharing iterator problem.]]></summary></entry><entry><title type="html">Qt Bryan Lecture Episode 3 ~ 6</title><link href="coolwindjo.github.io/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html" rel="alternate" type="text/html" title="Qt Bryan Lecture Episode 3 ~ 6" /><published>2022-06-23T00:00:00+00:00</published><updated>2022-06-23T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://www.youtube.com/watch?v=KugPAznC4Yo&amp;list=PLUbFnGajtZlXbrbdlraCe3LMC_YH5abao&amp;index=6" target="_blank">YouTube Lecture: Qt 6 with C++ by Bryan Cairns</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qobject.html" target="_blank">QObject</a>.</li>
+  <li><a href="https://doc.qt.io/qt-6/signalsandslots.html" target="_blank">Signals and Slots</a>.</li>
+  <li><a href="https://doc.qt.io/qt-6/metaobjects.html" target="_blank">meta-object system</a>.</li>
+  <li><a href="https://bcairns.medium.com/understanding-qobject-in-qt-97de374ca0cd" target="_blank">Understanding QObject in Qt by Bryan Cairns</a>.</li>
+</ul>
+
+<h2 id="qt-console-application">Qt Console Application</h2>
+
+<h3 id="whats-going-on-under-the-hood">What’s going on under the hood</h3>
+
+<p><img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0d0a736b696e706172616d206163746976697479207b0d0a20204261636b67726f756e64436f6c6f723c3c204d4f43203e3e205265640d0a7d0d0a22536f7572636520436f646522202d2d3e2050726570726f636573736f720d0a2d2d3e204d4f43203c3c4d4f433e3e0d0a2d2d3e20436f6d70696c65720d0a2d2d3e204c696e6b65720d0a40656e64756d6c" /></p>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="lecture" /><category term="qt-example" /><summary type="html"><![CDATA[Reference Links YouTube Lecture: Qt 6 with C++ by Bryan Cairns QObject. Signals and Slots. meta-object system. Understanding QObject in Qt by Bryan Cairns. Qt Console Application What’s going on under the hood]]></summary></entry><entry><title type="html">Qt Notepad Example</title><link href="coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html" rel="alternate" type="text/html" title="Qt Notepad Example" /><published>2022-06-20T00:00:00+00:00</published><updated>2022-06-20T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html" target="_blank">Qt Documentation - Notepad Example</a></li>
+  <li><a href="https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/tutorials/notepad" target="_blank">Qt Source code - Notepad Example</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/creator-build-example-application.html" target="_blank">Building and Running an Example</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/index.html" target="_blank">Using Qt Creator</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/creator-tutorials.html" target="_blank">Creating other kind of applications with Qt Creator</a></li>
+  <li><a href="https://doc.qt.io/qt-6/application-windows.html" target="_blank">QWindow and Dialog Widgets</a></li>
+  <li><a href="https://doc.qt.io/qt-6/eventsandfilters.html" target="_blank">The Event System</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtdesigner-manual.html" target="_blank">Qt Designer Manual</a></li>
+  <li><a href="https://doc.qt.io/qt-6/layout.html" target="_blank">Layout Management</a></li>
+  <li><a href="https://doc.qt.io/qt-6/graphicsview.html#widgets-and-layouts" target="_blank">Widgets and Layouts</a></li>
+  <li><a href="https://doc.qt.io/qt-6/layout.html#layout-examples" target="_blank">Layout Examples</a></li>
+  <li><a href="https://doc.qt.io/qt-6/gallery.html" target="_blank">Qt Widget Gallery</a></li>
+  <li><a href="https://doc.qt.io/qt-6/mainwindow.html" target="_blank">Application Main Window</a></li>
+  <li><a href="https://doc.qt.io/qt-6/examples-mainwindow.html" target="_blank">Main Window Examples</a></li>
+  <li><a href="https://doc.qt.io/qt-6/object.html" target="_blank">Object Model</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qmake-manual.html" target="_blank">qmake Model</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qmdiarea.html" target="_blank">MDI applications - QMdiArea</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtwidgets-mainwindows-mdi-example.html" target="_blank">MDI applications - MDI Example</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qfile.html" target="_blank">Files and I/O devices - QFile</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qiodevice.html" target="_blank">Files and I/O devices - QIODevice</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtlinguist-index.html" target="_blank">tr() and internationalization - Qt Linguist Manual</a></li>
+  <li><a href="https://doc.qt.io/qt-6/i18n-source-translation.html" target="_blank">tr() and internationalization - Writing Source Code for Translation</a></li>
+  <li><a href="https://doc.qt.io/qt-6/internationalization.html" target="_blank">tr() and internationalization - Internationalization with Qt</a></li>
+</ul>
+
+<h2 id="goals">Goals</h2>
+
+<ul>
+  <li>We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the <a href="https://doc.qt.io/qt-6/qtwidgets-index.html" target="_blank">QtWidgets</a> module.
+    <ul>
+      <li>The application is a small text editor which allows you to…
+        <ul>
+          <li>create a text file,</li>
+          <li>save it,</li>
+          <li>print it,</li>
+          <li>or reopen and edit it again.</li>
+          <li>set the font to be used.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="notepad-example">Notepad Example</h2>
+
+<p><img src="/assets/images/posts/2022-06-20/notepad_example.png" alt="notepad_example" /></p>
+
+<h3 id="running-the-example">Running the example</h3>
+
+<ul>
+  <li>To run the example from <a href="https://doc.qt.io/qtcreator/index.html">Qt Creator</a>, open the Welcome mode and select the example from Examples.</li>
+</ul>
+
+<h3 id="creating-the-notepad-project">Creating the Notepad Project</h3>
+
+<ul>
+  <li>Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process.
+    <ul>
+      <li>The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_new_project.png" alt="qtcreator_new_project" />
+<img src="/assets/images/posts/2022-06-20/qtc_new_project_cmake.png" alt="qtcreator_new_project_cmake" /></p>
+
+<ul>
+  <li>To create the Notepad project, select <strong>File</strong> &gt; <strong>New Project</strong> &gt;  <strong>Application</strong> &gt; <strong>Qt Widgets Application</strong> &gt; <strong>Choose…</strong>, and follow the instructions of the wizard.</li>
+  <li>In the <strong>Class Information</strong> dialog, type <em>Notepad</em> as the class name and select <strong>QMainWindow</strong> as the base class.</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_class_info.png" alt="qtcreator_class_information" /></p>
+
+<ul>
+  <li>
+    <p>The <strong>Qt Widgets Application</strong> wizard creates a project that contains a main source file and a set of files that specify a user interface (Notepad widget):</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>file name</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CMakeLists.txt</td>
+          <td>the project file</td>
+        </tr>
+        <tr>
+          <td>main.cpp</td>
+          <td>the main source file for the application</td>
+        </tr>
+        <tr>
+          <td>notepad.cpp</td>
+          <td>the source file of the notepad class of the Notepad widget</td>
+        </tr>
+        <tr>
+          <td>notepad.h</td>
+          <td>the header file of the notepad class for the Notepad widget</td>
+        </tr>
+        <tr>
+          <td>notepad.ui</td>
+          <td>the UI form for the Notepad widget</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>The files come with the necessary boiler plate code for you to be able to build and run the project.</p>
+  </li>
+</ul>
+
+<h3 id="main-source-file">Main Source File</h3>
+
+<ul>
+  <li>The wizard generates the following code in th main.cpp file:</li>
+</ul>
+
+<pre><code class="language-main.cpp">#include "notepad.h"    // 1.
+#include &lt;QApplication&gt;
+
+int main(int argc, char *argv[])    // 2.
+{
+    QApplication a(argc, argv);   // 3.
+    Notepad w;    // 4.
+    w.show();   // 5.
+    return a.exec();    // 6.
+}
+</code></pre>
+
+<ol>
+  <li>Include the header files for the Notepad widget and <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a>.</li>
+  <li>Defines the main function that is the entry point for all C and C++ based applications.</li>
+  <li>Creates a <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a> object.
+    <ul>
+      <li>This object manages application-wide resources and is necessary to run any Qt program that uses Qt Widgets.</li>
+      <li>It constructs an application object with argc command line arguments run in argv.</li>
+    </ul>
+    <ul>
+      <li>(For GUI applications that do not use Qt Widgets, you can use <a href="https://doc.qt.io/qt-6/qguiapplication.html" target="_blank">QGuiApplication</a> instead.)</li>
+    </ul>
+  </li>
+  <li>Creates the Notepad object.
+    <ul>
+      <li>This is the object for which the wizard created the class and the UI file.</li>
+    </ul>
+    <ul>
+      <li>The UI contains visual elements that are called <strong>widgets</strong> in Qt.
+        <ul>
+          <li>Examples of widgets are
+            <ul>
+              <li>text edits,</li>
+              <li>scroll bars,</li>
+              <li>labels,</li>
+              <li>and radio buttons.</li>
+            </ul>
+          </li>
+          <li>A widget can also be a container for other widgets;
+            <ul>
+              <li>a dialog</li>
+              <li>or a main application window,</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Shows the Notepad widget on the screen in its own window.
+    <ul>
+      <li>Widgets can also function as containers.</li>
+    </ul>
+    <ul>
+      <li>e.g. <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> which often contains several types of widgets.
+        <ul>
+          <li>Widgets are not visible by default;</li>
+          <li>the function <a href="https://doc.qt.io/qt-6/qwidget.html#show" target="_blank">show()</a> makes the widget visible.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Makes the <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a> enter its event loop.
+    <ul>
+      <li>When a Qt application is running, events are generated and sent to the widgets of the application.</li>
+      <li>e.g. mouse presses and key strokes</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="designing-a-ui">Designing a UI</h3>
+
+<ul>
+  <li>The wizard generates a UI definition in XML format: notepad.ui.
+    <ul>
+      <li>When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer.</li>
+    </ul>
+  </li>
+  <li>When you build the application, Qt Creator launches the Qt <a href="https://doc.qt.io/qt-6/uic.html" target="_blank">User Interface Compiler (uic)</a> that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h.</li>
+</ul>
+
+<h3 id="using-qt-designer">Using Qt Designer</h3>
+
+<ul>
+  <li>The wizard creates an application that uses a <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a>.
+    <ul>
+      <li>It has its own layout to which you can add
+        <ul>
+          <li>a menu bar,</li>
+          <li>dock widgets,</li>
+          <li>toolbars,</li>
+          <li>a status bar.</li>
+        </ul>
+      </li>
+      <li>The center area can be occupied by any kind of widget.
+        <ul>
+          <li>The wizard places the Notepad widget there.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>To add widgets in Qt Designer:
+    <ol>
+      <li>In the Qt Creator <strong>Edit</strong> mode, double-click the notepad.ui file in the <strong>Projects</strong> view to launch the file in the integrated Qt Designer.</li>
+      <li>Drag and drop widgets Text Edit (<a href="https://doc.qt.io/qt-6/qtextedit.html" target="_blank">QTextEdit</a>) to the form.</li>
+      <li>Press <strong>Ctrl+A</strong> (or <strong>Cmd+A</strong>) to select the widgets and click <strong>Lay out Vertically</strong> (or press <strong>Ctrl+L</strong>) to apply a vertical layout (<a href="https://doc.qt.io/qt-6/qvboxlayout.html" target="_blank">QVBoxLayout</a>).</li>
+      <li>Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong>) to save your changes.</li>
+    </ol>
+  </li>
+  <li>The UI now looks as follows in Qt Designer:</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_qtd_ui.png" alt="qtcreator_qtdesigner_ui" /></p>
+
+<ul>
+  <li>You can view the generated XML file in the code editor:</li>
+</ul>
+
+<pre><code class="language-notepad.ui">&lt;?xml version="1.0" encoding="UTF-8"?&gt;    &lt;!-- 1. --&gt;
+&lt;ui version="4.0"&gt;    &lt;!-- 2. --&gt;
+ &lt;class&gt;Notepad&lt;/class&gt;
+ &lt;widget class="QMainWindow" name="Notepad"&gt;
+  &lt;property name="geometry"&gt;
+   &lt;rect&gt;
+    &lt;x&gt;0&lt;/x&gt;
+    &lt;y&gt;0&lt;/y&gt;
+    &lt;width&gt;800&lt;/width&gt;
+    &lt;height&gt;600&lt;/height&gt;
+   &lt;/rect&gt;
+  &lt;/property&gt;
+  &lt;property name="windowTitle"&gt;
+   &lt;string&gt;Notepad&lt;/string&gt;
+  &lt;/property&gt;
+  &lt;widget class="QWidget" name="centralwidget"/&gt;
+  &lt;widget class="QMenuBar" name="menubar"&gt;
+   &lt;property name="geometry"&gt;
+    &lt;rect&gt;
+     &lt;x&gt;0&lt;/x&gt;
+     &lt;y&gt;0&lt;/y&gt;
+     &lt;width&gt;800&lt;/width&gt;
+     &lt;height&gt;20&lt;/height&gt;
+    &lt;/rect&gt;
+   &lt;/property&gt;
+  &lt;/widget&gt;
+  &lt;widget class="QStatusBar" name="statusbar"/&gt;
+ &lt;/widget&gt;
+ &lt;resources/&gt;
+ &lt;connections/&gt;
+&lt;/ui&gt;
+</code></pre>
+
+<ol>
+  <li>Contains the XML declaration, which specifies the XML version and character encoding used in the document:</li>
+  <li>The rest of the file specifies an <strong>ui</strong> element that defines a Notepad widget:</li>
+</ol>
+
+<ul>
+  <li>The UI file is used together with the header and source file of the Notepad class.</li>
+</ul>
+
+<h3 id="notepad-header-file">Notepad Header File</h3>
+
+<ul>
+  <li>The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object.</li>
+</ul>
+
+<pre><code class="language-notepad.h">#ifndef NOTEPAD_H
+#define NOTEPAD_H
+
+#include &lt;QMainWindow&gt;    // 1.
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class Notepad; }   / /2.
+QT_END_NAMESPACE
+
+class Notepad : public QMainWindow    // 3.
+{
+    Q_OBJECT
+
+public:
+    Notepad(QWidget *parent = nullptr);   // 4.
+    ~Notepad();   // 5.
+
+private:
+    Ui::Notepad *ui;    // 6.
+};
+#endif // NOTEPAD_H
+</code></pre>
+
+<ol>
+  <li>Includes <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> that provides a main application window.</li>
+  <li>Declares the Notepad class in the Ui namespace, which is the standard namespace for the UI classes generated from .ui files by the uic tool.</li>
+  <li>The class declaration contains the Q_OBJECT macro. It must come first in the class definition, and declares our class as a <a href="https://doc.qt.io/qt-6/qobject.html" target="_blank">QObject</a>.
+    <ul>
+      <li>Naturally, it must also inherit from <strong>QObject</strong>.</li>
+    </ul>
+    <ul>
+      <li>A <strong>QObject</strong> adds several abilities to a normal C++ class.</li>
+      <li>Notably, the class name and slot names can be queried at runtime.</li>
+      <li>It is also possible to query a slot’s parameter types and invoke it.</li>
+    </ul>
+  </li>
+  <li>Declares a constructor that has a default argument called <strong>parent</strong>.
+    <ul>
+      <li>The value nullptr indicates that the widget has no parent (it is a top-level widget).</li>
+    </ul>
+  </li>
+  <li>Declares a virtual destructor to free the resources that were acquired by the object during its life-cycle.
+    <ul>
+      <li>According to the C++ naming convention, destructors have the same name as the class they are associated with, prefixed with a tilde(~).</li>
+      <li>In <strong>QObject</strong> , destructors are virtual to ensure that the destructors of derived classes are invoked properly when an object is deleted through a pointer-to-base-class.</li>
+    </ul>
+  </li>
+  <li>Declares a member variable which is a pointer to the Notepad UI class.
+    <ul>
+      <li>A member variable is associated with a specific class, and accessible for all its methods.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="notepad-source-file">Notepad Source File</h3>
+
+<ul>
+  <li>The source file that the wizard generated for the Notepad class looks as follows:</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">#include "notepad.h"    // 1.
+#include "./ui_notepad.h"
+
+Notepad::Notepad(QWidget *parent)   // 2.
+    : QMainWindow(parent)   // 3.
+    , ui(new Ui::Notepad)   // 4.
+{
+    ui-&gt;setupUi(this);    // 5.
+}
+
+Notepad::~Notepad()   // 6.
+{
+    delete ui;
+}
+</code></pre>
+
+<ol>
+  <li>Includes the Notepad class header file that was generated by the wizard and the UI header file that was generated by the <strong>uic</strong> tool.</li>
+  <li>Defines the Notepad constructor.</li>
+  <li>Calls the <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> constructor, which is the base class for the Notepad class.</li>
+  <li>Creates the UI class instance and assigns it to the <strong>ui</strong> member.</li>
+  <li>Sets up the UI.</li>
+  <li>In the destructor, we delete the <strong>ui</strong>.</li>
+</ol>
+
+<h3 id="project-file">Project File</h3>
+
+<ul>
+  <li>The wizard generates the following project file, <strong>CMakeLists.txt</strong>, for us.</li>
+</ul>
+
+<pre><code class="language-CMakeLists.txt">cmake_minimum_required(VERSION 3.5)
+
+project(NotepadEx VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+
+set(PROJECT_SOURCES
+        main.cpp
+        notepad.cpp
+        notepad.h
+        notepad.ui
+)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(NotepadEx
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET NotepadEx APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+else()
+    if(ANDROID)
+        add_library(NotepadEx SHARED
+            ${PROJECT_SOURCES}
+        )
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(NotepadEx
+            ${PROJECT_SOURCES}
+        )
+    endif()
+endif()
+
+target_link_libraries(NotepadEx PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+set_target_properties(NotepadEx PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(NotepadEx)
+endif()
+</code></pre>
+
+<ul>
+  <li>The project file specifies the source, header, and UI files included in the project.</li>
+</ul>
+
+<h3 id="adding-user-interaction">Adding User Interaction</h3>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_type_here.png" alt="qtcreator_ui_type_here" /></p>
+
+<ul>
+  <li>To add functionality to the editor, we start by adding menu items and buttons on a toolbar.</li>
+  <li>Click on “Type Here”, and add the options New, Open, Save, Save as, Print and Exit.
+    <ul>
+      <li>This creates 6 lines in the Action Editor below.</li>
+      <li>To connect the actions to slots, right-click an action and select <strong>Go to slot</strong> &gt; <strong>triggered()</strong>, and complete the code for that given slot by changing the name of the function.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_action_slot.png" alt="qtcreator_ui_action_slot" /></p>
+
+<ul>
+  <li>If we also want to add the actions to a toolbar, we can assign an icon to each <a href="https://doc.qt.io/qt-6/qaction.html" target="_blank">QAction</a>, and then drag the <strong>QAction</strong> to the toolbar.</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_add_icon_toolbar.png" alt="qtcreator_ui_add_icon_toolbar" /></p>
+
+<ul>
+  <li>You assign an icon by entering an icon name in the icon property of the action concerned.
+    <ul>
+      <li>When the <strong>QAction</strong> has been dragged to the toolbar, clicking the icon will launch the associated slot.</li>
+      <li>If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a <a href="http://doc.qt.io/qt-5/resources.html" target="_blank">QRC file</a>.</li>
+      <li>Add the notepad.qrc file to CMakeLists.txt.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_add_icon_resource.png" alt="qtcreator_ui_add_icon_resource" /></p>
+
+<ul>
+  <li>Complete the method newDocument():</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionNew_triggered()
+{
+    currentFile.clear();
+    ui-&gt;textEdit-&gt;setText(QString());
+}
+</code></pre>
+
+<ul>
+  <li>The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer.</li>
+  <li>The currentFile variable is defined in the private part of notepad.h:</li>
+</ul>
+
+<pre><code class="language-notepad.h">private:
+  Ui::Notepad *ui;
+  QString currentFile;
+</code></pre>
+
+<h3 id="opening-a-file">Opening a file</h3>
+
+<ul>
+  <li>In notepad.ui, right click on actionOpen and select <strong>Go to Slot</strong></li>
+  <li>Complete method open().</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Open the file");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+
+    QTextStream in(&amp;file);
+    QString text = in.readAll();
+    ui-&gt;textEdit-&gt;setText(text);
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li>QFileDialog::getOpenFileName opens a dialog enabling you to select a file. <a href="https://doc.qt.io/qt-6/qfile.html" target="_blank">QFile</a> object <em>myfile</em> has the selected <em>file_name</em> as parameter.
+    <ul>
+      <li>We store the selected file also into the global variable <em>currentFile</em> for later purposes.</li>
+      <li>We open the file with <em>file.open</em> as a readonly text file.</li>
+      <li>If it cannot be opened, a warning is issued, and the program stops.</li>
+    </ul>
+  </li>
+  <li>We define a <a href="https://doc.qt.io/qt-6/qtextstream.html" target="_blank">QTextStream</a> instream for parameter <em>myfile</em>.
+    <ul>
+      <li>The contents of file <em>myfile</em> is copied into <a href="https://doc.qt.io/qt-6/qstring.html" target="_blank">QString</a> text.</li>
+      <li><em>setText(text)</em> fills the buffer of out editor with text.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="saving-a-file">Saving a file</h3>
+
+<ul>
+  <li>We create the method for saving a file in the same way as for <a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#opening-a-file" target="_blank">Opening a file</a>, by right clinking on <em>actionSave</em>, and selecting <strong>Go to Slot</strong>.</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionSave_triggered()
+{
+    QString fileName;
+
+    // If we don't have a filename from before, get one.
+    if (currentFile.isEmpty()) {
+        fileName = QFileDialog::getSaveFileName(this, "Save");
+        if (fileName.isEmpty()) return;
+        currentFile = fileName;
+    }
+    else {
+        fileName = currentFile;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    QTextStream out(&amp;file);
+    QString text = ui-&gt;textEdit-&gt;toPlainText();
+    out &lt;&lt; text;
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li><strong>QFile</strong> object <em>myfile</em> is linked to a member variable <em>current_file</em>, the variable that contains the file we were working with.
+    <ul>
+      <li>If we cannot open <em>myfile</em>, an error message is issued and the method stops.</li>
+      <li>We create a <strong>QTextStream</strong> <em>outstream</em>.</li>
+      <li>The contents of the editor buffer is converted to plain text, and then written to <em>outstream</em>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="saving-a-file-under-another-name">Saving a file under another name</h3>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionSave_as_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save as");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    currentFile = fileName;
+    setWindowTitle(fileName);
+    QTextStream out(&amp;file);
+    QString text = ui-&gt;textEdit-&gt;toPlainText();
+    out &lt;&lt; text;
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li>This is the same procedure as for <a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#saving-a-file" target="_blank">Saving a file</a>, the only difference being that here you need to enter a new file name for the file to be created.</li>
+</ul>
+
+<h3 id="printing-a-file">Printing a File</h3>
+
+<p>If you want to use print functionalities, you need to add <em>PrintSupport</em> to the project file:</p>
+
+<pre><code class="language-CMakeLists.txt">find_package(Qt${QT_VERSION_MAJOR}
+  REQUIRED COMPONENTS Core Gui Widgets
+  OPTIONAL_COMPONENTS PrintSupport
+)
+</code></pre>
+
+<p>In <em>notepad.cpp</em>, we declare a QPrinter object called <em>printDev</em>:</p>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionPrint_triggered()
+{
+#if defined(QT_PRINTSUPPORT_LIB) &amp;&amp; QT_CONFIG(printer)
+    QPrinter printDev;
+#if QTCONFIG(printdialog)
+    QPrintDialog dialog(&amp;printDev, this);
+    if (dialog.exec() == QDialog::Rejected)
+        return;
+#endif	// QT_CONFIG(printdialog)
+    ui-&gt;textEdit-&gt;print(&amp;printDev);
+#endif	// QT_CONFIG(printer)
+}
+</code></pre>
+
+<ul>
+  <li>We launch a printer dialog box and store the selected printer in object <em>printDev</em>.
+    <ul>
+      <li>If we clicked on <em>Cancel</em> and did not select a printer, the methods returns.</li>
+      <li>The actual printer command is given with <em>ui-&gt;textEdit-&gt;print</em> with our QPrinter object as parameter.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="select-a-font">Select a Font</h3>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionFont_triggered()
+{
+    bool fontSelected;
+    QFont font = QFontDialog::getFont(&amp;fontSelected, this);
+    if (fontSelected)
+        ui-&gt;textEdit-&gt;setFont(font);
+}
+</code></pre>
+
+<ul>
+  <li>We declare a boolean indicating  if we did select a font with <a href="https://doc.qt.io/qt-6/qfontdialog.html" target="_blank">QFontDialog</a>.
+    <ul>
+      <li>If so, we set the font with <em>ui-&gt;textEdit-&gt;setFont(myfont)</em>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="copy-cut-paste-undo-and-redo">Copy, Cut, Paste, Undo and Redo</h3>
+
+<ul>
+  <li>
+    <p>If you select some text, and want to copy it to the clipboard, you call the appropriate method of <em>ui-&gt;textEdit</em>. The same counts for cut, paste, undo and redo.</p>
+  </li>
+  <li>
+    <p>This table shows the method name to use.</p>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Method called</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Copy</td>
+      <td>ui-&gt;textEdit-&gt;copy()</td>
+    </tr>
+    <tr>
+      <td>Cut</td>
+      <td>ui-&gt;textEdit-&gt;cut()</td>
+    </tr>
+    <tr>
+      <td>Paste</td>
+      <td>ui-&gt;textEdit-&gt;paste()</td>
+    </tr>
+    <tr>
+      <td>Undo</td>
+      <td>ui-&gt;textEdit-&gt;undo()</td>
+    </tr>
+    <tr>
+      <td>Redo</td>
+      <td>ui-&gt;textEdit-&gt;redo()</td>
+    </tr>
+  </tbody>
+</table>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="notepad" /><category term="qt-example" /><summary type="html"><![CDATA[Reference Links]]></summary></entry><entry><title type="html">Qt Menus Example</title><link href="coolwindjo.github.io/gui/2022/06/06/Qt-menus-example.html" rel="alternate" type="text/html" title="Qt Menus Example" /><published>2022-06-06T00:00:00+00:00</published><updated>2022-06-06T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/06/06/Qt-menus-example</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/06/06/Qt-menus-example.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-5/qtwidgets-mainwindows-menus-example.html" target="_blank">Qt Documentation - Menus Example</a></li>
+  <li><a href="https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/mainwindows/menus" target="_blank">Qt Source code - Menus Example</a></li>
+</ul>
+
+<h2 id="menus-example">Menus Example</h2>
+
+<ul>
+  <li>How menus can be used in a main window application</li>
+  <li>Menu widget can be either
+    <ul>
+      <li>a pull-down menu in a menu bar or
+        <ul>
+          <li>Pull-down menus are shown by the menu bar when the user clicks on the respective item or presses the specified shortcut key.</li>
+        </ul>
+      </li>
+      <li>a standalone context menu.
+        <ul>
+          <li>Context menus are usually invoked by some special keyboard key or by right-clicking.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-06/menu_example.png" alt="menu_example" /></p>
+
+<ul>
+  <li>A menu consists of a list of action items.
+-In applications, many common commands can be invoked via menus, toolbar buttons as well as keyboard shortcuts.
+    <ul>
+      <li>Since the user expects the commands to be performed in the same way, regardless of the user interface used,
+        <ul>
+          <li>it is useful to represent each command as an action.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The Menus example consists of one single class, MainWidow, derived from the <a href="https://doc.qt.io/qt-5/qmainwindow.html" target="_blank">QMainWindow</a> class.
+    <ul>
+      <li>When choosing one of the action items in our application, it will display the item’s path in its central widget.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mainwindow-class-definition">MainWindow Class Definition</h3>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-5/qmainwindow.html" target="_blank">QMainWindow</a> class provides a main application window, with a menu bar, tool bars, dock widgets and a status bar around a large central widget.</li>
+</ul>
+
+<pre><code class="language-mainwindow.h">class MainWindow : public QMainWindow
+{
+    Q_OBJECT
+
+public:
+    MainWindow();
+
+protected:
+#ifndef QT_NO_CONTEXTMENU
+    void contextMenuEvent(QContextMenuEvent *event) override;
+#endif // QT_NO_CONTEXTMENU
+</code></pre>
+
+<ul>
+  <li>In this example, we will see how to implement pull-down menus as well as a context menu.
+    <ul>
+      <li>In order to implement a custom context menu we must reimplement <a href="https://doc.qt.io/qt-5/qwidget.html" target="_blank">QWidget</a>’s <a href="https://doc.qt.io/qt-5/qwidget.html#contextMenuEvent" target="_blank">contextMenuEvent()</a> function to receive the context menu events for our main window.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.h">private slots:
+    void newFile();
+    void open();
+    void save();
+    void print();
+    void undo();
+    void redo();
+    void cut();
+    void copy();
+    void paste();
+    void bold();
+    void italic();
+    void leftAlign();
+    void rightAlign();
+    void justify();
+    void center();
+    void setLineSpacing();
+    void setParagraphSpacing();
+    void about();
+    void aboutQt();
+</code></pre>
+
+<ul>
+  <li>We must also implement a collection of private slots to respond to the user activating any of our menu entries.
+    <ul>
+      <li>Note that these slots are left out of this documentation since they are trivial,</li>
+      <li>i.e. most of them are only displaying the actions’s path in the main window’s central widget.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.h">private:
+    void createActions();
+    void createMenus();
+</code></pre>
+
+<ul>
+  <li>simplify the constructor by implementing two private convenience functions
+    <ul>
+      <li>to create the various actions,</li>
+      <li>to add them to menus</li>
+      <li>and to insert the menus into our main window’s menu bar.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.h">    QMenu* fileMenu_;
+    QMenu* editMenu_;
+    QMenu* formatMenu_;
+    QMenu* helpMenu_;
+    QActionGroup* alignmentGroup_;
+    QAction* newAct_;
+    QAction* openAct_;
+    QAction* saveAct_;
+    QAction* printAct_;
+    QAction* exitAct_;
+    QAction* undoAct_;
+    QAction* redoAct_;
+    QAction* cutAct_;
+    QAction* copyAct_;
+    QAction* pasteAct_;
+    QAction* boldAct_;
+    QAction* italicAct_;
+    QAction* leftAlignAct_;
+    QAction* rightAlignAct_;
+    QAction* justifyAct_;
+    QAction* centerAct_;
+    QAction* setLineSpacingAct_;
+    QAction* setParagraphSpacingAct_;
+    QAction* aboutAct_;
+    QAction* aboutQtAct_;
+    QLabel* infoLabel_;
+</code></pre>
+
+<ul>
+  <li>Finally, we declare the various menus and actions as well as a simple information label in the application wide scope.</li>
+  <li>The <a href="https://doc.qt.io/qt-5/qmenu.html" target="_blank">QMenu</a> class provides a menu widget for use in
+    <ul>
+      <li>menu bars,</li>
+      <li>context menus,</li>
+      <li>and other popup menus</li>
+    </ul>
+  </li>
+  <li>while the <a href="https://doc.qt.io/qt-5/qaction.html" target="_blank">QAction</a> class provides an abstract UI action that can be inserted into widgets.</li>
+  <li>In some situations it is useful to group actions together,
+    <ul>
+      <li>e.g., we have a Left Align actions, a Right Align action, a Justify action, and a Center action, and we want only one of these actions to be active at any one time.</li>
+      <li>One simple way of achieving this is to group the actions together in an action group using the <a href="https://doc.qt.io/qt-5/qactiongroup.html" target="_blank">QActionGroup</a> class.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="mainwindow-class-implementation">MainWindow Class Implementation</h3>
+
+<ul>
+  <li>In the constructor, we start off by creating a regular QWidget and make it our main window’s central widget.
+    <ul>
+      <li>Note that the main window takes ownership of the widget pointer and deletes it at the appropriate time.</li>
+    </ul>
+
+    <pre><code class="language-mainwindow.cpp">MainWindow::MainWindow()
+{
+  QWidget* widget = new QWidget;
+  setCentralWidget(widget);
+
+  QWidget* topFiller = new QWidget;
+  topFiller-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  infoLabel_ = new QLabel(tr("&lt;i&gt;Choose a menu option, or right-click to "
+                            "invoke a context menu&lt;/i&gt;"));
+  infoLabel_-&gt;setFrameStyle(QFrame::StyledPanel | QFrame::Sunken);
+  infoLabel_-&gt;setAlignment(Qt::AlignCenter);
+
+  QWidget* bottomFiller = new QWidget;
+  bottomFiller-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
+
+  QVBoxLayout* layout = new QVBoxLayout;
+  layout-&gt;setContentsMargins(5, 5, 5, 5);
+  layout-&gt;addWidget(topFiller);
+  layout-&gt;addWidget(infoLabel_);
+  layout-&gt;addWidget(bottomFiller);
+  widget-&gt;setLayout(layout);
+</code></pre>
+  </li>
+  <li>Then we create the information label as well as a top and bottom filler that we add to a layout which we install on the central widget.</li>
+  <li><a href="https://doc.qt.io/qt-5/qmainwindow.html" target="_blank">QMainWindow</a> objects come with their own customized layout
+    <ul>
+      <li>Followings are considered as errors.
+        <ul>
+          <li>setting a layout on a the actual main window,</li>
+          <li>or creating a layout with a main window as a parent</li>
+        </ul>
+      </li>
+      <li>You should always set your own layout on the central widget instead.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">    createActions();
+    createMenus();
+
+    QString message = tr("A context menu is available by right-clicking");
+    statusBar()-&gt;showMessage(message);
+
+    setWindowTitle("Menus Example");
+    setMinimumSize(160, 160);
+    resize(480, 320);
+}
+</code></pre>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-5/qmainwindow.html" target="_blank">QMainWindow</a>’s <a href="https://doc.qt.io/qt-5/qmainwindow.html#statusBar">statusBar()</a>{target=”_blank”} function returns the status bar for the main window (if the status bar does not exist, this function will create and return an empty status bar).
+    <ul>
+      <li>We initialize the status bar and window title, resize the window to an appropriate size as well as ensure that the main window cannot be resized to a smaller size than the given one.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">void MainWindow::createActions()
+{
+    newAct_ = new QAction(tr("&amp;New"), this);
+    newAct_-&gt;setShortcuts(QKeySequence::New);
+    newAct_-&gt;setStatusTip(tr("Create a new file"));
+    connect(newAct_, &amp;QAction::triggered, this, &amp;MainWindow::newFile);
+    ...
+    ...
+</code></pre>
+
+<ul>
+  <li>A <a href="https://doc.qt.io/qt-5/qaction.html" target="_blank">QAction</a> object may contain
+    <ul>
+      <li>an icon,</li>
+      <li>a text,</li>
+      <li>a shortcut,</li>
+      <li>a status tip,</li>
+      <li>a “What’s this?” text,</li>
+      <li>and a tooltip.</li>
+    </ul>
+  </li>
+  <li>
+    <p>Most of these can be set in the constructor, but they can also be set independently using the provided convenience functions.</p>
+  </li>
+  <li>In the createActions() function,
+    <ul>
+      <li>we first create a newAct action.
+        <ul>
+          <li>We make <strong>Ctrl+N</strong> its shortcut using the <a href="https://doc.qt.io/qt-5/qaction.html#shortcut-prop" target="_blank">QAction::setShortcut()</a> function,</li>
+          <li>and we set its status tip using <a href="https://doc.qt.io/qt-5/qaction.html#statusTip-prop" target="_blank">QAction::setStatusTip()</a> function (the status tip is displayed on all status bars provided by the actions’s top-level parent widget).</li>
+          <li>We also connect its <a href="https://doc.qt.io/qt-5/qaction.html#triggered" target="_blank">triggered()</a> signal to the newFile() slot.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The rest of the actions are created in a similar manner.</li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">    alignmentGroup_ = new QActionGroup(this);
+    alignmentGroup_-&gt;addAction(leftAlignAct_);
+    alignmentGroup_-&gt;addAction(rightAlignAct_);
+    alignmentGroup_-&gt;addAction(justifyAct_);
+    alignmentGroup_-&gt;addAction(centerAct_);
+    leftAlignAct_-&gt;setCheckable(true);
+}
+</code></pre>
+
+<ul>
+  <li>
+    <p>Once we have created the <strong>Left Align, Right Align, Justify,</strong> and a <strong>Center</strong> actions, we can also create the previously mentioned action group.</p>
+  </li>
+  <li>Each action is added to the group using <a href="https://doc.qt.io/qt-5/qactiongroup.html" target="_blank">QActionGroup</a>’s <a href="https://doc.qt.io/qt-5/qactiongroup.html#addAction" target="_blank">addAction()</a> function.
+    <ul>
+      <li>Note that an action also can be added to a group by creating it with the group as its parent.
+        <ul>
+          <li>Since an action group is exclusive by default, only one of the actions in the group is checked at any one time
+            <ul>
+              <li>(this can be altered using the <a href="https://doc.qt.io/qt-5/qactiongroup.html#setExclusive" target="_blank">QActionGroup::setExclusive()</a> function).</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>When all the actions are created, we use the createMenus() function to add the actions to the menus and to insert the menus into the menu bar:</li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">void MainWindow::createMenus()
+{
+    fileMenu_ = menuBar()-&gt;addMenu(tr("&amp;File"));
+    fileMenu_-&gt;addAction(newAct_);
+    fileMenu_-&gt;addAction(openAct_);
+    fileMenu_-&gt;addAction(saveAct_);
+    fileMenu_-&gt;addAction(printAct_);
+    fileMenu_-&gt;addSeparator();
+    fileMenu_-&gt;addAction(exitAct_);
+
+    editMenu_ = menuBar()-&gt;addMenu(tr("&amp;Edit"));
+    editMenu_-&gt;addAction(undoAct_);
+    editMenu_-&gt;addAction(redoAct_);
+    editMenu_-&gt;addSeparator();
+    editMenu_-&gt;addAction(cutAct_);
+    editMenu_-&gt;addAction(copyAct_);
+    editMenu_-&gt;addAction(pasteAct_);
+    editMenu_-&gt;addSeparator();
+</code></pre>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-5/qmenubar.html" target="_blank">QMenuBar</a>’s <a href="https://doc.qt.io/qt-5/qmenubar.html#addMenu" target="_blank">addMenu()</a> function appends a new <a href="https://doc.qt.io/qt-5/qmenu.html" target="_blank">QMenu</a> with the given title, to the menu bar
+    <ul>
+      <li>(note that the menu bar takes ownership of the menu).</li>
+      <li>We use <a href="https://doc.qt.io/qt-5/qwidget.html" target="_blank">QWidget</a>’s <a href="https://doc.qt.io/qt-5/qwidget.html#addAction" target="_blank">addAction()</a> function to add each action to the corresponding menu.
+        <ul>
+          <li>Alternatively, the <a href="https://doc.qt.io/qt-5/qmenu.html" target="_blank">QMenu</a> class provides several <a href="https://doc.qt.io/qt-5/qmenu.html#addAction" target="_blank">addAction()</a> convenience functions that create and add new actions from given texts and/or icons.
+            <ul>
+              <li>You can also provide a member that will automatically connect to
+                <ul>
+                  <li>the new action’s <a href="https://doc.qt.io/qt-5/qaction.html#triggered" target="_blank">triggered()</a> signal,</li>
+                  <li>and a shortcut represented by a <a href="https://doc.qt.io/qt-5/qkeysequence.html" target="_blank">QKeySequence</a> instance.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>The <a href="https://doc.qt.io/qt-5/qmenu.html#addSeparator" target="_blank">QMenu::addSeparator()</a> function creates and returns a new separator action,
+    <ul>
+      <li>i.e. an action for which <a href="https://doc.qt.io/qt-5/qaction.html#isSeparator">QMenu::isSeparator()</a> returns true,</li>
+      <li>and adds the new action to the menu’s list of actions.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">    formatMenu_ = editMenu_-&gt;addMenu(tr("&amp;Format"));
+    formatMenu_-&gt;addAction(boldAct_);
+    formatMenu_-&gt;addAction(italicAct_);
+    formatMenu_-&gt;addSeparator()-&gt;setText(tr("Alignment"));
+    formatMenu_-&gt;addAction(leftAlignAct_);
+    formatMenu_-&gt;addAction(rightAlignAct_);
+    formatMenu_-&gt;addAction(justifyAct_);
+    formatMenu_-&gt;addAction(centerAct_);
+    formatMenu_-&gt;addSeparator();
+    formatMenu_-&gt;addAction(setLineSpacingAct_);
+    formatMenu_-&gt;addAction(setParagraphSpacingAct_);
+</code></pre>
+
+<ul>
+  <li>Note the <strong>Format</strong> menu
+    <ul>
+      <li>It is added as a submenu to the <strong>Edit</strong> Menu using <a href="https://doc.qt.io/qt-5/qmenu.html" target="_blank">QMenu</a>’s <a href="https://doc.qt.io/qt-5/qmenu.html#addMenu" target="_blank">addMenu</a> function.</li>
+      <li>Take a look at the alignment actions: In the createActions() function we added the <strong>leftAlignAct, rightAlignAct, justifyAct and centerAct</strong> actions to an action group.
+        <ul>
+          <li>Nevertheless, we must add each action to the menu separately while the action group does its magic behind the scene.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-mainwindow.cpp">#ifndef QT_NO_CONTEXTMENU
+void MainWindow::contextMenuEvent(QContextMenuEvent* event)
+{
+    QMenu menu(this);
+    menu.addAction(cutAct_);
+    menu.addAction(copyAct_);
+    menu.addAction(pasteAct_);
+    menu.exec(event-&gt;globalPos());
+}
+#endif	// QT_NO_CONTEXTMENU
+</code></pre>
+
+<ul>
+  <li>To provide a custom context menu, we must reimplement <a href="https://doc.qt.io/qt-5/qwidget.html" target="_blank">QWidget</a>’s <a href="https://doc.qt.io/qt-5/qwidget.html#contextMenuEvent" target="_blank">contextMenuEvent()</a> function to receive the widget’s context menu events.</li>
+  <li>Whenever we receive such an event, we create a menu containing the <strong>Cut, Copy</strong> and <strong>Paste</strong> actions,
+    <ul>
+      <li>Context menus can be executed either asynchronously using the <a href="https://doc.qt.io/qt-5/qmenu.html#popup" target="_blank">popup()</a> function or synchronously using the <a href="https://doc.qt.io/qt-5/qmenu.html#exec" target="_blank">exec()</a> function.</li>
+    </ul>
+  </li>
+  <li>By passing the event’s position as argument, we ensure that the context menu appears at the expected position.</li>
+</ul>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="menu" /><category term="qt-example" /><summary type="html"><![CDATA[Reference Links Qt Documentation - Menus Example Qt Source code - Menus Example Menus Example How menus can be used in a main window application Menu widget can be either a pull-down menu in a menu bar or Pull-down menus are shown by the menu bar when the user clicks on the respective item or presses the specified shortcut key. a standalone context menu. Context menus are usually invoked by some special keyboard key or by right-clicking. A menu consists of a list of action items. -In applications, many common commands can be invoked via menus, toolbar buttons as well as keyboard shortcuts. Since the user expects the commands to be performed in the same way, regardless of the user interface used, it is useful to represent each command as an action. The Menus example consists of one single class, MainWidow, derived from the QMainWindow class. When choosing one of the action items in our application, it will display the item’s path in its central widget. MainWindow Class Definition QMainWindow class provides a main application window, with a menu bar, tool bars, dock widgets and a status bar around a large central widget. class MainWindow : public QMainWindow { Q_OBJECT public: MainWindow(); protected: #ifndef QT_NO_CONTEXTMENU void contextMenuEvent(QContextMenuEvent *event) override; #endif // QT_NO_CONTEXTMENU In this example, we will see how to implement pull-down menus as well as a context menu. In order to implement a custom context menu we must reimplement QWidget’s contextMenuEvent() function to receive the context menu events for our main window. private slots: void newFile(); void open(); void save(); void print(); void undo(); void redo(); void cut(); void copy(); void paste(); void bold(); void italic(); void leftAlign(); void rightAlign(); void justify(); void center(); void setLineSpacing(); void setParagraphSpacing(); void about(); void aboutQt(); We must also implement a collection of private slots to respond to the user activating any of our menu entries. Note that these slots are left out of this documentation since they are trivial, i.e. most of them are only displaying the actions’s path in the main window’s central widget. private: void createActions(); void createMenus(); simplify the constructor by implementing two private convenience functions to create the various actions, to add them to menus and to insert the menus into our main window’s menu bar. QMenu* fileMenu_; QMenu* editMenu_; QMenu* formatMenu_; QMenu* helpMenu_; QActionGroup* alignmentGroup_; QAction* newAct_; QAction* openAct_; QAction* saveAct_; QAction* printAct_; QAction* exitAct_; QAction* undoAct_; QAction* redoAct_; QAction* cutAct_; QAction* copyAct_; QAction* pasteAct_; QAction* boldAct_; QAction* italicAct_; QAction* leftAlignAct_; QAction* rightAlignAct_; QAction* justifyAct_; QAction* centerAct_; QAction* setLineSpacingAct_; QAction* setParagraphSpacingAct_; QAction* aboutAct_; QAction* aboutQtAct_; QLabel* infoLabel_; Finally, we declare the various menus and actions as well as a simple information label in the application wide scope. The QMenu class provides a menu widget for use in menu bars, context menus, and other popup menus while the QAction class provides an abstract UI action that can be inserted into widgets. In some situations it is useful to group actions together, e.g., we have a Left Align actions, a Right Align action, a Justify action, and a Center action, and we want only one of these actions to be active at any one time. One simple way of achieving this is to group the actions together in an action group using the QActionGroup class. MainWindow Class Implementation In the constructor, we start off by creating a regular QWidget and make it our main window’s central widget. Note that the main window takes ownership of the widget pointer and deletes it at the appropriate time. MainWindow::MainWindow() { QWidget* widget = new QWidget; setCentralWidget(widget); QWidget* topFiller = new QWidget; topFiller-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); infoLabel_ = new QLabel(tr("&lt;i&gt;Choose a menu option, or right-click to " "invoke a context menu&lt;/i&gt;")); infoLabel_-&gt;setFrameStyle(QFrame::StyledPanel | QFrame::Sunken); infoLabel_-&gt;setAlignment(Qt::AlignCenter); QWidget* bottomFiller = new QWidget; bottomFiller-&gt;setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding); QVBoxLayout* layout = new QVBoxLayout; layout-&gt;setContentsMargins(5, 5, 5, 5); layout-&gt;addWidget(topFiller); layout-&gt;addWidget(infoLabel_); layout-&gt;addWidget(bottomFiller); widget-&gt;setLayout(layout); Then we create the information label as well as a top and bottom filler that we add to a layout which we install on the central widget. QMainWindow objects come with their own customized layout Followings are considered as errors. setting a layout on a the actual main window, or creating a layout with a main window as a parent You should always set your own layout on the central widget instead. createActions(); createMenus(); QString message = tr("A context menu is available by right-clicking"); statusBar()-&gt;showMessage(message); setWindowTitle("Menus Example"); setMinimumSize(160, 160); resize(480, 320); } QMainWindow’s statusBar(){target=”_blank”} function returns the status bar for the main window (if the status bar does not exist, this function will create and return an empty status bar). We initialize the status bar and window title, resize the window to an appropriate size as well as ensure that the main window cannot be resized to a smaller size than the given one. void MainWindow::createActions() { newAct_ = new QAction(tr("&amp;New"), this); newAct_-&gt;setShortcuts(QKeySequence::New); newAct_-&gt;setStatusTip(tr("Create a new file")); connect(newAct_, &amp;QAction::triggered, this, &amp;MainWindow::newFile); ... ... A QAction object may contain an icon, a text, a shortcut, a status tip, a “What’s this?” text, and a tooltip. Most of these can be set in the constructor, but they can also be set independently using the provided convenience functions. In the createActions() function, we first create a newAct action. We make Ctrl+N its shortcut using the QAction::setShortcut() function, and we set its status tip using QAction::setStatusTip() function (the status tip is displayed on all status bars provided by the actions’s top-level parent widget). We also connect its triggered() signal to the newFile() slot. The rest of the actions are created in a similar manner. alignmentGroup_ = new QActionGroup(this); alignmentGroup_-&gt;addAction(leftAlignAct_); alignmentGroup_-&gt;addAction(rightAlignAct_); alignmentGroup_-&gt;addAction(justifyAct_); alignmentGroup_-&gt;addAction(centerAct_); leftAlignAct_-&gt;setCheckable(true); } Once we have created the Left Align, Right Align, Justify, and a Center actions, we can also create the previously mentioned action group. Each action is added to the group using QActionGroup’s addAction() function. Note that an action also can be added to a group by creating it with the group as its parent. Since an action group is exclusive by default, only one of the actions in the group is checked at any one time (this can be altered using the QActionGroup::setExclusive() function). When all the actions are created, we use the createMenus() function to add the actions to the menus and to insert the menus into the menu bar: void MainWindow::createMenus() { fileMenu_ = menuBar()-&gt;addMenu(tr("&amp;File")); fileMenu_-&gt;addAction(newAct_); fileMenu_-&gt;addAction(openAct_); fileMenu_-&gt;addAction(saveAct_); fileMenu_-&gt;addAction(printAct_); fileMenu_-&gt;addSeparator(); fileMenu_-&gt;addAction(exitAct_); editMenu_ = menuBar()-&gt;addMenu(tr("&amp;Edit")); editMenu_-&gt;addAction(undoAct_); editMenu_-&gt;addAction(redoAct_); editMenu_-&gt;addSeparator(); editMenu_-&gt;addAction(cutAct_); editMenu_-&gt;addAction(copyAct_); editMenu_-&gt;addAction(pasteAct_); editMenu_-&gt;addSeparator(); QMenuBar’s addMenu() function appends a new QMenu with the given title, to the menu bar (note that the menu bar takes ownership of the menu). We use QWidget’s addAction() function to add each action to the corresponding menu. Alternatively, the QMenu class provides several addAction() convenience functions that create and add new actions from given texts and/or icons. You can also provide a member that will automatically connect to the new action’s triggered() signal, and a shortcut represented by a QKeySequence instance. The QMenu::addSeparator() function creates and returns a new separator action, i.e. an action for which QMenu::isSeparator() returns true, and adds the new action to the menu’s list of actions. formatMenu_ = editMenu_-&gt;addMenu(tr("&amp;Format")); formatMenu_-&gt;addAction(boldAct_); formatMenu_-&gt;addAction(italicAct_); formatMenu_-&gt;addSeparator()-&gt;setText(tr("Alignment")); formatMenu_-&gt;addAction(leftAlignAct_); formatMenu_-&gt;addAction(rightAlignAct_); formatMenu_-&gt;addAction(justifyAct_); formatMenu_-&gt;addAction(centerAct_); formatMenu_-&gt;addSeparator(); formatMenu_-&gt;addAction(setLineSpacingAct_); formatMenu_-&gt;addAction(setParagraphSpacingAct_); Note the Format menu It is added as a submenu to the Edit Menu using QMenu’s addMenu function. Take a look at the alignment actions: In the createActions() function we added the leftAlignAct, rightAlignAct, justifyAct and centerAct actions to an action group. Nevertheless, we must add each action to the menu separately while the action group does its magic behind the scene. #ifndef QT_NO_CONTEXTMENU void MainWindow::contextMenuEvent(QContextMenuEvent* event) { QMenu menu(this); menu.addAction(cutAct_); menu.addAction(copyAct_); menu.addAction(pasteAct_); menu.exec(event-&gt;globalPos()); } #endif // QT_NO_CONTEXTMENU To provide a custom context menu, we must reimplement QWidget’s contextMenuEvent() function to receive the widget’s context menu events. Whenever we receive such an event, we create a menu containing the Cut, Copy and Paste actions, Context menus can be executed either asynchronously using the popup() function or synchronously using the exec() function. By passing the event’s position as argument, we ensure that the context menu appears at the expected position.]]></summary></entry><entry><title type="html">Qt Meta Object</title><link href="coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html" rel="alternate" type="text/html" title="Qt Meta Object" /><published>2022-05-17T00:00:00+00:00</published><updated>2022-05-17T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/05/17/Qt-meta-object</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://wiki.qt.io/Qt_for_Beginners" target="_blank">Qt for Beginners</a></li>
+</ul>
+
+<h2 id="the-meta-object">The Meta Object</h2>
+
+<ul>
+  <li>Qt provides a meta-object system.
+    <ul>
+      <li>Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like:
+        <ul>
+          <li>Introspection: capability of examining a type at run-time</li>
+          <li>Asynchronous function calls</li>
+        </ul>
+      </li>
+      <li>To use such <strong>Meta-object</strong> capabilities in an application, one can subclass <a href="http://doc.qt.io/qt-5/qobject.html#" target="_blank">QObject</a> and <strong>mark</strong> it so that the <strong>meta-object compiler (moc)</strong> can interpret and translate it.</li>
+      <li>Code produced by <strong>moc</strong> includes
+        <ul>
+          <li>signals and slots signatures,</li>
+          <li>methods that are used to retrieve meta-information from those <strong>marked</strong> classes, properties handling…</li>
+        </ul>
+      </li>
+      <li>All this information can be accessed using the following method:
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="n">QMetaObject</span> <span class="o">*</span> <span class="n">QObject</span><span class="o">::</span><span class="n">metaObject</span><span class="p">()</span> <span class="k">const</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li><a href="http://doc.qt.io/qt-5/qmetaobject.html#" target="_blank">QMetaObject</a> class contains all the methods that deal with meta-objects.</li>
+</ul>
+
+<h2 id="important-macros">Important macros</h2>
+
+<ul>
+  <li>The most important macro is <strong>Q_OBJECT</strong>.
+    <ul>
+      <li>Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler.
+        <ul>
+          <li>The <strong>moc</strong> is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax.
+            <pre><code class="language-mywidget.h">class MyWidget : public QWidget
+{
+Q_OBJECT
+public:
+  MyWidget(QWidget *parent=nullptr);
+}
+</code></pre>
+          </li>
+          <li>Others marker macros for <strong>moc</strong> are
+            <ul>
+              <li><strong>signals</strong></li>
+              <li>public / protected / private <strong>slots</strong></li>
+            </ul>
+
+            <p>that mark the different methods that need to be extended.</p>
+          </li>
+          <li><strong>SIGNAL</strong> and <strong>SLOT</strong> are also two very important and useful macros.
+            <ul>
+              <li>When a <strong>signal</strong> is emitted, the <strong>meta-object</strong> system is used to compare the signature of the <strong>signal</strong>, to check the connection, and to find the <strong>slot</strong> using it’s signature.</li>
+              <li>These macros are actually used to convert the provided method signature into a string that matches the one stored in the <strong>meta-object</strong>.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="creating-custom-signals-and-slots">Creating custom signals and slots</h2>
+
+<ul>
+  <li>Creating custom <strong>slots</strong>
+    <ul>
+      <li>Slots are like normal methods, but with small decorations around,</li>
+    </ul>
+  </li>
+  <li>Creating custom <strong>signals</strong>
+    <ul>
+      <li>Signals need little to no implementation at all.</li>
+    </ul>
+  </li>
+  <li>Checklist:
+    <ul>
+      <li>add <strong>Q_OBJECT</strong> macro</li>
+      <li>add <strong>signals</strong> section, and write signals prototypes</li>
+      <li>add <strong>public slots</strong> or <strong>protected slots</strong> or <strong>private slots</strong> sections, and write slots prototypes</li>
+      <li>implement <strong>slots</strong> as normal methods</li>
+      <li>establish <strong>connect</strong>ions</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="creating-custom-slots">Creating custom slots</h3>
+
+<ul>
+  <li>In order to implement a slot, we first need to <a href="https://coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern.html" target="_blank">make the class be able to send signals and have slots</a>.</li>
+  <li>This is done by setting the <strong>Q_OBJECT</strong> macro in the class declaration (often in the header).</li>
+  <li>After that, a <strong>slot</strong> should be declared in the corresponding section, and implemented as a normal method.</li>
+  <li>Finally, <strong>slots</strong> are connected to <strong>signals</strong>.</li>
+</ul>
+
+<h3 id="creating-signals">Creating signals</h3>
+
+<ul>
+  <li>As for slots, we first need to add the <strong>Q_OBJECT</strong> macro.</li>
+  <li><strong>Signals</strong> should also be declared in the <em>signals</em> section, and there is no need for them to be implemented.</li>
+  <li>They are emitted using the emit keyword:
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">emit</span> <span class="nf">mySignal</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Note that in order to send signals that have parameters, you have to pass them in the signal emission:
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">emit</span> <span class="nf">mySignal</span><span class="p">(</span><span class="n">firstParameter</span><span class="p">,</span> <span class="n">secondParameter</span> <span class="p">...);</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="example">Example</h3>
+
+<h4 id="creating-custom-slots-1">Creating custom slots</h4>
+
+<ul>
+  <li>Let’s start with our window with the button:</li>
+</ul>
+
+<pre><code class="language-window.h">#ifndef WINDOW_H
+#define WINDOW_H
+
+#include &lt;QWidget&gt;
+
+class QPushButton;
+class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+signals:
+};
+
+#endif // WINDOW_H
+</code></pre>
+
+<pre><code class="language-window.cpp">#include "window.h"
+
+#include &lt;QPushButton&gt;
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton-&gt;setGeometry(10, 10, 80, 30);
+
+    // New: Do the connection
+    // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+    m_pButton-&gt;setCheckable(true);
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton-&gt;setText("Checked");
+  } else {
+    m_pButton-&gt;setText("Hello World");
+  }
+}
+</code></pre>
+
+<ul>
+  <li>New Button Action
+    <ul>
+      <li>can be checked
+        <ul>
+          <li>when checked, it displays “checked”</li>
+          <li>when unchecked, it restores “Hello World”
+            <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nl">signals:</span>
+<span class="kt">void</span> <span class="n">QPushButton</span><span class="o">::</span><span class="n">clicked</span><span class="p">(</span><span class="kt">bool</span> <span class="n">checked</span><span class="p">)</span>
+<span class="k">private</span> <span class="n">slots</span><span class="o">:</span>
+<span class="kt">void</span> <span class="n">Window</span><span class="o">::</span><span class="n">slotButtonClicked</span><span class="p">(</span><span class="kt">bool</span> <span class="n">checked</span><span class="p">);</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li>Implement private and protected slots by prefixing them with “slot”</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="emitting-custom-signals">Emitting custom signals</h4>
+
+<ul>
+  <li>New Button Action
+    <ul>
+      <li>close the app. after clicking 10 times
+        <ul>
+          <li>implement a counter that count the number of clicks</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-window.h">class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+signals:
+    void counterReached();
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+    int m_nCounter;
+};
+</code></pre>
+<ul>
+  <li>add “signals” section in the header
+    <ul>
+      <li>Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this.</li>
+      <li>Now we need to emit the signal when the counter reaches 10.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-window.cpp">#include &lt;QPushButton&gt;
+#include &lt;QApplication&gt;
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton-&gt;setGeometry(10, 10, 80, 30);
+    m_pButton-&gt;setCheckable(true);
+
+    m_nCounter = 0;
+
+    // New: Do the connection
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+    connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit()));
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton-&gt;setText("Checked");
+  } else {
+    m_pButton-&gt;setText("Hello World");
+  }
+
+  m_nCounter++;
+  if (m_nCounter == 10){
+      emit counterReached();
+  }
+}
+</code></pre>
+<ul>
+  <li>We need t o write the keyword emit to send the signal.</li>
+</ul>
+
+<h3 id="troubleshooting">Troubleshooting</h3>
+
+<p>While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>main.cpp:<span class="o">(</span>.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3<span class="o">)</span>: undefined reference to <span class="sb">`</span>vtable <span class="k">for </span>Window<span class="s1">'
+</span></code></pre></div></div>
+
+<p>This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake.</p>
+
+<h3 id="widgets">Widgets</h3>
+
+<h4 id="qradiobutton">QRadioButton</h4>
+
+<ul>
+  <li>Radio button is a standard GUI component being used to make a unique choice from a list.</li>
+  <li>QRadioButton behaves just like QPushButton thanks to a nice inheritance.</li>
+  <li>By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup.</li>
+  <li>QButtonGroup
+    <ul>
+      <li>Allocate a new button group</li>
+      <li>Attach it to the parent object
+        <ul>
+          <li>e.g.)
+            <ul>
+              <li>MainWindow</li>
+              <li>this
+                <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">QButtonGroup</span><span class="o">*</span> <span class="n">pButtonGroup</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">QButtonGroup</span><span class="p">(</span><span class="n">object</span><span class="p">);</span>
+<span class="c1">// Add buttons in the button group</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button1</span><span class="p">);</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button2</span><span class="p">);</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button3</span><span class="p">);</span>
+</code></pre></div>                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="meta-object" /><summary type="html"><![CDATA[Reference Links Qt for Beginners The Meta Object Qt provides a meta-object system. Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like: Introspection: capability of examining a type at run-time Asynchronous function calls To use such Meta-object capabilities in an application, one can subclass QObject and mark it so that the meta-object compiler (moc) can interpret and translate it. Code produced by moc includes signals and slots signatures, methods that are used to retrieve meta-information from those marked classes, properties handling… All this information can be accessed using the following method: const QMetaObject * QObject::metaObject() const QMetaObject class contains all the methods that deal with meta-objects. Important macros The most important macro is Q_OBJECT. Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler. The moc is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax. class MyWidget : public QWidget { Q_OBJECT public: MyWidget(QWidget *parent=nullptr); } Others marker macros for moc are signals public / protected / private slots that mark the different methods that need to be extended. SIGNAL and SLOT are also two very important and useful macros. When a signal is emitted, the meta-object system is used to compare the signature of the signal, to check the connection, and to find the slot using it’s signature. These macros are actually used to convert the provided method signature into a string that matches the one stored in the meta-object. Creating custom signals and slots Creating custom slots Slots are like normal methods, but with small decorations around, Creating custom signals Signals need little to no implementation at all. Checklist: add Q_OBJECT macro add signals section, and write signals prototypes add public slots or protected slots or private slots sections, and write slots prototypes implement slots as normal methods establish connections Creating custom slots In order to implement a slot, we first need to make the class be able to send signals and have slots. This is done by setting the Q_OBJECT macro in the class declaration (often in the header). After that, a slot should be declared in the corresponding section, and implemented as a normal method. Finally, slots are connected to signals. Creating signals As for slots, we first need to add the Q_OBJECT macro. Signals should also be declared in the signals section, and there is no need for them to be implemented. They are emitted using the emit keyword: emit mySignal(); Note that in order to send signals that have parameters, you have to pass them in the signal emission: emit mySignal(firstParameter, secondParameter ...); Example Creating custom slots Let’s start with our window with the button: #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; signals: }; #endif // WINDOW_H #include "window.h" #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton("Hello World", this); m_pButton-&gt;setGeometry(10, 10, 80, 30); // New: Do the connection // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit())); m_pButton-&gt;setCheckable(true); connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText("Checked"); } else { m_pButton-&gt;setText("Hello World"); } } New Button Action can be checked when checked, it displays “checked” when unchecked, it restores “Hello World” signals: void QPushButton::clicked(bool checked) private slots: void Window::slotButtonClicked(bool checked); Implement private and protected slots by prefixing them with “slot” Emitting custom signals New Button Action close the app. after clicking 10 times implement a counter that count the number of clicks class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); signals: void counterReached(); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; int m_nCounter; }; add “signals” section in the header Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this. Now we need to emit the signal when the counter reaches 10. #include &lt;QPushButton&gt; #include &lt;QApplication&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton("Hello World", this); m_pButton-&gt;setGeometry(10, 10, 80, 30); m_pButton-&gt;setCheckable(true); m_nCounter = 0; // New: Do the connection connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit())); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText("Checked"); } else { m_pButton-&gt;setText("Hello World"); } m_nCounter++; if (m_nCounter == 10){ emit counterReached(); } } We need t o write the keyword emit to send the signal. Troubleshooting While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error. main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vtable for Window' This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake. Widgets QRadioButton Radio button is a standard GUI component being used to make a unique choice from a list. QRadioButton behaves just like QPushButton thanks to a nice inheritance. By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup. QButtonGroup Allocate a new button group Attach it to the parent object e.g.) MainWindow this QButtonGroup* pButtonGroup = new QButtonGroup(object); // Add buttons in the button group pButtonGroup-&gt;addButton(button1); pButtonGroup-&gt;addButton(button2); pButtonGroup-&gt;addButton(button3);]]></summary></entry><entry><title type="html">Qt Observer Pattern</title><link href="coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern.html" rel="alternate" type="text/html" title="Qt Observer Pattern" /><published>2022-04-19T00:00:00+00:00</published><updated>2022-04-19T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://wiki.qt.io/Qt_for_Beginners" target="_blank">Qt for Beginners</a></li>
+</ul>
+
+<h2 id="the-observer-pattern">The observer pattern</h2>
+
+<ul>
+  <li>Nearly all UI toolkits have a mechanism to detect an user action, and respond to this action.
+    <ul>
+      <li>Some of them use callbacks, other use listeners, but basically, all of them are inspired by the observer pattern.</li>
+      <li>Observer pattern is used when an observable object wants to notify other observers objects about a state change.
+        <ul>
+          <li>An user has clicked on a button -&gt; a menu should be displayed</li>
+          <li>A web page just finished loading -&gt; a process should extract some information from this loaded page.</li>
+          <li>An user is scrolling through a list of items(in an app store for example) -&gt; reached the end, so other items should be loaded</li>
+        </ul>
+      </li>
+      <li>Observer pattern is used everywhere in GUI applications,
+        <ul>
+          <li>And often leads to some boilerplate code (duplicate code).
+            <ul>
+              <li>Qt was created with the idea of removing this boilerplate code and providing a nice and clean syntax,</li>
+              <li>And the signal and slots mechanism is the answer.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="signals-and-slots">Signals and slots</h2>
+
+<ul>
+  <li>Instead of having observable objects and observers, and registering them, Qt provides two high level concepts: <strong>signals</strong> and <strong>slots</strong>.
+    <ul>
+      <li>A <strong>signal</strong> is a message
+        <ul>
+          <li>that object can send</li>
+          <li>most of the time to inform of a status change</li>
+        </ul>
+      </li>
+      <li>A <strong>slots</strong> is a function (handler?)
+        <ul>
+          <li>that is used to accept and respond to a signal</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Examples from <a href="https://doc.qt.io/qt-5/qpushbutton.html" target="_blank">QPushButton</a> class.
+    <ul>
+      <li>Signals
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">clicked</code> (pressed &amp; released)</li>
+          <li><code class="language-plaintext highlighter-rouge">pressed</code></li>
+          <li><code class="language-plaintext highlighter-rouge">released</code></li>
+        </ul>
+      </li>
+      <li>Slots
+        <ul>
+          <li><code class="language-plaintext highlighter-rouge">QApplication::quit</code></li>
+          <li><code class="language-plaintext highlighter-rouge">QWidget::setEnabled</code></li>
+          <li><code class="language-plaintext highlighter-rouge">QPushButton::setText</code></li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>In order to respond to a signal, a <strong>slot</strong> must be <em>connected</em> to a <strong>signal</strong>.
+    <ul>
+      <li>Qt provides the method QObject::<strong>connect</strong>.
+        <ul>
+          <li>It is used this way, with the two macros <code class="language-plaintext highlighter-rouge">SIGNAL</code> and <code class="language-plaintext highlighter-rouge">SLOT</code></li>
+        </ul>
+
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">FooObjectA</span> <span class="o">*</span><span class="n">fooA</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">FooObjectA</span><span class="p">();</span>
+<span class="n">FooObjectB</span> <span class="o">*</span><span class="n">fooB</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">FooObjectB</span><span class="p">();</span>
+
+<span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">fooA</span><span class="p">,</span> <span class="n">SIGNAL</span> <span class="p">(</span><span class="n">bared</span><span class="p">()),</span> <span class="n">fooB</span><span class="p">,</span> <span class="n">SLOT</span> <span class="p">(</span><span class="n">baz</span><span class="p">()));</span>
+</code></pre></div>        </div>
+        <ul>
+          <li>assuming that <code class="language-plaintext highlighter-rouge">FooObjectA</code> have a <code class="language-plaintext highlighter-rouge">bared</code> signal, and <code class="language-plaintext highlighter-rouge">FooObjectB</code> have a <code class="language-plaintext highlighter-rouge">baz</code> slot.
+            <ul>
+              <li>write signature of the signal and the slot inside the two macros <em>SIGNAL</em> and <em>SLOT</em>.</li>
+            </ul>
+          </li>
+          <li><strong>Remark</strong>: Basically, <em>signal</em>s and <em>slot</em>s are methods, that might or might not have arguments,
+            <ul>
+              <li>but that never return anything.</li>
+            </ul>
+          </li>
+          <li>While the notion of a <em>signal</em> as a method is unusual,
+            <ul>
+              <li>a <em>slot</em> is actually a real method, and can be called as usual in other methods, or whilst responding to a <em>signal</em>.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="transmitting-information">Transmitting information</h2>
+
+<ul>
+  <li>The <em>signal</em>s and <em>slot</em>s mechanism is useful to respond to buttons clicks, but it can do much more than that.
+    <ul>
+      <li>For example, it can also be used to communicate information.
+        <ul>
+          <li>While playing song,
+            <ul>
+              <li>a progress bar is needed to show how much time remains before the song is over.</li>
+              <li>A media player might have a class that is used to check the progress of the media.
+                <ul>
+                  <li>An instance of this class might periodically send a <em>tick</em> signal, with the progress value.
+This <em>signal</em> can be connected to a  <a href="https://doc.qt.io/qt-5/qprogressbar.html" target="_blank">QProgressBar</a>, that can be used to display the progress.</li>
+                  <li>The hypothetical class used to check the progress might have a <em>signal</em> that have this signature:
+                    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">MediaProgressManager</span><span class="o">::</span><span class="n">tick</span><span class="p">(</span><span class="kt">int</span> <span class="n">ms</span><span class="p">);</span>
+</code></pre></div>                    </div>
+                  </li>
+                  <li>and we know from the documentation, that the <a href="https://doc.qt.io/qt-5/qprogressbar.html" target="_blank">QProgressBar</a> has this slot:
+                    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">QProressBar</span><span class="o">::</span><span class="n">setValue</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">);</span>
+</code></pre></div>                    </div>
+                  </li>
+                  <li>You can see that the <em>signal</em> and the <em>slot</em> have the same kind of parameters, especially the <em>type</em> <strong>int</strong>.
+                    <ul>
+                      <li>If you connect a <em>signal</em> to a <em>slot</em> that does not share the same kind of parameters, when the connection is done (at run-time) you will get a warning like:
+                        <blockquote>
+                          <p>QObject::connect: Incompatible sender/receiver arguments</p>
+                        </blockquote>
+                      </li>
+                      <li>This is because the <em>signal</em> transmits the information to the <em>slot</em> using the parameters.</li>
+                      <li>The first parameter of the <em>signal</em> is passed to the first one of the <em>slot</em>, and the same for second, third, and so forth.</li>
+                    </ul>
+                  </li>
+                  <li>The code for the connection will look like this:
+                    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">MediaProgressManager</span> <span class="o">*</span><span class="n">manager</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">MediaProgressManager</span><span class="p">();</span>
+<span class="n">QProgressBar</span> <span class="o">*</span><span class="n">progress</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">QProgressBar</span><span class="p">(</span><span class="n">window</span><span class="p">);</span>
+
+<span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span><span class="n">manager</span><span class="p">,</span> <span class="n">SIGNAL</span> <span class="p">(</span><span class="n">tick</span><span class="p">(</span><span class="kt">int</span><span class="p">)),</span> <span class="n">progress</span><span class="p">,</span> <span class="n">SLOT</span> <span class="p">(</span><span class="n">setValue</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">);</span>
+</code></pre></div>                    </div>
+                    <ul>
+                      <li>You can see that you have to provide a signature inside the <em>SIGNAL</em> and <em>SLOT</em> macro, providing the type of values that are passed through the <em>signal</em>s.
+                        <ul>
+                          <li>You may also provide the name of the variable if you want. (It is actually even better).</li>
+                        </ul>
+                      </li>
+                    </ul>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="feature-of-signals-and-slots">Feature of signals and slots</h2>
+
+<ul>
+  <li>A <em>signal</em> can be connected to several <em>slots</em></li>
+  <li>Many <em>signals</em> can be connected to a <em>slot</em></li>
+  <li>A <em>signal</em> can be connected to a <em>signal</em>:
+    <ul>
+      <li>it is <em>signal</em> relaying.</li>
+      <li>The second is sent if the first <em>signal</em> is sent</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="examples">Examples</h2>
+
+<ul>
+  <li>Responding to an event
+    <ul>
+      <li><a href="https://doc.qt.io/qt-5/qpushbutton.html" target="_blank">QPushButton</a> provides the <em>clicked</em> signal.</li>
+      <li><a href="https://doc.qt.io/qt-5/qapplication.html" target="_blank">QApplication</a> provides the <em>quit</em> slot, that closes the application.</li>
+      <li>In order to make a click on a button close the app, we have to connect the signal <em>clicked</em> of the button to the <em>quit</em> slot of QApplication instance.</li>
+      <li>How to access to the QApplication instance while you are in another class.
+        <ul>
+          <li>There exists a static function in <a href="https://doc.qt.io/qt-5/qapplication.html" target="_blank">QApplication</a>, with the following signature, that is used to get it:
+            <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">QApplication</span> <span class="o">*</span> <span class="n">QApplication</span><span class="o">::</span><span class="n">instance</span><span class="p">()</span>
+</code></pre></div>            </div>
+          </li>
+          <li>This leads to the following modification of our previous code:
+```window.cpp
+#include “window.h”</li>
+        </ul>
+
+        <p>#include <QApplication>
+#include <QPushButton></QPushButton></QApplication></p>
+
+        <p>Window::Window(QWidget *parent) : QWidget(parent)
+{
+  // Set size of the window
+  setFixedSize(100, 50);</p>
+
+        <p>// Create and position the button
+  m_button = new QPushButton(“Hello World”, this);
+  m_button-&gt;setGeometry(10, 10, 80, 30);</p>
+
+        <p>// New : Do the connection
+  connect(m_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()) );
+}
+```</p>
+        <ul>
+          <li>While clicking on the button inside of the window, the application should quit.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="transmitting-information-with-signals-and-slots">Transmitting information with signals and slots</h2>
+
+<ul>
+  <li>Simpler example for information transmission.
+    <ul>
+      <li>Only displays a progress bar and a slider (created by <a href="http://doc.qt.io/qt-5/qslider.html#" target="_blank">QSlider</a>) inside a window, and while the slider is moved, the value of the progress bar is synced with a very simple connection.
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">QSlider</span><span class="o">::</span><span class="n">valueChanged</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">);</span>
+<span class="kt">void</span> <span class="n">QProgressBar</span><span class="o">::</span><span class="n">setValue</span><span class="p">(</span><span class="kt">int</span> <span class="n">value</span><span class="p">);</span>
+</code></pre></div>        </div>
+      </li>
+      <li>QSlider automatically emits the signal <code class="language-plaintext highlighter-rouge">valueChanged</code> with the new value passed as a parameter when the value is changed, and the method <code class="language-plaintext highlighter-rouge">setValue</code> of QProgressBar, is used to set the value of the progress bar.</li>
+    </ul>
+
+    <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QProgressBar&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QSlider&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span> <span class="p">{</span>
+  <span class="n">QApplication</span> <span class="n">app</span><span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+  <span class="c1">// Create a container window</span>
+  <span class="n">Window</span> <span class="n">window</span><span class="p">;</span>
+  <span class="n">window</span><span class="p">.</span><span class="n">setFixedSize</span><span class="p">(</span><span class="mi">200</span><span class="p">,</span> <span class="mi">140</span><span class="p">);</span>
+
+  <span class="c1">// Create a progress bar</span>
+  <span class="c1">// with the range between 0 and 100, and a starting value of 0</span>
+  <span class="n">QProgressBar</span><span class="o">*</span> <span class="n">progressBar</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QProgressBar</span><span class="p">(</span><span class="o">&amp;</span><span class="n">window</span><span class="p">);</span>
+  <span class="n">progressBar</span><span class="o">-&gt;</span><span class="n">setRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+  <span class="n">progressBar</span><span class="o">-&gt;</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="n">progressBar</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">50</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+
+  <span class="c1">// Create a horizontal slider</span>
+  <span class="c1">// with the range between 0 and 100, and a starting value of 0</span>
+  <span class="n">QSlider</span><span class="o">*</span> <span class="n">slider</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QSlider</span><span class="p">(</span><span class="o">&amp;</span><span class="n">window</span><span class="p">);</span>
+  <span class="n">slider</span><span class="o">-&gt;</span><span class="n">setOrientation</span><span class="p">(</span><span class="n">Qt</span><span class="o">::</span><span class="n">Horizontal</span><span class="p">);</span>
+  <span class="n">slider</span><span class="o">-&gt;</span><span class="n">setRange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">100</span><span class="p">);</span>
+  <span class="n">slider</span><span class="o">-&gt;</span><span class="n">setValue</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+  <span class="n">slider</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">90</span><span class="p">,</span> <span class="mi">180</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+
+  <span class="n">window</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+
+  <span class="c1">// Connection</span>
+  <span class="c1">// This connection set the value of the progress bar</span>
+  <span class="c1">// while the slider's value changes</span>
+  <span class="n">QObject</span><span class="o">::</span><span class="n">connect</span><span class="p">(</span> <span class="n">slider</span><span class="p">,</span> <span class="n">SIGNAL</span> <span class="p">(</span><span class="n">valueChanged</span><span class="p">(</span><span class="kt">int</span><span class="p">)),</span> <span class="n">progressBar</span><span class="p">,</span> <span class="n">SLOT</span> <span class="p">(</span><span class="n">setValue</span><span class="p">(</span><span class="kt">int</span><span class="p">))</span> <span class="p">);</span>
+
+  <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div>    </div>
+  </li>
+</ul>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><category term="observer-pattern" /><category term="signal" /><category term="slot" /><summary type="html"><![CDATA[Reference Links Qt for Beginners The observer pattern Nearly all UI toolkits have a mechanism to detect an user action, and respond to this action. Some of them use callbacks, other use listeners, but basically, all of them are inspired by the observer pattern. Observer pattern is used when an observable object wants to notify other observers objects about a state change. An user has clicked on a button -&gt; a menu should be displayed A web page just finished loading -&gt; a process should extract some information from this loaded page. An user is scrolling through a list of items(in an app store for example) -&gt; reached the end, so other items should be loaded Observer pattern is used everywhere in GUI applications, And often leads to some boilerplate code (duplicate code). Qt was created with the idea of removing this boilerplate code and providing a nice and clean syntax, And the signal and slots mechanism is the answer. Signals and slots Instead of having observable objects and observers, and registering them, Qt provides two high level concepts: signals and slots. A signal is a message that object can send most of the time to inform of a status change A slots is a function (handler?) that is used to accept and respond to a signal Examples from QPushButton class. Signals clicked (pressed &amp; released) pressed released Slots QApplication::quit QWidget::setEnabled QPushButton::setText In order to respond to a signal, a slot must be connected to a signal. Qt provides the method QObject::connect. It is used this way, with the two macros SIGNAL and SLOT FooObjectA *fooA = new FooObjectA(); FooObjectB *fooB = new FooObjectB(); QObject::connect(fooA, SIGNAL (bared()), fooB, SLOT (baz())); assuming that FooObjectA have a bared signal, and FooObjectB have a baz slot. write signature of the signal and the slot inside the two macros SIGNAL and SLOT. Remark: Basically, signals and slots are methods, that might or might not have arguments, but that never return anything. While the notion of a signal as a method is unusual, a slot is actually a real method, and can be called as usual in other methods, or whilst responding to a signal. Transmitting information The signals and slots mechanism is useful to respond to buttons clicks, but it can do much more than that. For example, it can also be used to communicate information. While playing song, a progress bar is needed to show how much time remains before the song is over. A media player might have a class that is used to check the progress of the media. An instance of this class might periodically send a tick signal, with the progress value. This signal can be connected to a QProgressBar, that can be used to display the progress. The hypothetical class used to check the progress might have a signal that have this signature: void MediaProgressManager::tick(int ms); and we know from the documentation, that the QProgressBar has this slot: void QProressBar::setValue(int value); You can see that the signal and the slot have the same kind of parameters, especially the type int. If you connect a signal to a slot that does not share the same kind of parameters, when the connection is done (at run-time) you will get a warning like: QObject::connect: Incompatible sender/receiver arguments This is because the signal transmits the information to the slot using the parameters. The first parameter of the signal is passed to the first one of the slot, and the same for second, third, and so forth. The code for the connection will look like this: MediaProgressManager *manager = new MediaProgressManager(); QProgressBar *progress = new QProgressBar(window); QObject::connect(manager, SIGNAL (tick(int)), progress, SLOT (setValue(int)) ); You can see that you have to provide a signature inside the SIGNAL and SLOT macro, providing the type of values that are passed through the signals. You may also provide the name of the variable if you want. (It is actually even better). Feature of signals and slots A signal can be connected to several slots Many signals can be connected to a slot A signal can be connected to a signal: it is signal relaying. The second is sent if the first signal is sent Examples Responding to an event QPushButton provides the clicked signal. QApplication provides the quit slot, that closes the application. In order to make a click on a button close the app, we have to connect the signal clicked of the button to the quit slot of QApplication instance. How to access to the QApplication instance while you are in another class. There exists a static function in QApplication, with the following signature, that is used to get it: QApplication * QApplication::instance() This leads to the following modification of our previous code: ```window.cpp #include “window.h” #include #include Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_button = new QPushButton(“Hello World”, this); m_button-&gt;setGeometry(10, 10, 80, 30); // New : Do the connection connect(m_button, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()) ); } ``` While clicking on the button inside of the window, the application should quit. Transmitting information with signals and slots Simpler example for information transmission. Only displays a progress bar and a slider (created by QSlider) inside a window, and while the slider is moved, the value of the progress bar is synced with a very simple connection. void QSlider::valueChanged(int value); void QProgressBar::setValue(int value); QSlider automatically emits the signal valueChanged with the new value passed as a parameter when the value is changed, and the method setValue of QProgressBar, is used to set the value of the progress bar. #include &lt;QApplication&gt; #include &lt;QProgressBar&gt; #include &lt;QSlider&gt; int main(int argc, char **argv) { QApplication app(argc, argv); // Create a container window Window window; window.setFixedSize(200, 140); // Create a progress bar // with the range between 0 and 100, and a starting value of 0 QProgressBar* progressBar = new QProgressBar(&amp;window); progressBar-&gt;setRange(0, 100); progressBar-&gt;setValue(0); progressBar-&gt;setGeometry(10, 50, 180, 30); // Create a horizontal slider // with the range between 0 and 100, and a starting value of 0 QSlider* slider = new QSlider(&amp;window); slider-&gt;setOrientation(Qt::Horizontal); slider-&gt;setRange(0, 100); slider-&gt;setValue(0); slider-&gt;setGeometry(10, 90, 180, 30); window.show(); // Connection // This connection set the value of the progress bar // while the slider's value changes QObject::connect( slider, SIGNAL (valueChanged(int)), progressBar, SLOT (setValue(int)) ); return app.exec(); }]]></summary></entry><entry><title type="html">Qt Introduction</title><link href="coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html" rel="alternate" type="text/html" title="Qt Introduction" /><published>2022-03-10T00:00:00+00:00</published><updated>2022-03-10T00:00:00+00:00</updated><id>coolwindjo.github.io/gui/2022/03/10/Qt-introduction</id><content type="html" xml:base="coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://wiki.qt.io/Qt_for_Beginners" target="_blank">Qt for Beginners</a></li>
+</ul>
+
+<h2 id="introduction-to-qt">Introduction to Qt</h2>
+
+<ul>
+  <li>
+    <p>Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications.</p>
+  </li>
+  <li>
+    <p>Qt has an impressive collection of modules, including</p>
+    <ul>
+      <li><strong>QtCore</strong>, a base library that provides
+        <ul>
+          <li>containers,</li>
+          <li>thread management,</li>
+          <li>event management, and much more</li>
+        </ul>
+      </li>
+      <li><strong>QtGui</strong> and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications.</li>
+      <li><strong>QtNetwork</strong>, that provides a useful set of classes to deal with network communications</li>
+      <li><strong>QtWebkit</strong>, the webkit engine, that enable the use of web pages and web apps in a Qt application.</li>
+      <li><strong>QtSQL</strong>, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box</li>
+      <li><strong>QtXML</strong>, support for simple XML parsing (SAX) and DOM</li>
+      <li><strong>QtXmlPatterns</strong>, support for XSLT, XPath, XQuery and Schema validation</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="run-the-first-qt-app-via-docker-container">Run the first Qt app. via Docker Container</h2>
+
+<h3 id="scripts">Scripts</h3>
+
+<ul>
+  <li>
+    <p>run-qt5-container.sh</p>
+
+    <div class="language-shell highlighter-rouge"><div class="highlight"><pre class="highlight"><code>xhost +local:docker
+docker build <span class="se">\</span>
+    <span class="nt">-t</span> qt5-image <span class="nb">.</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker run <span class="se">\</span>
+    <span class="nt">--privileged</span> <span class="se">\</span>
+    <span class="nt">--rm</span> <span class="se">\</span>
+    <span class="nt">-it</span> <span class="se">\</span>
+    <span class="nt">--net</span><span class="o">=</span>host <span class="se">\</span>
+    <span class="nt">--name</span> qt5-container <span class="se">\</span>
+    <span class="nt">-e</span> <span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span> <span class="se">\</span>
+    <span class="nt">-v</span> /tmp/.X11-unix:/tmp/.X11-unix:ro <span class="se">\</span>
+    <span class="nt">-v</span> /sandbox/workspace_qt5:/workspace <span class="se">\</span>
+    <span class="nt">--workdir</span> /workspace <span class="se">\</span>
+    qt5-image <span class="se">\</span>
+    /bin/bash
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Dockerfile</p>
+
+    <div class="language-dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu:18.04</span>
+
+<span class="c"># Install packages</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="se">\
+</span>    <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>    git wget <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    perl <span class="se">\
+</span>    python <span class="se">\
+</span>    libgl-dev <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="se">\
+</span>    <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>    qt5-default <span class="se">\
+</span>    qtcreator <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="c">#ENTRYPOINT [ "qtcreator" ]</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="create-window">Create window</h3>
+
+<ul>
+  <li>
+    <p>Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project
+  <img src="https://qt-wiki-uploads.s3.amazonaws.com/images/thumb/0/0f/Beginners-01-NewProject.jpg/600px-Beginners-01-NewProject.jpg" alt="image of the new project wizard" /></p>
+  </li>
+  <li>This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us.
+    <ul>
+      <li>TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories.</li>
+      <li>TARGET is the name of the app or the library.</li>
+      <li>QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui.</li>
+    </ul>
+
+    <pre><code class="language-HelloWorld.pro">TEMPLATE = app
+TARGET = name_of_the_app
+
+QT = core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+</code></pre>
+  </li>
+  <li>
+    <p>Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job.
+  <img src="https://qt-wiki-uploads.s3.amazonaws.com/images/thumb/3/3f/Beginners-03-NewFile.jpg/600px-Beginners-03-NewFile.jpg" alt="image of the new file wizard" /></p>
+  </li>
+  <li>Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator :</li>
+</ul>
+
+<pre><code class="language-HelloWord.pro">  TEMPLATE = app
+  TARGET = name_of_the_app
+
+  QT = core gui
+
+  greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+  SOURCES +=  main.cpp
+</code></pre>
+
+<pre><code class="language-main.cpp">  #include &lt;QApplication&gt;
+  #include &lt;QPushButton&gt;
+
+  int main(int argc, char **argv)
+  {
+    QApplication app (argc, argv);
+
+    QPushButton button ("Hello world !");
+    button.show();
+
+    return app.exec();
+  }
+</code></pre>
+
+<h2 id="how-a-qt-program-is-compiled">How a Qt program is compiled</h2>
+
+<ul>
+  <li>Qt apps are compiled in 3 steps
+    <ul>
+      <li>A .pro file is written to describe the project to compile</li>
+      <li>A makefile is generated using qmake</li>
+      <li>The program is built using make (or nmake or jom on windows)</li>
+    </ul>
+
+    <div class="language-sh highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>HelloWorld
+<span class="nb">mkdir</span> <span class="nt">-p</span> ../build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ../build
+qmake ../HelloWorld/
+make
+./hello_world_app
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="widgets">Widgets</h3>
+
+<p>Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">T</span> <span class="n">foo</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">setFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>In fact, Qt extends this system of attributes and getters and setters to something called property.</p>
+
+<p>A property is a value of any type that can be accessed, be modified or constant, and can notify a change.</p>
+
+<p>The property system is useful, especially in the third part (QML).</p>
+
+<p>For now, we will use “attribute” or “property” to do the same thing.</p>
+<ul>
+  <li>A QPushButton has plenty of properties :
+    <ul>
+      <li>text</li>
+      <li>font
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">QFont</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span> <span class="n">family</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pointSize</span> <span class="o">=</span> <span class="err">–</span><span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">italic</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span>
+
+<span class="n">QFont</span> <span class="nf">font</span> <span class="p">(</span><span class="s">"Courier"</span><span class="p">);</span>
+<span class="n">button</span><span class="p">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">);</span>
+</code></pre></div>        </div>
+      </li>
+      <li>icon
+        <div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">QIcon</span> <span class="n">Qicon</span><span class="o">::</span><span class="n">fromTheme</span> <span class="p">(</span> <span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">QIcon</span> <span class="o">&amp;</span><span class="n">fallback</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">())</span>
+
+<span class="n">QIcon</span> <span class="nf">icon</span> <span class="p">(</span><span class="s">"/path/to/my/icon/icon.png"</span><span class="p">);</span>
+<span class="n">button</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+</code></pre></div>        </div>
+      </li>
+      <li>tooltip
+…</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="qt-class-hierarchy">Qt class hierarchy</h3>
+
+<p><img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0d0a514f626a656374203c7c2d2d20515468726561640d0a514f626a656374203c7c2d2d20515769646765740d0a51576964676574203c7c2d2d20514162737472616374427574746f6e203a2061206261736520636c61737320666f7220616c6c20627574746f6e2074797065730d0a51576964676574203c7c2d2d20514672616d65203a20646973706c6179732061206672616d650d0a51576964676574203c7c2d2d205150726f67726573734261720d0a514162737472616374427574746f6e203c7c2d2d2051436865636b426f780d0a514162737472616374427574746f6e203c7c2d2d205150757368427574746f6e0d0a514162737472616374427574746f6e203c7c2d2d2051526164696f427574746f6e0d0a514672616d65203c7c2d2d205141627374726163745363726f6c6c417265610d0a514672616d65203c7c2d2d20514c6162656c203a20646973706c6179732074657874206f7220706963747572650d0a5141627374726163745363726f6c6c41726561203c7c2d2d2051477261706968696373566965770d0a5141627374726163745363726f6c6c41726561203c7c2d2d205154657874456469740d0a68696465206d656d626572730d0a40656e64756d6c" /></p>
+
+<p>QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like:</p>
+<ul>
+  <li>object name: you cans set a name, as a string, to an object and search for objects by names.</li>
+  <li>parenting system</li>
+  <li>signals and slots</li>
+  <li>event management</li>
+</ul>
+
+<p>Widgets are able to</p>
+<ul>
+  <li>respond to events and</li>
+  <li>use parenting system and signals and slots mechanism.</li>
+</ul>
+
+<p>All widget inherit from QObject.</p>
+
+<p>The most basic widget is the QWidget.
+QWidget contains most properties that are used to describe a window, or a widget, like</p>
+<ul>
+  <li>position and size,</li>
+  <li>mouse cursor,</li>
+  <li>tooltips, etc.</li>
+</ul>
+
+<p>Remark: in Qt, a <strong>widget</strong> can also be a <strong>window</strong>.
+In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class</p>
+
+<p>This inheritance is done in order to facilitate properties management.</p>
+<ul>
+  <li>Shared properties like size and cursors can be used on other graphical components, and</li>
+  <li>QAbstractButton provides basic properties that are shared by all buttons.</li>
+</ul>
+
+<h3 id="parenting-system">Parenting system</h3>
+
+<p>Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient:</p>
+<ul>
+  <li>When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases.</li>
+  <li>All QObjects have findChild and findChildren methods that can be used to search for children of a given object.</li>
+  <li>Child widgets in a QWidget automatically appear inside the parent widget.</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">QPushButton</span> <span class="n">button1</span> <span class="p">(</span><span class="s">"test"</span><span class="p">);</span>
+ <span class="n">QPushButton</span> <span class="n">button2</span> <span class="p">(</span><span class="s">"other"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">button1</span><span class="p">);</span>
+
+ <span class="n">button1</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also.</p>
+
+<p>You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any.</p>
+
+<p>There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything.</p>
+
+<p>This container is simply the QWidget.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">QWidget</span> <span class="n">window</span><span class="p">;</span>
+ <span class="n">window</span><span class="p">.</span><span class="n">setFixedSize</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+ <span class="n">QPushButton</span> <span class="o">*</span><span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window</span><span class="p">);</span>
+ <span class="n">button</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+
+ <span class="n">window</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Note that we create a fixed size widget (that acts as a window) using setFixedSize.</p>
+
+<p>We also positioned the button using  setGeometry.</p>
+
+<p>These method have the following signatures:</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">QWidget</span><span class="o">::</span><span class="n">setFixedSize</span><span class="p">(</span><span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="kt">int</span> <span class="n">height</span><span class="p">)</span>
+<span class="kt">void</span> <span class="n">QWidget</span><span class="o">::</span><span class="n">setGeometry</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="kt">int</span> <span class="n">height</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="subclassing-qwidget">Subclassing QWidget</h3>
+
+<p>We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#ifndef WINDOW_H
+#define WINDOW_H
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;QWidget&gt;</span><span class="cp">
+</span>
+<span class="k">class</span> <span class="nc">Window</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QWidget</span>
+<span class="p">{</span>
+ <span class="n">Q_OBJECT</span>
+ <span class="nl">public:</span>
+  <span class="k">explicit</span> <span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+
+ <span class="nl">signals:</span>
+ <span class="k">public</span> <span class="n">slots</span><span class="o">:</span>
+<span class="p">};</span>
+
+<span class="cp">#endif // WINDOW_H
+</span></code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"window.h"</span><span class="cp">
+</span>
+<span class="n">Window</span><span class="o">::</span><span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span><span class="p">)</span> <span class="o">:</span>
+ <span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<p>Qt Creator automatically generates a class template. Notice that there are some new elements in the header:</p>
+<ul>
+  <li>The Q_OBJECT macro.</li>
+  <li>A new category of methods:
+    <ul>
+      <li>signals</li>
+      <li>public slots</li>
+    </ul>
+  </li>
+</ul>
+
+<p>We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">"window.h"</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">Window</span> <span class="n">window</span><span class="p">;</span>
+ <span class="n">window</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#ifndef WINDOW_H
+#define WINDOW_H
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;QWidget&gt;</span><span class="cp">
+</span>
+<span class="k">class</span> <span class="nc">QPushButton</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">Window</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QWidget</span>
+<span class="p">{</span>
+ <span class="nl">public:</span>
+  <span class="k">explicit</span> <span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+ <span class="nl">private:</span>
+ <span class="n">QPushButton</span> <span class="o">*</span><span class="n">m_button</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif // WINDOW_H
+</span></code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"window.h"</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="n">Window</span><span class="o">::</span><span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span><span class="p">)</span> <span class="o">:</span>
+ <span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+ <span class="p">{</span>
+ <span class="c1">// Set size of the window</span>
+ <span class="n">setFixedSize</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+ <span class="c1">// Create and position the button</span>
+ <span class="n">m_button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+ <span class="n">m_button</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.</p>]]></content><author><name>CoolWind</name></author><category term="GUI" /><category term="qt" /><summary type="html"><![CDATA[Reference Links Qt for Beginners Introduction to Qt Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications. Qt has an impressive collection of modules, including QtCore, a base library that provides containers, thread management, event management, and much more QtGui and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications. QtNetwork, that provides a useful set of classes to deal with network communications QtWebkit, the webkit engine, that enable the use of web pages and web apps in a Qt application. QtSQL, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box QtXML, support for simple XML parsing (SAX) and DOM QtXmlPatterns, support for XSLT, XPath, XQuery and Schema validation Run the first Qt app. via Docker Container Scripts run-qt5-container.sh xhost +local:docker docker build \ -t qt5-image . &amp;&amp; \ docker run \ --privileged \ --rm \ -it \ --net=host \ --name qt5-container \ -e DISPLAY=$DISPLAY \ -v /tmp/.X11-unix:/tmp/.X11-unix:ro \ -v /sandbox/workspace_qt5:/workspace \ --workdir /workspace \ qt5-image \ /bin/bash Dockerfile FROM ubuntu:18.04 # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ git wget \ build-essential \ perl \ python \ libgl-dev \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ qt5-default \ qtcreator \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* #ENTRYPOINT [ "qtcreator" ] Create window Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us. TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories. TARGET is the name of the app or the library. QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui. TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job. Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator : TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets SOURCES += main.cpp #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button ("Hello world !"); button.show(); return app.exec(); } How a Qt program is compiled Qt apps are compiled in 3 steps A .pro file is written to describe the project to compile A makefile is generated using qmake The program is built using make (or nmake or jom on windows) cd HelloWorld mkdir -p ../build &amp;&amp; cd ../build qmake ../HelloWorld/ make ./hello_world_app Widgets Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures T foo() const; void setFoo(const T); In fact, Qt extends this system of attributes and getters and setters to something called property. A property is a value of any type that can be accessed, be modified or constant, and can notify a change. The property system is useful, especially in the third part (QML). For now, we will use “attribute” or “property” to do the same thing. A QPushButton has plenty of properties : text font QFont(const QString &amp; family, int pointSize = –1, int weight = -1, bool italic = false) QFont font ("Courier"); button.setFont(font); icon QIcon Qicon::fromTheme ( const QString &amp;name, const QIcon &amp;fallback = QIcon()) QIcon icon ("/path/to/my/icon/icon.png"); button.setIcon(icon); tooltip … Qt class hierarchy QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like: object name: you cans set a name, as a string, to an object and search for objects by names. parenting system signals and slots event management Widgets are able to respond to events and use parenting system and signals and slots mechanism. All widget inherit from QObject. The most basic widget is the QWidget. QWidget contains most properties that are used to describe a window, or a widget, like position and size, mouse cursor, tooltips, etc. Remark: in Qt, a widget can also be a window. In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class This inheritance is done in order to facilitate properties management. Shared properties like size and cursors can be used on other graphical components, and QAbstractButton provides basic properties that are shared by all buttons. Parenting system Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient: When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases. All QObjects have findChild and findChildren methods that can be used to search for children of a given object. Child widgets in a QWidget automatically appear inside the parent widget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button1 ("test"); QPushButton button2 ("other", &amp;button1); button1.show(); return app.exec(); } You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also. You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any. There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything. This container is simply the QWidget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QWidget window; window.setFixedSize(100, 50); QPushButton *button = new QPushButton("Hello World", &amp;window); button-&gt;setGeometry(10, 10, 80, 30); window.show(); return app.exec(); } Note that we create a fixed size widget (that acts as a window) using setFixedSize. We also positioned the button using setGeometry. These method have the following signatures: void QWidget::setFixedSize(int width, int height) void QWidget::setGeometry(int x, int y, int width, int height) Subclassing QWidget We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class. #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = 0); signals: public slots: }; #endif // WINDOW_H #include "window.h" Window::Window(QWidget *parent) : QWidget(parent) {} Qt Creator automatically generates a class template. Notice that there are some new elements in the header: The Q_OBJECT macro. A new category of methods: signals public slots We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way: #include &lt;QApplication&gt; #include "window.h" int main(int argc, char **argv) { QApplication app (argc, argv); Window window; window.show(); return app.exec(); } #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { public: explicit Window(QWidget *parent = 0); private: QPushButton *m_button; }; #endif // WINDOW_H #include "window.h" #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_button = new QPushButton("Hello World", this); m_button-&gt;setGeometry(10, 10, 80, 30); } Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.]]></summary></entry><entry><title type="html">Design Pattern Builder</title><link href="coolwindjo.github.io/programming/2022/03/10/design-pattern-builder.html" rel="alternate" type="text/html" title="Design Pattern Builder" /><published>2022-03-10T00:00:00+00:00</published><updated>2022-03-10T00:00:00+00:00</updated><id>coolwindjo.github.io/programming/2022/03/10/design-pattern-builder</id><content type="html" xml:base="coolwindjo.github.io/programming/2022/03/10/design-pattern-builder.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://refactoring.guru/design-patterns/builder" target="_blank">Refactoring GURU - Builder</a></li>
+</ul>
+
+<h2 id="intent">Intent</h2>
+
+<p>Builder is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.</p>
+
+<p><img src="https://refactoring.guru/images/patterns/content/builder/builder-en.png" alt="image of factory building robots" /></p>
+
+<h2 id="problem">Problem</h2>
+
+<p><img src="https://refactoring.guru/images/patterns/diagrams/builder/problem1.png" alt="image of various houses" /></p>
+
+<p>The simplest solution is to extend the base House class and create a set of subclasses to cover all combinations of the parameters. But eventually you’ll end up with a considerable number of subclasses. Any new parameter, such as the porch style, will require growing this hierarchy even more.</p>
+
+<p>There’s another approach that doesn’t involve breeding subclasses. You can create a giant constructor right in the base House class with all possible parameters that control the house object. While this approach indeed eliminates the need for subclasses, it creates another problem.</p>
+
+<p><img src="https://refactoring.guru/images/patterns/diagrams/builder/problem2.png" alt="create houses with tons of parameters" /></p>
+
+<h2 id="solution">Solution</h2>
+
+<p><img src="https://refactoring.guru/images/patterns/content/builder/builder-comic-1-en-2x.png" alt="image of different builders executing the same task in various ways" /></p>
+
+<p>For example, imagine a builder that builds everything from wood and glass, a second one that builds everything with stone and iron and a third one that uses gold and diamonds. By calling the same set of steps, you get a regular house from the first builder, a small castle from the second and a palace from the third. However, this would only work if the client code that calls the building steps is able to interact with builders using a common interface.</p>
+
+<h3 id="director">Director</h3>
+
+<p>You can go further and extract a series of calls to the builder steps you use to construct a product into a separate class called director. The director class defines the order in which to execute the building steps, while the builder provides the implementation for those steps.</p>
+
+<p><img src="https://refactoring.guru/images/patterns/content/builder/builder-comic-2-en-2x.png" alt="image of director that knows building steps" /></p>
+
+<p>Having a director class in your program isn’t strictly necessary. You can always call the building steps in a specific order directly from the client code. However, the director class might be a good place to put various construction routines so you can reuse them across your program.</p>
+
+<p>In addition, the director class completely hides the details of product construction from the client code. The client only needs to associate a builder with a director, launch the construction with the director, and get the result from the builder.</p>
+
+<h2 id="structure">Structure</h2>
+
+<p><img src="https://refactoring.guru/images/patterns/diagrams/builder/structure-2x.png" alt="image of builder and director" /></p>
+
+<p>The Client must associate one of the builder objects with the director. Usually, it’s done just once, via parameters of the director’s constructor. Then the director uses that builder object for all further construction. However, there’s an alternative approach for when the client passes the builder object to the production method of the director. In this case, you can use a different builder each time you produce something with the director.</p>
+
+<h2 id="pseudocode">Pseudocode</h2>
+
+<p><img src="https://refactoring.guru/images/patterns/diagrams/builder/example-en-2x.png" alt="image of car builder and director" /></p>
+
+<pre><code class="language-pseudocode">
+// Using the Builder pattern makes sense only when your products
+// are quite complex and require extensive configuration. The
+// following two products are related, although they don't have
+// a common interface.
+class Car is
+    // A car can have a GPS, trip computer and some number of
+    // seats. Different models of cars (sports car, SUV,
+    // cabriolet) might have different features installed or
+    // enabled.
+
+class Manual is
+    // Each car should have a user manual that corresponds to
+    // the car's configuration and describes all its features.
+
+
+// The builder interface specifies methods for creating the
+// different parts of the product objects.
+interface Builder is
+    method reset()
+    method setSeats(...)
+    method setEngine(...)
+    method setTripComputer(...)
+    method setGPS(...)
+
+// The concrete builder classes follow the builder interface and
+// provide specific implementations of the building steps. Your
+// program may have several variations of builders, each
+// implemented differently.
+class CarBuilder implements Builder is
+    private field car:Car
+
+    // A fresh builder instance should contain a blank product
+    // object which it uses in further assembly.
+    constructor CarBuilder() is
+        this.reset()
+
+    // The reset method clears the object being built.
+    method reset() is
+        this.car = new Car()
+
+    // All production steps work with the same product instance.
+    method setSeats(...) is
+        // Set the number of seats in the car.
+
+    method setEngine(...) is
+        // Install a given engine.
+
+    method setTripComputer(...) is
+        // Install a trip computer.
+
+    method setGPS(...) is
+        // Install a global positioning system.
+
+    // Concrete builders are supposed to provide their own
+    // methods for retrieving results. That's because various
+    // types of builders may create entirely different products
+    // that don't all follow the same interface. Therefore such
+    // methods can't be declared in the builder interface (at
+    // least not in a statically-typed programming language).
+    //
+    // Usually, after returning the end result to the client, a
+    // builder instance is expected to be ready to start
+    // producing another product. That's why it's a usual
+    // practice to call the reset method at the end of the
+    // `getProduct` method body. However, this behavior isn't
+    // mandatory, and you can make your builder wait for an
+    // explicit reset call from the client code before disposing
+    // of the previous result.
+    method getProduct():Car is
+        product = this.car
+        this.reset()
+        return product
+
+// Unlike other creational patterns, builder lets you construct
+// products that don't follow the common interface.
+class CarManualBuilder implements Builder is
+    private field manual:Manual
+
+    constructor CarManualBuilder() is
+        this.reset()
+
+    method reset() is
+        this.manual = new Manual()
+
+    method setSeats(...) is
+        // Document car seat features.
+
+    method setEngine(...) is
+        // Add engine instructions.
+
+    method setTripComputer(...) is
+        // Add trip computer instructions.
+
+    method setGPS(...) is
+        // Add GPS instructions.
+
+    method getProduct():Manual is
+        // Return the manual and reset the builder.
+
+
+// The director is only responsible for executing the building
+// steps in a particular sequence. It's helpful when producing
+// products according to a specific order or configuration.
+// Strictly speaking, the director class is optional, since the
+// client can control builders directly.
+class Director is
+    private field builder:Builder
+
+    // The director works with any builder instance that the
+    // client code passes to it. This way, the client code may
+    // alter the final type of the newly assembled product.
+    method setBuilder(builder:Builder)
+        this.builder = builder
+
+    // The director can construct several product variations
+    // using the same building steps.
+    method constructSportsCar(builder: Builder) is
+        builder.reset()
+        builder.setSeats(2)
+        builder.setEngine(new SportEngine())
+        builder.setTripComputer(true)
+        builder.setGPS(true)
+
+    method constructSUV(builder: Builder) is
+        // ...
+
+
+// The client code creates a builder object, passes it to the
+// director and then initiates the construction process. The end
+// result is retrieved from the builder object.
+class Application is
+
+    method makeCar() is
+        director = new Director()
+
+        CarBuilder builder = new CarBuilder()
+        director.constructSportsCar(builder)
+        Car car = builder.getProduct()
+
+        CarManualBuilder builder = new CarManualBuilder()
+        director.constructSportsCar(builder)
+
+        // The final product is often retrieved from a builder
+        // object since the director isn't aware of and not
+        // dependent on concrete builders and products.
+        Manual manual = builder.getProduct()
+
+</code></pre>
+
+<h2 id="applicability">Applicability</h2>
+
+<h3 id="use-the-builder-pattern-to-get-rid-of-a-telescopic-constructor">Use the Builder pattern to get rid of a “telescopic constructor”</h3>
+
+<pre><code class="language-C++">
+class Pizza {
+    Pizza(int size) { ... }
+    Pizza(int size, boolean cheese) { ... }
+    Pizza(int size, boolean cheese, boolean pepperoni) { ... }
+    // ...
+
+</code></pre>
+
+<h3 id="use-the-builder-pattern-when-you-want-your-code-to-be-able-to-create-different-representations-of-some-product-for-example-stone-and-wooden-houses">Use the Builder pattern when you want your code to be able to create different representations of some product (for example, stone and wooden houses)</h3>
+
+<p>The Builder pattern can be applied when construction of various representations of the product involves similar steps that differ only in the details.</p>
+
+<h3 id="use-the-builder-to-construct-composite-trees-or-other-complex-objects">Use the Builder to construct Composite trees or other complex objects</h3>
+
+<p>The Builder pattern lets you construct products step-by-step. You could defer execution of some steps without breaking the final product. You can even call steps recursively, which comes in handy when you need to build an object tree.</p>
+
+<h2 id="how-to-implement">How to Implement</h2>
+
+<ol>
+  <li>Clearly define the common construction steps for building all available product representations</li>
+  <li>Declare these steps in the base builder interface.</li>
+  <li>Create a concrete builder class
+    <ul>
+      <li>for each of the product representations and</li>
+      <li>implement their construction steps.</li>
+    </ul>
+    <ul>
+      <li>Don’t forget about implementing a method for fetching the result of the construction
+        <ul>
+          <li>various builders may construct products that don’t have a common interface. Therefore, you don’t know what would be the return type for such a method.</li>
+          <li>However, if you’re dealing with products from a single hierarchy, the fetching method can be safely added to the base interface.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Create a director class. It may encapsulate various ways to construct a product using the same builder object.</li>
+  <li>Before construction starts, the client must pass a builder object to the director. Usually, the client does this only once, via parameters of the director’s constructor.
+    <ul>
+      <li>There’s an alternative approach, where the builder is passed directly to the construction method of the director.</li>
+    </ul>
+  </li>
+  <li>The construction result can be obtained directly from the director only if all products follow the same interface. Otherwise, the client should fetch the result from the builder.</li>
+</ol>
+
+<h2 id="pros-and-cons">Pros and Cons</h2>
+
+<p>:heavy_check_mark:
+Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.</p>
+
+<p>:x:
+The overall complexity of the code increases since the pattern requires creating multiple new classes.</p>
+
+<h2 id="relations-with-other-patterns">Relations with Other Patterns</h2>
+
+<ul>
+  <li>
+    <p>Many designs start by using <strong>Factory Method</strong> (less complicated and more customizable via subclasses) and evolve toward <strong>Abstract Factory</strong>, <strong>Prototype</strong>, or <strong>Builder</strong> (more flexible, but more complicated).</p>
+  </li>
+  <li>
+    <p><strong>Builder</strong> focuses on constructing complex objects step by step. <strong>Abstract Factory</strong> specializes in creating families of related objects. <strong>Abstract Factory</strong> returns the product immediately, whereas <strong>Builder</strong> lets you run some additional construction steps before fetching the product.</p>
+  </li>
+  <li>
+    <p>You can use <strong>Builder</strong> when creating complex <strong>Composite</strong> trees because you can program its construction steps to work recursively.</p>
+  </li>
+  <li>
+    <p>You can combine <strong>Builder</strong> with <strong>Bridge</strong>: the director class plays the role of the abstraction, while different builders act as implementations.</p>
+  </li>
+  <li>
+    <p><strong>Abstract Factories</strong>, <strong>Builders</strong> and <strong>Prototypes</strong> can all be implemented as <strong>Singletons</strong>.</p>
+  </li>
+</ul>
+
+<h2 id="code-examples">Code Examples</h2>
+
+<ul>
+  <li><a href="https://refactoring.guru/design-patterns/builder/csharp/example" target="_blank">C#</a></li>
+  <li><a href="https://refactoring.guru/design-patterns/builder/cpp/example" target="_blank">C++</a></li>
+  <li><a href="https://refactoring.guru/design-patterns/builder/python/example" target="_blank">Python</a></li>
+  <li><a href="https://refactoring.guru/design-patterns/builder/go/example" target="_blank">Go</a></li>
+</ul>]]></content><author><name>CoolWind</name></author><category term="Programming" /><category term="design-pattern" /><category term="builder" /><category term="creator" /><summary type="html"><![CDATA[Reference Links]]></summary></entry><entry><title type="html">Nvidia Docker</title><link href="coolwindjo.github.io/scripts/2021/12/27/nvidia-docker.html" rel="alternate" type="text/html" title="Nvidia Docker" /><published>2021-12-27T00:00:00+00:00</published><updated>2021-12-27T00:00:00+00:00</updated><id>coolwindjo.github.io/scripts/2021/12/27/nvidia-docker</id><content type="html" xml:base="coolwindjo.github.io/scripts/2021/12/27/nvidia-docker.html"><![CDATA[<h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://discourse.ros.org/t/ros2-yocto-meta-layer/9643" target="_blank">ROS2 yocto meta layer</a> Discourse: Discussion about how to install ROS2 into a yocto based system</li>
+</ul>
+
+<h2 id="dockerfiles">Dockerfiles</h2>
+
+<div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code></code></pre></div></div>]]></content><author><name>CoolWind</name></author><category term="Scripts" /><category term="dockerfile" /><category term="nvidia" /><category term="docker" /><summary type="html"><![CDATA[Reference Links ROS2 yocto meta layer Discourse: Discussion about how to install ROS2 into a yocto based system Dockerfiles]]></summary></entry></feed>

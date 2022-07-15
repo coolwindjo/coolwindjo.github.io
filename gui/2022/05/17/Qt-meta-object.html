@@ -1,0 +1,1301 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Qt Meta Object | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Qt Meta Object">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Reference Links Qt for Beginners The Meta Object Qt provides a meta-object system. Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like: Introspection: capability of examining a type at run-time Asynchronous function calls To use such Meta-object capabilities in an application, one can subclass QObject and mark it so that the meta-object compiler (moc) can interpret and translate it. Code produced by moc includes signals and slots signatures, methods that are used to retrieve meta-information from those marked classes, properties handling… All this information can be accessed using the following method: const QMetaObject * QObject::metaObject() const QMetaObject class contains all the methods that deal with meta-objects. Important macros The most important macro is Q_OBJECT. Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler. The moc is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax. class MyWidget : public QWidget { Q_OBJECT public: MyWidget(QWidget *parent=nullptr); } Others marker macros for moc are signals public / protected / private slots that mark the different methods that need to be extended. SIGNAL and SLOT are also two very important and useful macros. When a signal is emitted, the meta-object system is used to compare the signature of the signal, to check the connection, and to find the slot using it’s signature. These macros are actually used to convert the provided method signature into a string that matches the one stored in the meta-object. Creating custom signals and slots Creating custom slots Slots are like normal methods, but with small decorations around, Creating custom signals Signals need little to no implementation at all. Checklist: add Q_OBJECT macro add signals section, and write signals prototypes add public slots or protected slots or private slots sections, and write slots prototypes implement slots as normal methods establish connections Creating custom slots In order to implement a slot, we first need to make the class be able to send signals and have slots. This is done by setting the Q_OBJECT macro in the class declaration (often in the header). After that, a slot should be declared in the corresponding section, and implemented as a normal method. Finally, slots are connected to signals. Creating signals As for slots, we first need to add the Q_OBJECT macro. Signals should also be declared in the signals section, and there is no need for them to be implemented. They are emitted using the emit keyword: emit mySignal(); Note that in order to send signals that have parameters, you have to pass them in the signal emission: emit mySignal(firstParameter, secondParameter ...); Example Creating custom slots Let’s start with our window with the button: #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; signals: }; #endif // WINDOW_H #include &quot;window.h&quot; #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); // New: Do the connection // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit())); m_pButton-&gt;setCheckable(true); connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } } New Button Action can be checked when checked, it displays “checked” when unchecked, it restores “Hello World” signals: void QPushButton::clicked(bool checked) private slots: void Window::slotButtonClicked(bool checked); Implement private and protected slots by prefixing them with “slot” Emitting custom signals New Button Action close the app. after clicking 10 times implement a counter that count the number of clicks class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); signals: void counterReached(); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; int m_nCounter; }; add “signals” section in the header Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this. Now we need to emit the signal when the counter reaches 10. #include &lt;QPushButton&gt; #include &lt;QApplication&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); m_pButton-&gt;setCheckable(true); m_nCounter = 0; // New: Do the connection connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit())); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } m_nCounter++; if (m_nCounter == 10){ emit counterReached(); } } We need t o write the keyword emit to send the signal. Troubleshooting While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error. main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vtable for Window' This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake. Widgets QRadioButton Radio button is a standard GUI component being used to make a unique choice from a list. QRadioButton behaves just like QPushButton thanks to a nice inheritance. By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup. QButtonGroup Allocate a new button group Attach it to the parent object e.g.) MainWindow this QButtonGroup* pButtonGroup = new QButtonGroup(object); // Add buttons in the button group pButtonGroup-&gt;addButton(button1); pButtonGroup-&gt;addButton(button2); pButtonGroup-&gt;addButton(button3);">
+<meta property="og:description" content="Reference Links Qt for Beginners The Meta Object Qt provides a meta-object system. Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like: Introspection: capability of examining a type at run-time Asynchronous function calls To use such Meta-object capabilities in an application, one can subclass QObject and mark it so that the meta-object compiler (moc) can interpret and translate it. Code produced by moc includes signals and slots signatures, methods that are used to retrieve meta-information from those marked classes, properties handling… All this information can be accessed using the following method: const QMetaObject * QObject::metaObject() const QMetaObject class contains all the methods that deal with meta-objects. Important macros The most important macro is Q_OBJECT. Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler. The moc is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax. class MyWidget : public QWidget { Q_OBJECT public: MyWidget(QWidget *parent=nullptr); } Others marker macros for moc are signals public / protected / private slots that mark the different methods that need to be extended. SIGNAL and SLOT are also two very important and useful macros. When a signal is emitted, the meta-object system is used to compare the signature of the signal, to check the connection, and to find the slot using it’s signature. These macros are actually used to convert the provided method signature into a string that matches the one stored in the meta-object. Creating custom signals and slots Creating custom slots Slots are like normal methods, but with small decorations around, Creating custom signals Signals need little to no implementation at all. Checklist: add Q_OBJECT macro add signals section, and write signals prototypes add public slots or protected slots or private slots sections, and write slots prototypes implement slots as normal methods establish connections Creating custom slots In order to implement a slot, we first need to make the class be able to send signals and have slots. This is done by setting the Q_OBJECT macro in the class declaration (often in the header). After that, a slot should be declared in the corresponding section, and implemented as a normal method. Finally, slots are connected to signals. Creating signals As for slots, we first need to add the Q_OBJECT macro. Signals should also be declared in the signals section, and there is no need for them to be implemented. They are emitted using the emit keyword: emit mySignal(); Note that in order to send signals that have parameters, you have to pass them in the signal emission: emit mySignal(firstParameter, secondParameter ...); Example Creating custom slots Let’s start with our window with the button: #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; signals: }; #endif // WINDOW_H #include &quot;window.h&quot; #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); // New: Do the connection // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit())); m_pButton-&gt;setCheckable(true); connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } } New Button Action can be checked when checked, it displays “checked” when unchecked, it restores “Hello World” signals: void QPushButton::clicked(bool checked) private slots: void Window::slotButtonClicked(bool checked); Implement private and protected slots by prefixing them with “slot” Emitting custom signals New Button Action close the app. after clicking 10 times implement a counter that count the number of clicks class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); signals: void counterReached(); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; int m_nCounter; }; add “signals” section in the header Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this. Now we need to emit the signal when the counter reaches 10. #include &lt;QPushButton&gt; #include &lt;QApplication&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); m_pButton-&gt;setCheckable(true); m_nCounter = 0; // New: Do the connection connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit())); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } m_nCounter++; if (m_nCounter == 10){ emit counterReached(); } } We need t o write the keyword emit to send the signal. Troubleshooting While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error. main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vtable for Window' This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake. Widgets QRadioButton Radio button is a standard GUI component being used to make a unique choice from a list. QRadioButton behaves just like QPushButton thanks to a nice inheritance. By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup. QButtonGroup Allocate a new button group Attach it to the parent object e.g.) MainWindow this QButtonGroup* pButtonGroup = new QButtonGroup(object); // Add buttons in the button group pButtonGroup-&gt;addButton(button1); pButtonGroup-&gt;addButton(button2); pButtonGroup-&gt;addButton(button3);">
+<link rel="canonical" href="coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html">
+<meta property="og:url" content="coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-05-17T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Qt Meta Object">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2022-05-17T00:00:00+00:00","datePublished":"2022-05-17T00:00:00+00:00","description":"Reference Links Qt for Beginners The Meta Object Qt provides a meta-object system. Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like: Introspection: capability of examining a type at run-time Asynchronous function calls To use such Meta-object capabilities in an application, one can subclass QObject and mark it so that the meta-object compiler (moc) can interpret and translate it. Code produced by moc includes signals and slots signatures, methods that are used to retrieve meta-information from those marked classes, properties handling… All this information can be accessed using the following method: const QMetaObject * QObject::metaObject() const QMetaObject class contains all the methods that deal with meta-objects. Important macros The most important macro is Q_OBJECT. Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler. The moc is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax. class MyWidget : public QWidget { Q_OBJECT public: MyWidget(QWidget *parent=nullptr); } Others marker macros for moc are signals public / protected / private slots that mark the different methods that need to be extended. SIGNAL and SLOT are also two very important and useful macros. When a signal is emitted, the meta-object system is used to compare the signature of the signal, to check the connection, and to find the slot using it’s signature. These macros are actually used to convert the provided method signature into a string that matches the one stored in the meta-object. Creating custom signals and slots Creating custom slots Slots are like normal methods, but with small decorations around, Creating custom signals Signals need little to no implementation at all. Checklist: add Q_OBJECT macro add signals section, and write signals prototypes add public slots or protected slots or private slots sections, and write slots prototypes implement slots as normal methods establish connections Creating custom slots In order to implement a slot, we first need to make the class be able to send signals and have slots. This is done by setting the Q_OBJECT macro in the class declaration (often in the header). After that, a slot should be declared in the corresponding section, and implemented as a normal method. Finally, slots are connected to signals. Creating signals As for slots, we first need to add the Q_OBJECT macro. Signals should also be declared in the signals section, and there is no need for them to be implemented. They are emitted using the emit keyword: emit mySignal(); Note that in order to send signals that have parameters, you have to pass them in the signal emission: emit mySignal(firstParameter, secondParameter ...); Example Creating custom slots Let’s start with our window with the button: #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; signals: }; #endif // WINDOW_H #include &quot;window.h&quot; #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); // New: Do the connection // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit())); m_pButton-&gt;setCheckable(true); connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } } New Button Action can be checked when checked, it displays “checked” when unchecked, it restores “Hello World” signals: void QPushButton::clicked(bool checked) private slots: void Window::slotButtonClicked(bool checked); Implement private and protected slots by prefixing them with “slot” Emitting custom signals New Button Action close the app. after clicking 10 times implement a counter that count the number of clicks class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = nullptr); signals: void counterReached(); private slots: void slotButtonClicked(bool checked); private: QPushButton* m_pButton; int m_nCounter; }; add “signals” section in the header Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this. Now we need to emit the signal when the counter reaches 10. #include &lt;QPushButton&gt; #include &lt;QApplication&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_pButton = new QPushButton(&quot;Hello World&quot;, this); m_pButton-&gt;setGeometry(10, 10, 80, 30); m_pButton-&gt;setCheckable(true); m_nCounter = 0; // New: Do the connection connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool))); connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit())); } void Window::slotButtonClicked(bool checked) { if (checked) { m_pButton-&gt;setText(&quot;Checked&quot;); } else { m_pButton-&gt;setText(&quot;Hello World&quot;); } m_nCounter++; if (m_nCounter == 10){ emit counterReached(); } } We need t o write the keyword emit to send the signal. Troubleshooting While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error. main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vtable for Window&#39; This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake. Widgets QRadioButton Radio button is a standard GUI component being used to make a unique choice from a list. QRadioButton behaves just like QPushButton thanks to a nice inheritance. By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup. QButtonGroup Allocate a new button group Attach it to the parent object e.g.) MainWindow this QButtonGroup* pButtonGroup = new QButtonGroup(object); // Add buttons in the button group pButtonGroup-&gt;addButton(button1); pButtonGroup-&gt;addButton(button2); pButtonGroup-&gt;addButton(button3);","headline":"Qt Meta Object","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html"},"url":"coolwindjo.github.io/gui/2022/05/17/Qt-meta-object.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Qt Meta Object</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-05-17T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> May 17, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#meta-object">#meta-object</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://wiki.qt.io/Qt_for_Beginners" target="_blank">Qt for Beginners</a></li>
+</ul>
+
+<h2 id="the-meta-object">The Meta Object</h2>
+
+<ul>
+  <li>Qt provides a meta-object system.
+    <ul>
+      <li>Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like:
+        <ul>
+          <li>Introspection: capability of examining a type at run-time</li>
+          <li>Asynchronous function calls</li>
+        </ul>
+      </li>
+      <li>To use such <strong>Meta-object</strong> capabilities in an application, one can subclass <a href="http://doc.qt.io/qt-5/qobject.html#" target="_blank">QObject</a> and <strong>mark</strong> it so that the <strong>meta-object compiler (moc)</strong> can interpret and translate it.</li>
+      <li>Code produced by <strong>moc</strong> includes
+        <ul>
+          <li>signals and slots signatures,</li>
+          <li>methods that are used to retrieve meta-information from those <strong>marked</strong> classes, properties handling…</li>
+        </ul>
+      </li>
+      <li>All this information can be accessed using the following method:
+        <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">const</span> <span class="n">QMetaObject</span> <span class="o">*</span> <span class="n">QObject</span><span class="o">::</span><span class="n">metaObject</span><span class="p">()</span> <span class="k">const</span>
+</code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>
+<a href="http://doc.qt.io/qt-5/qmetaobject.html#" target="_blank">QMetaObject</a> class contains all the methods that deal with meta-objects.</li>
+</ul>
+
+<h2 id="important-macros">Important macros</h2>
+
+<ul>
+  <li>The most important macro is <strong>Q_OBJECT</strong>.
+    <ul>
+      <li>Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler.
+        <ul>
+          <li>The <strong>moc</strong> is provided to translate the QT syntax like “connect”, “signals”, “slots”, etc into regular C++ syntax.
+            <pre><code class="language-mywidget.h">class MyWidget : public QWidget
+{
+Q_OBJECT
+public:
+  MyWidget(QWidget *parent=nullptr);
+}
+</code></pre>
+          </li>
+          <li>Others marker macros for <strong>moc</strong> are
+            <ul>
+              <li><strong>signals</strong></li>
+              <li>public / protected / private <strong>slots</strong>
+</li>
+            </ul>
+
+            <p>that mark the different methods that need to be extended.</p>
+          </li>
+          <li>
+<strong>SIGNAL</strong> and <strong>SLOT</strong> are also two very important and useful macros.
+            <ul>
+              <li>When a <strong>signal</strong> is emitted, the <strong>meta-object</strong> system is used to compare the signature of the <strong>signal</strong>, to check the connection, and to find the <strong>slot</strong> using it’s signature.</li>
+              <li>These macros are actually used to convert the provided method signature into a string that matches the one stored in the <strong>meta-object</strong>.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="creating-custom-signals-and-slots">Creating custom signals and slots</h2>
+
+<ul>
+  <li>Creating custom <strong>slots</strong>
+    <ul>
+      <li>Slots are like normal methods, but with small decorations around,</li>
+    </ul>
+  </li>
+  <li>Creating custom <strong>signals</strong>
+    <ul>
+      <li>Signals need little to no implementation at all.</li>
+    </ul>
+  </li>
+  <li>Checklist:
+    <ul>
+      <li>add <strong>Q_OBJECT</strong> macro</li>
+      <li>add <strong>signals</strong> section, and write signals prototypes</li>
+      <li>add <strong>public slots</strong> or <strong>protected slots</strong> or <strong>private slots</strong> sections, and write slots prototypes</li>
+      <li>implement <strong>slots</strong> as normal methods</li>
+      <li>establish <strong>connect</strong>ions</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="creating-custom-slots">Creating custom slots</h3>
+
+<ul>
+  <li>In order to implement a slot, we first need to <a href="https://coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern.html" target="_blank">make the class be able to send signals and have slots</a>.</li>
+  <li>This is done by setting the <strong>Q_OBJECT</strong> macro in the class declaration (often in the header).</li>
+  <li>After that, a <strong>slot</strong> should be declared in the corresponding section, and implemented as a normal method.</li>
+  <li>Finally, <strong>slots</strong> are connected to <strong>signals</strong>.</li>
+</ul>
+
+<h3 id="creating-signals">Creating signals</h3>
+
+<ul>
+  <li>As for slots, we first need to add the <strong>Q_OBJECT</strong> macro.</li>
+  <li>
+<strong>Signals</strong> should also be declared in the <em>signals</em> section, and there is no need for them to be implemented.</li>
+  <li>They are emitted using the emit keyword:
+    <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">emit</span> <span class="nf">mySignal</span><span class="p">();</span>
+</code></pre></div>    </div>
+  </li>
+  <li>Note that in order to send signals that have parameters, you have to pass them in the signal emission:
+    <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">emit</span> <span class="nf">mySignal</span><span class="p">(</span><span class="n">firstParameter</span><span class="p">,</span> <span class="n">secondParameter</span> <span class="p">...);</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="example">Example</h3>
+
+<h4 id="creating-custom-slots-1">Creating custom slots</h4>
+
+<ul>
+  <li>Let’s start with our window with the button:</li>
+</ul>
+
+<pre><code class="language-window.h">#ifndef WINDOW_H
+#define WINDOW_H
+
+#include &lt;QWidget&gt;
+
+class QPushButton;
+class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+signals:
+};
+
+#endif // WINDOW_H
+</code></pre>
+
+<pre><code class="language-window.cpp">#include "window.h"
+
+#include &lt;QPushButton&gt;
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton-&gt;setGeometry(10, 10, 80, 30);
+
+    // New: Do the connection
+    // connect(m_pButton, SIGNAL (clicked()), QApplication::instance(), SLOT (quit()));
+    m_pButton-&gt;setCheckable(true);
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton-&gt;setText("Checked");
+  } else {
+    m_pButton-&gt;setText("Hello World");
+  }
+}
+</code></pre>
+
+<ul>
+  <li>New Button Action
+    <ul>
+      <li>can be checked
+        <ul>
+          <li>when checked, it displays “checked”</li>
+          <li>when unchecked, it restores “Hello World”
+            <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nl">signals:</span>
+<span class="kt">void</span> <span class="n">QPushButton</span><span class="o">::</span><span class="n">clicked</span><span class="p">(</span><span class="kt">bool</span> <span class="n">checked</span><span class="p">)</span>
+<span class="k">private</span> <span class="n">slots</span><span class="o">:</span>
+<span class="kt">void</span> <span class="n">Window</span><span class="o">::</span><span class="n">slotButtonClicked</span><span class="p">(</span><span class="kt">bool</span> <span class="n">checked</span><span class="p">);</span>
+</code></pre></div>            </div>
+          </li>
+        </ul>
+      </li>
+      <li>Implement private and protected slots by prefixing them with “slot”</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="emitting-custom-signals">Emitting custom signals</h4>
+
+<ul>
+  <li>New Button Action
+    <ul>
+      <li>close the app. after clicking 10 times
+        <ul>
+          <li>implement a counter that count the number of clicks</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-window.h">class Window : public QWidget
+{
+    Q_OBJECT
+public:
+    explicit Window(QWidget *parent = nullptr);
+signals:
+    void counterReached();
+private slots:
+    void slotButtonClicked(bool checked);
+private:
+    QPushButton* m_pButton;
+    int m_nCounter;
+};
+</code></pre>
+<ul>
+  <li>add “signals” section in the header
+    <ul>
+      <li>Even if the signal is declared as a method, there is no need to implement it. The meta-compiler is used to do this.</li>
+      <li>Now we need to emit the signal when the counter reaches 10.</li>
+    </ul>
+  </li>
+</ul>
+
+<pre><code class="language-window.cpp">#include &lt;QPushButton&gt;
+#include &lt;QApplication&gt;
+
+Window::Window(QWidget *parent) : QWidget(parent)
+{
+    // Set size of the window
+    setFixedSize(100, 50);
+
+    // Create and position the button
+    m_pButton = new QPushButton("Hello World", this);
+    m_pButton-&gt;setGeometry(10, 10, 80, 30);
+    m_pButton-&gt;setCheckable(true);
+
+    m_nCounter = 0;
+
+    // New: Do the connection
+    connect(m_pButton, SIGNAL (clicked(bool)), this, SLOT (slotButtonClicked(bool)));
+    connect(this, SIGNAL (counterReached()), QApplication::instance(), SLOT (quit()));
+}
+
+void Window::slotButtonClicked(bool checked) {
+  if (checked) {
+    m_pButton-&gt;setText("Checked");
+  } else {
+    m_pButton-&gt;setText("Hello World");
+  }
+
+  m_nCounter++;
+  if (m_nCounter == 10){
+      emit counterReached();
+  }
+}
+</code></pre>
+<ul>
+  <li>We need t o write the keyword emit to send the signal.</li>
+</ul>
+
+<h3 id="troubleshooting">Troubleshooting</h3>
+
+<p>While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error.</p>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>main.cpp:<span class="o">(</span>.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3<span class="o">)</span>: undefined reference to <span class="sb">`</span>vtable <span class="k">for </span>Window<span class="s1">'
+</span></code></pre></div></div>
+
+<p>This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build &gt; Run qmake.</p>
+
+<h3 id="widgets">Widgets</h3>
+
+<h4 id="qradiobutton">QRadioButton</h4>
+
+<ul>
+  <li>Radio button is a standard GUI component being used to make a unique choice from a list.</li>
+  <li>QRadioButton behaves just like QPushButton thanks to a nice inheritance.</li>
+  <li>By default, QRadioButton are not grouped, therefore more than one of them can be checked at the same time. In order to have the “exclusive” behaviour of many radio buttons, we need to use QButtonGroup.</li>
+  <li>QButtonGroup
+    <ul>
+      <li>Allocate a new button group</li>
+      <li>Attach it to the parent object
+        <ul>
+          <li>e.g.)
+            <ul>
+              <li>MainWindow</li>
+              <li>this
+                <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">QButtonGroup</span><span class="o">*</span> <span class="n">pButtonGroup</span> <span class="o">=</span> <span class="k">new</span> <span class="nf">QButtonGroup</span><span class="p">(</span><span class="n">object</span><span class="p">);</span>
+<span class="c1">// Add buttons in the button group</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button1</span><span class="p">);</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button2</span><span class="p">);</span>
+<span class="n">pButtonGroup</span><span class="o">-&gt;</span><span class="n">addButton</span><span class="p">(</span><span class="n">button3</span><span class="p">);</span>
+</code></pre></div>                </div>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/gui/2022/04/19/Qt-observer-pattern.html" title="Qt Observer Pattern">Qt Observer Pattern</a><a class="next" href="/gui/2022/06/06/Qt-menus-example.html" title="Qt Menus Example">Qt Menus Example</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/scripts/2021/12/27/pyqt5-docker.html" title="Qt Menus Example">Pyqt5 Docker</a></li>
+<li><a class="post-link" href="/gui/2022/07/11/Qt-implicit-sharing.html" title="Qt Menus Example">Qt Implicit Sharing</a></li>
+<li><a class="post-link" href="/mlops/2021/12/22/vggnet.html" title="Qt Menus Example">CNN Architecture - VGGNet</a></li>
+<li><a class="post-link" href="/skillorknowhow/2021/12/27/cheat-sheets.html" title="Qt Menus Example">Cheat Sheets</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

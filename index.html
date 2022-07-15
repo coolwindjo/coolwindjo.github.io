@@ -1,0 +1,5541 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Home | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Home">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Archive what I learned, what I experienced, what I felt.">
+<meta property="og:description" content="Archive what I learned, what I experienced, what I felt.">
+<link rel="canonical" href="coolwindjo.github.io/">
+<meta property="og:url" content="coolwindjo.github.io/">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Home">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"WebSite","author":{"@type":"Person","name":"CoolWind"},"description":"Archive what I learned, what I experienced, what I felt.","headline":"Home","name":"Cool Wind on Study","url":"coolwindjo.github.io/"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+<script>MathJax={"tex":{"inlineMath":[["$","$"],["\\(","\\)"]],"displayMath":[["$$","$$"],["\\[","\\]"]]},"svg":{"fontCache":"global"}}</script><script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script><script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header site-header-transparent" role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;documentElement.setAttribute("data-header-transparent", "");var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<section class="page-banner">
+    <div class="page-banner-img">
+<div style="background-image: url(/assets/images/banners/2019-AMG-GT-4DOOR-COUPE.jpg)"></div>
+        <img class="img-placeholder" src="/assets/images/banners/2019-AMG-GT-4DOOR-COUPE.jpg">
+</div>
+    <div class="wrapper">
+      <div class="page-banner-inner"><div class="page-banner-default">
+            <h1 class="page-banner-heading">
+              Cool Wind on Study
+            </h1>
+            <h2 class="page-banner-subheading">
+              Technical Notes
+            </h2>
+          </div></div>
+    </div>
+  </section><script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="articles">
+  
+
+  
+
+
+  <div class="pagination">
+  <!-- Post list links -->
+  <ul class="post-list">
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/07/14/Qt-recipe-example.html">
+          Qt Recipe Example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 14, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/07/14/Qt-recipe-example.html">
+        <p>
+        Reference Links
+
+
+  Qt Documentation - Recipe Example
+  Qt Documentation - text viewer
+  Qt Documentation - combo box
+  Qt Documentation - XQuery
+  Qt Documentation - Qt Desinger
+
+
+Recipes Example
+
+
+  Using Qt XML Patterns to query XML data loaded from a file.
+  This Recipes example shows how to use Qt XML Patterns to query XML data loaded from ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#xml">#xml</a><a class="post-tag" href="/tags.html#qt-example">#qt-example</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/07/11/Qt-implicit-sharing.html">
+          Qt Implicit Sharing
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jul 11, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 5 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/07/11/Qt-implicit-sharing.html">
+        <p>
+        Reference Links
+
+
+  Qt - Implicit Sharing
+  Qt - Implicit Sharing iterator problem
+  Qt - Threads and Implicitly Shared Classes
+  Qt - QSharedData
+  Qt - QSharedDataPointer
+
+
+Implicit Sharing
+
+
+  Many C++ classes in Qt use implicit data sharing to
+    
+      maximize resource usage and
+      minimize copying.
+    
+  
+  Implicitly shared classes ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#memory-management">#memory-management</a><a class="post-tag" href="/tags.html#copy-on-write">#copy-on-write</a><a class="post-tag" href="/tags.html#shared-data">#shared-data</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html">
+          Qt Bryan Lecture Episode 3 ~ 6
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 23, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html">
+        <p>
+        Reference Links
+
+
+  YouTube Lecture: Qt 6 with C++ by Bryan Cairns
+  QObject.
+  Signals and Slots.
+  meta-object system.
+  Understanding QObject in Qt by Bryan Cairns.
+
+
+Qt Console Application
+
+What’s going on under the hood
+
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#lecture">#lecture</a><a class="post-tag" href="/tags.html#qt-example">#qt-example</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/06/20/Qt-notepad-example.html">
+          Qt Notepad Example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 20, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/06/20/Qt-notepad-example.html">
+        <p>
+        Reference Links
+
+
+  Qt Documentation - Notepad Example
+  Qt Source code - Notepad Example
+  Building and Running an Example
+  Using Qt Creator
+  Creating other kind of applications with Qt Creator
+  QWindow and Dialog Widgets
+  The Event System
+  Qt Designer Manual
+  Layout Management
+  Widgets and Layouts
+  Layout Examples
+  Qt Widget Gallery
+ ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#notepad">#notepad</a><a class="post-tag" href="/tags.html#qt-example">#qt-example</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/06/06/Qt-menus-example.html">
+          Qt Menus Example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 06, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/06/06/Qt-menus-example.html">
+        <p>
+        Reference Links
+
+
+  Qt Documentation - Menus Example
+  Qt Source code - Menus Example
+
+
+Menus Example
+
+
+  How menus can be used in a main window application
+  Menu widget can be either
+    
+      a pull-down menu in a menu bar or
+        
+          Pull-down menus are shown by the menu bar when the user clicks on the respective item or presses t... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#menu">#menu</a><a class="post-tag" href="/tags.html#qt-example">#qt-example</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/05/17/Qt-meta-object.html">
+          Qt Meta Object
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> May 17, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/05/17/Qt-meta-object.html">
+        <p>
+        Reference Links
+
+
+  Qt for Beginners
+
+
+The Meta Object
+
+
+  Qt provides a meta-object system.
+    
+      Meta-object (literally “over the object”) is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like:
+        
+          Introspection: capability of examining a type at run-time
+          Asynchr... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#meta-object">#meta-object</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/04/19/Qt-observer-pattern.html">
+          Qt Observer Pattern
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Apr 19, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/04/19/Qt-observer-pattern.html">
+        <p>
+        Reference Links
+
+
+  Qt for Beginners
+
+
+The observer pattern
+
+
+  Nearly all UI toolkits have a mechanism to detect an user action, and respond to this action.
+    
+      Some of them use callbacks, other use listeners, but basically, all of them are inspired by the observer pattern.
+      Observer pattern is used when an observable object wants t... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#observer-pattern">#observer-pattern</a><a class="post-tag" href="/tags.html#signal">#signal</a><a class="post-tag" href="/tags.html#slot">#slot</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/programming/2022/03/10/design-pattern-builder.html">
+          Design Pattern Builder
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 10, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 10 mins</span>
+      </div>
+      <a class="post-excerpt" href="/programming/2022/03/10/design-pattern-builder.html">
+        <p>
+        Reference Links
+
+
+  Refactoring GURU - Builder
+
+
+Intent
+
+Builder is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.
+
+
+
+Problem
+
+
+
+The simplest solution is to extend the base House class and create... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#design-pattern">#design-pattern</a><a class="post-tag" href="/tags.html#builder">#builder</a><a class="post-tag" href="/tags.html#creator">#creator</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gui/2022/03/10/Qt-introduction.html">
+          Qt Introduction
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 10, 2022</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 12 mins</span>
+      </div>
+      <a class="post-excerpt" href="/gui/2022/03/10/Qt-introduction.html">
+        <p>
+        Reference Links
+
+
+  Qt for Beginners
+
+
+Introduction to Qt
+
+
+  
+    Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications.
+  
+  
+    Qt has an impressive collection of modules, including
+    
+      QtCore, a base library that... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#qt">#qt</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/skillorknowhow/2021/12/27/cheat-sheets.html">
+          Cheat Sheets
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/skillorknowhow/2021/12/27/cheat-sheets.html">
+        <p>
+        Python related
+
+
+  Conda Cheat Sheet
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#cheatsheet">#cheatsheet</a><a class="post-tag" href="/tags.html#conda">#conda</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/12/27/yolox-docker.html">
+          Yolox Docker
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/12/27/yolox-docker.html">
+        <p>
+        Reference Links
+
+
+  Github - lyyiangang/yolox-dockerfile
+
+
+Dockerfiles
+
+# docker build -f ./Dockerfile.txt -t yolox .
+FROM nvcr.io/nvidia/pytorch:21.06-py3
+# install douban pip source, boost installation
+RUN mkdir ~/.pip &amp;&amp; echo -e "[global]\nindex-url = https://pypi.doubanio.com/simple\ntrusted-host = pypi.doubanio.com\n" &gt; ~/.pip/pi... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#yolox">#yolox</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/12/27/python3-anaconda3-docker.html">
+          Python3 Anaconda3 Docker
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 8 mins</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/12/27/python3-anaconda3-docker.html">
+        <p>
+        Reference Links
+
+
+  Github - ContinuumIO/docker-images
+  Github - docker-library/python
+
+
+Dockerfile - Anaconda3
+
+FROM debian:bullseye-slim
+
+ENV LANG=C.UTF-8 LC_ALL=C.UTF-8
+ENV PATH /opt/conda/bin:$PATH
+
+# hadolint ignore=DL3008
+RUN set -x &amp;&amp; \
+    apt-get update --fix-missing &amp;&amp; \
+    apt-get install -y --no-install-recommends \... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#python3">#python3</a><a class="post-tag" href="/tags.html#anaconda3">#anaconda3</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/12/27/pyqt5-docker.html">
+          Pyqt5 Docker
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/12/27/pyqt5-docker.html">
+        <p>
+        Reference Links
+
+
+  Dockerfiles - pyqt
+  Github - jozo/docker-pyqt5
+
+
+Dockerfiles
+
+
+FROM ubuntu:20.04
+
+MAINTAINER jozo &lt;hi@jozo.io&gt;
+
+ENV DEBIAN_FRONTEND=noninteractive
+
+# Add user
+RUN adduser --quiet --disabled-password qtuser &amp;&amp; usermod -a -G audio qtuser
+
+# This fix: libGL error: No matching fbConfigs or visuals found
+ENV LIBGL_A... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#pyqt5">#pyqt5</a><a class="post-tag" href="/tags.html#docker">#docker</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/12/27/nvidia-docker.html">
+          Nvidia Docker
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/12/27/nvidia-docker.html">
+        <p>
+        Reference Links
+
+
+  ROS2 yocto meta layer Discourse: Discussion about how to install ROS2 into a yocto based system
+
+
+Dockerfiles
+
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#nvidia">#nvidia</a><a class="post-tag" href="/tags.html#docker">#docker</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/mlops/2021/12/22/vggnet.html">
+          CNN Architecture - VGGNet
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 22, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+      </div>
+      <a class="post-excerpt" href="/mlops/2021/12/22/vggnet.html">
+        <p>
+        Reference Links
+
+
+  Blog - 이석중의 알기쉬운 인공지능 CNN 구조(6) - VGGNet comment
+  Blog - Machine Learning Academy by Laon People - VGGNet comment
+  Blog - Convolutional neural networks on the iPhone with VGGNet comment
+  Blog - An introduction to Convolutional Neural Networks comment
+  Blog - Google’s MobileNets on the iPhone comment
+
+
+What I learned
+
+
+  V... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#cnn">#cnn</a><a class="post-tag" href="/tags.html#architecture">#architecture</a><a class="post-tag" href="/tags.html#vggnet">#vggnet</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/12/05/nvtop.html">
+          GPU Profiling with nvtop
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 05, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/12/05/nvtop.html">
+        <p>
+        Reference Links
+
+
+  Blog - Use nvtop rather than nvidia-smi (Korean) Offering command to install nvtop via apt-get or github source
+
+
+
+sudo apt-get install nvtop
+
+# If it is not work, follow the belows
+sudo apt-get install cmake libncurses5-dev libncursesw5-dev git
+
+git clone https://github.com/Syllo/nvtop.git &amp;&amp; \
+mkdir -p nvtop/build &amp;... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#shell">#shell</a><a class="post-tag" href="/tags.html#nvidia">#nvidia</a><a class="post-tag" href="/tags.html#profile">#profile</a><a class="post-tag" href="/tags.html#gpu">#gpu</a><a class="post-tag" href="/tags.html#install_from_source">#install_from_source</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/mlops/2021/12/05/remove-cuda-nvidia-related-modules.html">
+          How to remove Nvidia related modules like CUDA toolkit and driver
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 05, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/mlops/2021/12/05/remove-cuda-nvidia-related-modules.html">
+        <p>
+        Reference Links
+
+
+  Blog - RTX3090 Deep learning 실험환경 구축하기 (Korean) Offering commands to uninstall Nvidia related modules like CUDA toolkit and driver
+
+
+
+sudo apt-get --purge -y remove 'cuda*' &amp;&amp; \
+sudo apt-get --purge -y remove 'nvidia*' &amp;&amp; \
+sudo apt-get --purge -y remove 'libnvidia-*' &amp;&amp; \
+sudo apt-get --purge -y remov... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#nvidia">#nvidia</a><a class="post-tag" href="/tags.html#uninstall">#uninstall</a><a class="post-tag" href="/tags.html#cuda">#cuda</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2021/12/05/markdown-cheat-sheet.html">
+          Markdown Cheat Sheet
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 05, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2021/12/05/markdown-cheat-sheet.html">
+        <p>
+        Reference Links
+
+
+  Markdown short_cheat sheet Search for a syntax to write a blog post.
+  Markdown cheat sheet Search for a syntax to write a blog post.
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/scripts/2021/11/20/dind-and-dood-for-jenkins.html">
+          Docker in Docker and Docker out of Docker for Jenkins
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Nov 20, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+      </div>
+      <a class="post-excerpt" href="/scripts/2021/11/20/dind-and-dood-for-jenkins.html">
+        <p>
+        Jenkins in Docker
+
+Reference Links
+
+
+  Install Jenkins via Docker
+    
+      Official Manual - Jenkins via Docker Useful guide for Downloading and running Jenkins in Docker
+      Official GitHub Documentation for Jenkins Docker Image Not yet to be used but, useful someday…
+      Official Docker Hub for Jenkins Docker Image Not yet to be used but... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#jenkins">#jenkins</a><a class="post-tag" href="/tags.html#docker">#docker</a><a class="post-tag" href="/tags.html#dind">#dind</a><a class="post-tag" href="/tags.html#dood">#dood</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/skillorknowhow/2021/08/27/selenium-in-docker.html">
+          Python Selenium in Docker
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Aug 27, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 7 mins</span>
+      </div>
+      <a class="post-excerpt" href="/skillorknowhow/2021/08/27/selenium-in-docker.html">
+        <p>
+        Reference Links
+
+
+  Using Selenium With Python in a Docker Container A blog on dev.to that intruduce a docker file to build containers in which the selenium and chrome run.
+  GitHub: docker-python-chromedriver GitHub containing docker files with various versions of python. Seems to based on the source code from the above dev.to blog.
+  A recipe ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#python">#python</a><a class="post-tag" href="/tags.html#selenium">#selenium</a><a class="post-tag" href="/tags.html#docker">#docker</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/raspberrypi/2021/03/30/build-linux-for-raspberry-pi.html">
+          Linux Kernel Building for Raspberry Pi 4
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Mar 30, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/raspberrypi/2021/03/30/build-linux-for-raspberry-pi.html">
+        <p>
+        Preparations
+
+
+  Raspberry Pi Development Setting Get some snippets from the manual!
+
+
+Repositories
+
+
+git clone https://github.com/kimdukyu/rpi4-uboot.git
+git clone https://bitbucket.org/jayleekr0125/rpi-5.4.y.git
+
+
+
+Build a kernel, dtb, rootfs, etc.
+
+
+  Kernel Building for Raspberry Pi (Official) Get some snippets from the manual!
+  Build a ker... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#kernel">#kernel</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/linux/2021/01/25/interupt-trap-systemcall.html">
+          Interupt, Trap and System Call
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jan 25, 2021</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+      </div>
+      <a class="post-excerpt" href="/linux/2021/01/25/interupt-trap-systemcall.html">
+        <p>
+        Interupt Handling Procedure
+
+System Call Handling Procedure
+
+Additional System Call Implementation
+
+
+  Adding a new system call
+    
+      Add a new system call number “317” and register the signature “sys_newsyscall()” to the “sys_call_table” in the “~/arch/x86/kernel/syscalls/syscall_64_tbl” file.
+    
+
+    
+
+    
+      Add the new system call... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#interupt">#interupt</a><a class="post-tag" href="/tags.html#trap">#trap</a><a class="post-tag" href="/tags.html#system-call">#system-call</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/linux/2020/12/28/linux-file-system.html">
+          Linux File System and Virtual File System
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 28, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/linux/2020/12/28/linux-file-system.html">
+        <p>
+        File System
+
+
+  Main Memory vs. Secondary Storage
+
+
+
+  
+    
+      Memory
+      Memory Management
+      Device
+      Volatility
+      Accessing Unit
+    
+  
+  
+    
+      main memory
+      virtual memory
+      RAM
+      volatile
+      page frame
+    
+    
+      secondary storage
+      file system
+      hard disk
+      non-volatile
+      disk blo... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#file-system">#file-system</a><a class="post-tag" href="/tags.html#virtual-file-system">#virtual-file-system</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/ros/2020/12/17/ros-basic-programming.html">
+          ROS Basic Programming
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 17, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 12 mins</span>
+      </div>
+      <a class="post-excerpt" href="/ros/2020/12/17/ros-basic-programming.html">
+        <p>
+        ROS basics
+
+
+  
+    Axis Orientation
+
+    
+    
+      x: forward
+      y: left
+      z: upward
+    
+  
+  
+    SI Unit
+
+    
+      
+        
+          Quantity
+          Unit
+        
+      
+      
+        
+          angle
+          radian
+        
+        
+          length
+          meter
+        
+        
+          mass
+          kilogram
+     ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#lecture">#lecture</a><a class="post-tag" href="/tags.html#mooc">#mooc</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/ros/2020/12/11/simulator-comparison.html">
+          Comparison of Simulators for Robotics and Self-driving Vehicles
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 11, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/ros/2020/12/11/simulator-comparison.html">
+        <p>
+        Reference Links
+
+
+  Udacidrone
+  AirSim
+  CARLA
+  AADS
+    
+      AADS paper
+    
+  
+  LGSVL
+  Gazebo
+  Udacity’s Self-Driving Car Simulators
+  List of simulation environments for AI/ML training
+  Autonomous Driving paper with code
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#robotics">#robotics</a><a class="post-tag" href="/tags.html#self-driving">#self-driving</a><a class="post-tag" href="/tags.html#sensor">#sensor</a><a class="post-tag" href="/tags.html#simulator">#simulator</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/linux/2020/12/07/task-management.html">
+          Linux Task Management
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 07, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/linux/2020/12/07/task-management.html">
+        <p>
+        Process, Thread and Task
+
+
+  
+    
+      Managing unit
+      Description
+    
+  
+  
+    
+      Task
+      Resource acquisition unit
+    
+    
+      Thread
+      Running unit
+    
+    
+      Process
+      Running or runnable program
+    
+    
+      Program
+      Executable file stored in disk
+    
+  
+
+
+
+  
+    Executable file is compiled to be a ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#task">#task</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/linux/2020/12/07/memory-management.html">
+          Linux Memory Management
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 07, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+      </div>
+      <a class="post-excerpt" href="/linux/2020/12/07/memory-management.html">
+        <p>
+        Memory management technic and virtual memory
+
+
+  
+    Virtual memory offers maximum sized Virtual Address Space to each Task.
+
+    
+      
+        
+          CPU
+          Size
+        
+      
+      
+        
+          32bit
+          4GB
+        
+        
+          64bit
+          16EB
+        
+      
+    
+
+    
+      In case of 32bit CPU, Virt... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#memory">#memory</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/linux/2020/12/05/linux-kernel.html">
+          Linux Kernel Structure
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 05, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/linux/2020/12/05/linux-kernel.html">
+        <p>
+        Linux kernel structure
+
+
+  Operating System is a resource manager
+  
+    Resource
+
+    
+      
+        
+          Physical resource
+          Abstract resource
+        
+      
+      
+        
+          CPU
+          Task
+        
+        
+          Memory
+          Segment, Page
+        
+        
+          Disk
+          File
+        
+        
+ ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#kernel">#kernel</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/skillorknowhow/2020/11/14/gui-from-docker.html">
+          GUI from Docker Container
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Nov 14, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/skillorknowhow/2020/11/14/gui-from-docker.html">
+        <p>
+        Add xhost access permission for the docker
+
+$ xhost +local:docker
+non-network local connections being added to access control list
+$ docker run -it \
+        -e DISPLAY=$DISPLAY \
+        -v /tmp/.X11-unix:/tmp/.X11-unix:ro \
+        IMAGE_NAME
+$ xhost -local:docker
+non-network local connections being removed from access control list
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#gui">#gui</a><a class="post-tag" href="/tags.html#docker">#docker</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/ros/2020/10/25/setting-ros-evironment.html">
+          Setting ROS Environment
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 25, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/ros/2020/10/25/setting-ros-evironment.html">
+        <p>
+        ROS Official Tutorial
+
+
+  ROS + Docker
+    
+      Getting started with ROS and Docker Compose
+      Using GUI’s with Docker
+        
+          x11docker: A simple way to run GUI appas in Docker
+        
+      
+    
+  
+  Ubuntu install of ROS Melodic
+  ROS Tutorials
+    
+      Installing from source
+    
+  
+
+
+Install Dependent Libraries
+
+
+
+
+
+
+sud... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#official">#official</a><a class="post-tag" href="/tags.html#tutorial">#tutorial</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/raspberrypi/2020/10/24/raspberrypi4-sensors.html">
+          Sensors for Raspberry Pi
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 24, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/raspberrypi/2020/10/24/raspberrypi4-sensors.html">
+        <p>
+        Reference Links
+
+
+  ROS Melodic on Raspberry Pi 4 [Debian Buster] + RPLIDAR A1M8: LiDAR Sensor
+  50 of the most important Raspberry Pi Sensors and Components:    Temperature / Humidity / Air Pressure / Gas / Motion Sensors / Navigation Modules / Wireless / Infrared (IR) / Bluetooth / Motors / Analogue Sensors / Current Supply / Displays / Other ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#sensor">#sensor</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/raspberrypi/2020/10/24/mender-for-raspberrypi.html">
+          Mender for Raspberry Pi
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 24, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/raspberrypi/2020/10/24/mender-for-raspberrypi.html">
+        <p>
+        Reference Links
+
+
+  Prepare a Raspberry Pi device: Quickly and easily deploy your first over-the-air (OTA) software update with Mender using a secure server we host for you.
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#mender">#mender</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/raspberrypi/2020/10/24/agl-for-raspberrypi.html">
+          Automotive Graded Linux for Raspberry Pi
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 24, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/raspberrypi/2020/10/24/agl-for-raspberrypi.html">
+        <p>
+        Clone gits from the official repository and the one managed by our member
+
+
+  Kernel building (Official Docu): Get some snippets from the manual!
+  Kernel (rpi-5.4.y) git repo (/jsyleekr0125): Kernel source 1 (needed to be compared with official one)
+  Kernel git repo (/kimdukyu): Kernel source 2 (needed to be compared with official one)
+  Uboot... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#agl">#agl</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/gcp/2020/10/24/google-cloud-platform.html">
+          Beginning Google Cloud Platform
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 24, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/gcp/2020/10/24/google-cloud-platform.html">
+        <p>
+        Google Cloud Platform 무료 사용 관련 영상
+
+
+
+Reference Links
+
+
+  Google Cloud Platform을 활용하여 평생 ‘무료’ PC 만들기: GCP 이용 시작할 때 참고 사이트
+  Using IoT Core gateways with a Raspberry Pi: GCP IoT Tutorial
+  Tutorial on Google IoT Core with Raspberry Pi to visualize the sensor data: 
+In this tutorial we will learn how to build an IoT application using the Google Clo... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#gcp">#gcp</a><a class="post-tag" href="/tags.html#google">#google</a><a class="post-tag" href="/tags.html#iot">#iot</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/raspberrypi/2020/10/15/ros-yocto-raspberrypi4.html">
+          ROS with Yocto for Raspberry Pi 4
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 15, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/raspberrypi/2020/10/15/ros-yocto-raspberrypi4.html">
+        <p>
+        Reference Links
+
+
+  ROS2 yocto meta layer Discourse: Discussion about how to install ROS2 into a yocto based system
+  Best ARM board for ROS Discourse: Discussion about Best ARM board for ROS
+  Creating_Recipes_for_ROS_modules Yocto Wiki: This article covers creating a recipe for a ROS module. For this article we’ll use the vectornav module as a... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#yocto">#yocto</a><a class="post-tag" href="/tags.html#raspberrypi">#raspberrypi</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/ros/2020/10/09/ros-tech-terms.html">
+          ROS Technical Terms
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 09, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <a class="post-excerpt" href="/ros/2020/10/09/ros-tech-terms.html">
+        <p>
+        Technical Terms
+
+
+  
+    
+      Term
+      Description
+    
+  
+  
+    
+      [ROS](#ros) (Robot Operating System)
+      Robot SW를 작성하기 위한 Framework or Platform
+    
+    
+      [Master](#master)
+      Node 사이 연결과 Message 통신을 위한 Name server 역할
+    
+    
+      [Node](#node)
+      ROS에서 실행되는 최소 단위의 Processor를 지칭
+    
+    
+      XML-RPC (XML - Remote... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#term">#term</a><a class="post-tag" href="/tags.html#jargon">#jargon</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/ros/2020/10/08/ros-lecture.html">
+          ROS - ROBOTIS Lecture 1, 2, 4 (with Links)
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Oct 08, 2020</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/ros/2020/10/08/ros-lecture.html">
+        <p>
+        ROS References
+
+
+  ROS Robotis Lecture Youtube
+    
+      Material Github
+    
+  
+  ROS 한글책 Github
+  로열모 (로봇공학을 위한 열린모임) Facebook
+  ROS (Robot Operating System)
+    
+      ROS Wiki - Message
+      ROS Wiki - Common Messages
+      ROS Wiki - Standard Messages
+    
+  
+  OPROS (Open Platform for Robotic Services)
+  OpenRTM-aist
+  오로카 Naver Cafe
+
+
+R... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#lecture">#lecture</a><a class="post-tag" href="/tags.html#mooc">#mooc</a><a class="post-tag" href="/tags.html#robotis">#robotis</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2018/12/07/welcome-to-jekyll.html">
+          Welcome to Jekyll!
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 07, 2018</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2018/12/07/welcome-to-jekyll.html">
+        <p>
+        You’ll find this post in your _posts directory. Go ahead and edit it and re-build the site to see your changes. You can rebuild the site in many different ways, but the most common way is to run jekyll serve, which launches a web server and auto-regenerates your site when a file is updated.
+
+To add new posts, simply add a file in the _posts dire... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#jekyll">#jekyll</a><a class="post-tag" href="/tags.html#theme">#theme</a><a class="post-tag" href="/tags.html#yat">#yat</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2018/12/05/an-exhibit-of-markdown.html">
+          An exhibit of Markdown
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 05, 2018</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 2 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2018/12/05/an-exhibit-of-markdown.html">
+        <p>
+        This note demonstrates some of what Markdown is capable of doing.
+
+An exhibit of Markdown
+
+Note: Feel free to play with this page. Unlike regular notes, this doesn’t automatically save itself.
+
+Basic formatting
+
+Paragraphs can be written like so. A paragraph is the basic block of Markdown. A paragraph is what text will turn into when there is no... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2018/05/26/mathjax-test.html">
+          Mathjax Test
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> May 26, 2018</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2018/05/26/mathjax-test.html">
+        <p>
+        
+  A safe integer is an integer that
+    
+      can be exactly represented as an IEEE-754 double precision number, and
+      whose IEEE-75 representation cannot be the result of rounding any other integer to fit the IEEE-754 representation
+    
+  
+  For example, $ 2 ^ {53} - 1 $ is a safe integer,
+    
+      it can be exactly represented
+    
+  
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/12/18/video-example.html">
+          Video example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 18, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/12/18/video-example.html">
+        <p>
+        Canon in D (Pachelbel’s Canon) - Cello &amp; Piano [BEST WEDDING VERSION]
+Some of you know that we occasionally play for weddings. As you can imagine, we get a LOT of requests for Canon in D, and we discovered that there were no good arrangements available anywhere for piano and cello! Hard to believe given its popularity. So we decided to make ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#video">#video</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/12/15/table-example.html">
+          Table example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 15, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/12/15/table-example.html">
+        <p>
+        Table example as below
+
+For now, these extended features are provided:
+
+
+  Cells spanning multiple columns
+  Cells spanning multiple rows
+  Cells text align separately
+  Table header not required
+  Grouped table header rows or data rows
+
+
+Rowspan and Colspan
+^^ in a cell indicates it should be merged with the cell above.
+This feature is contribu... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#table">#table</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/12/08/mermaid-example.html">
+          Mermaid example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 08, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/12/08/mermaid-example.html">
+        <p>
+        1. Pie chart
+
+
+
+2. sequence diagram
+
+
+
+
+
+3. Class diagram
+
+
+4. State diagram
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#mermaid">#mermaid</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/12/04/plantuml-example.html">
+          Plantuml example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Dec 04, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/12/04/plantuml-example.html">
+        <p>
+        My First PlantUML
+
+PlantUML Block-1
+
+
+PlantUML Block-2
+
+
+PlantUML Block-3
+
+
+PlantUML Block-4
+
+
+ <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#plantuml">#plantuml</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/06/10/quick-mardown-example.html">
+          Quick markdown example
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jun 10, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/06/10/quick-mardown-example.html">
+        <p>
+        Paragraphs are separated by a blank line.
+
+2nd paragraph. Italic, bold, and monospace. Itemized lists
+look like:
+
+
+  this one
+  that one
+  the other one
+
+
+Note that — not considering the asterisk — the actual text
+content starts at 4-columns in.
+
+
+  Block quotes are
+written like so.
+
+  They can span multiple paragraphs,
+if you like.
+
+
+Use 3 dash... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2017/05/20/this-post-demonstrates-post-content-styles.html">
+          This post demonstrates post content styles
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> May 20, 2017</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2017/05/20/this-post-demonstrates-post-content-styles.html">
+        <p>
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Fusce bibendum neque eget nunc mattis eu sollicitudin enim tincidunt. Vestibulum lacus tortor, ultricies id dignissim ac, bibendum in velit.
+
+Some great heading (h2)
+
+Proin convallis mi ac felis pharetra aliquam. Curabitur dignissim accumsan rutrum. In arcu magna, aliquet vel pretium et, m... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#styles">#styles</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/sample/2016/08/12/my-example-post.html">
+          My Example Post
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Aug 12, 2016</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/sample/2016/08/12/my-example-post.html">
+        <p>
+        Eos eu docendi tractatos sapientem, brute option menandri in vix, quando vivendo accommodare te ius. Nec melius fastidii constituam id, viderer theophrastus ad sit, hinc semper periculis cum id. Noluisse postulant assentior est in, no choro sadipscing repudiandae vix. Vis in euismod delenit dignissim. Ex quod nostrum sit, suas decore animal id i... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags">
+<a class="post-tag" href="/tags.html#markdown">#markdown</a><a class="post-tag" href="/tags.html#comment">#comment</a>
+</div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2016/01/01/another-test-markdown.html">
+          Another test markdown
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Jan 01, 2016</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2016/01/01/another-test-markdown.html">
+        <p>
+        Put the math expression within $…$:
+
+\(\LaTeX{}\)
+
+$\Pi$
+
+$ a * b = c ^ b $
+
+$ 2^{\frac{n-1}{3}} $
+
+$ \int_a^b f(x)\,dx. $
+
+\( \int_a^b f(x)\,dx. \)
+
+$$
+\begin{cases}
+\text{if true}\ foo 
+\text{if false}\ bar
+\end{cases}
+$$
+
+
+  
+    
+      $ \rho {\rm{FOD}} = \sum\limits{\sigma ,i} {(\delta _1 - \delta _2 n_i^\sigma )
+      \phi _i^\sigma ({\bf{... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+<li>
+      
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<h2 class="post-title">
+        <a class="post-link" href="/blogging/2015/02/28/test-markdown.html">
+          Test markdown
+        </a>
+      </h2>
+      <div class="post-meta">
+        <span class="post-date"><i class="fa fa-calendar"></i> Feb 28, 2015</span>
+        <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 1 min</span>
+      </div>
+      <a class="post-excerpt" href="/blogging/2015/02/28/test-markdown.html">
+        <p>
+        You can write regular markdown here and Jekyll will automatically convert it to a nice webpage.  I strongly encourage you to take 5 minutes to learn how to write in markdown - it’ll teach you how to transform regular text into bold/italics/headings/tables/etc.
+
+Here is some bold text
+
+Here is a secondary heading
+
+Here’s a useless table:
+
+
+  
+   ... <span class="read_more">Read More</span>
+        </p>
+      </a>
+      <div class="post-tags"><a class="post-tag" href="/tags.html#markdown">#markdown</a></div>
+    </li>
+</ul>
+
+  <!-- Pagination links -->
+</div>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items -->
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="common-list">
+  <ul>
+    <li>
+      <a href="/index.html">
+        All<span>49</span>
+      </a>
+    </li>
+
+    
+      <li>
+        <a href="/categories.html#h-Blogging">
+          Blogging <span>12</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-GCP">
+          GCP <span>1</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-GUI">
+          GUI <span>8</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Linux">
+          Linux <span>5</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-MLops">
+          MLops <span>2</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Programming">
+          Programming <span>1</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-ROS">
+          ROS <span>5</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-RaspberryPi">
+          RaspberryPi <span>5</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Sample">
+          Sample <span>1</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-Scripts">
+          Scripts <span>6</span>
+        </a>
+      </li>
+    
+      <li>
+        <a href="/categories.html#h-SkillOrKnowhow">
+          SkillOrKnowhow <span>3</span>
+        </a>
+      </li>
+    
+  </ul>
+</div>
+
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

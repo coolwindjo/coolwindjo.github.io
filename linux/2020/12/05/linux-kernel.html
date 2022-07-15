@@ -1,0 +1,1307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Linux Kernel Structure | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Linux Kernel Structure">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Linux kernel structure Operating System is a resource manager Resource Physical resource Abstract resource CPU Task Memory Segment, Page Disk File Network Communication protocol, Packet Abstract resource only Security Access control Linux kernel’s conceptual structure Linux kernel offers services in the user space with system calls through the system call interfaces. Linux Kernel (Conceptual Structure) Task Manager Task creation Task execution State transition Scheduling Signal Handling Inter Process Communication Memory Manager Physical memory management Virtual memory management Segmentation Paging Page fault handling File System File creation Access control inode management Directory management Super block management Network Manager Socket interface TCP/IP communication protocol Device Drive Manager Manage device drivers for Disk, Terminal, CD, Network card, etc. Linux kernel source level structure Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”) /kernel directory Implementation of the Task manager HW dependent task managing logics are in /arch/$(ARCH)/kernel. $(ARCH) is i386, arm, etc. /arch directory Acronym of “architecture” /arch/$(ARCH)/kernel $(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc. /arch/x86 Source Directory Description /arch/x86/boot bootstrap code for system booting /arch/x86/kernel HW dependent task manage code like context switch /arch/x86/mm HW dependent memory manage code like page fault handling /arch/x86/lib library function code used by the kernel /arch/x86/math-emu FPU(Floating Point Unit) emulator /fs directory System call implementation like open(), read(), write() At least 60 different file systems are available for Linux Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc. Virtual File System for offering consistent interface for user /mm directory Implementation of the Memory manager Physical memory management Virtual memory management Memory object allocated for each task management /driver directory Implementation of the Device manager Management and virtualization of Disk, Terminal, Network card, etc. 3 different device drivers Block Device Driver accessed by the file system Character Device Driver accessed by user application program through its device file Network Device Driver accessed by TCP/IP Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc. /net directory Decent portion of the whole linux kernel source amount Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc. Implementation of Abstract layer of many different communication protocol Implementation of Socket offering user interface /ipc directory Implementation of Inter-Process Communication supported by linux kernel Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc. Implementation of message passing, shared memory, semaphore, etc. /init directory Implementation of main start function to initialize the kernel /arch/$(ARCH)/kernel: HW dependent initialization at “head.S” and “mics.c” Global kernel initialization at start_kernel() /include directory Linux kernel headers at /include/linux HW dependent headers at /include/asm-$(ARCH) other directory /Documentation directory for descriptions /lib directory for implementation of kernel library functions /scripts directory for scripts used when configure and compile the kernel Physical resource Abstract resource Conceptual Manager Source directory CPU Task Task Manager /kernel Memory Segment, Page Memory Manager /mm Disk File File System /fs Network Communication protocol, Packet Network Manager /ipc Devices Device drivers for each devices Device Manager /driver Linux kernel compile For new version of linux kernel, just compile and reboot the new kernel.   hello.out kernel executable hello.out bzImage or zImage stored at file system memory access level user level kernel level compile gcc gcc with make file 3 steps for making linux kernel Kernel configuration Kernel compile Kernel installation">
+<meta property="og:description" content="Linux kernel structure Operating System is a resource manager Resource Physical resource Abstract resource CPU Task Memory Segment, Page Disk File Network Communication protocol, Packet Abstract resource only Security Access control Linux kernel’s conceptual structure Linux kernel offers services in the user space with system calls through the system call interfaces. Linux Kernel (Conceptual Structure) Task Manager Task creation Task execution State transition Scheduling Signal Handling Inter Process Communication Memory Manager Physical memory management Virtual memory management Segmentation Paging Page fault handling File System File creation Access control inode management Directory management Super block management Network Manager Socket interface TCP/IP communication protocol Device Drive Manager Manage device drivers for Disk, Terminal, CD, Network card, etc. Linux kernel source level structure Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”) /kernel directory Implementation of the Task manager HW dependent task managing logics are in /arch/$(ARCH)/kernel. $(ARCH) is i386, arm, etc. /arch directory Acronym of “architecture” /arch/$(ARCH)/kernel $(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc. /arch/x86 Source Directory Description /arch/x86/boot bootstrap code for system booting /arch/x86/kernel HW dependent task manage code like context switch /arch/x86/mm HW dependent memory manage code like page fault handling /arch/x86/lib library function code used by the kernel /arch/x86/math-emu FPU(Floating Point Unit) emulator /fs directory System call implementation like open(), read(), write() At least 60 different file systems are available for Linux Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc. Virtual File System for offering consistent interface for user /mm directory Implementation of the Memory manager Physical memory management Virtual memory management Memory object allocated for each task management /driver directory Implementation of the Device manager Management and virtualization of Disk, Terminal, Network card, etc. 3 different device drivers Block Device Driver accessed by the file system Character Device Driver accessed by user application program through its device file Network Device Driver accessed by TCP/IP Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc. /net directory Decent portion of the whole linux kernel source amount Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc. Implementation of Abstract layer of many different communication protocol Implementation of Socket offering user interface /ipc directory Implementation of Inter-Process Communication supported by linux kernel Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc. Implementation of message passing, shared memory, semaphore, etc. /init directory Implementation of main start function to initialize the kernel /arch/$(ARCH)/kernel: HW dependent initialization at “head.S” and “mics.c” Global kernel initialization at start_kernel() /include directory Linux kernel headers at /include/linux HW dependent headers at /include/asm-$(ARCH) other directory /Documentation directory for descriptions /lib directory for implementation of kernel library functions /scripts directory for scripts used when configure and compile the kernel Physical resource Abstract resource Conceptual Manager Source directory CPU Task Task Manager /kernel Memory Segment, Page Memory Manager /mm Disk File File System /fs Network Communication protocol, Packet Network Manager /ipc Devices Device drivers for each devices Device Manager /driver Linux kernel compile For new version of linux kernel, just compile and reboot the new kernel.   hello.out kernel executable hello.out bzImage or zImage stored at file system memory access level user level kernel level compile gcc gcc with make file 3 steps for making linux kernel Kernel configuration Kernel compile Kernel installation">
+<link rel="canonical" href="coolwindjo.github.io/linux/2020/12/05/linux-kernel.html">
+<meta property="og:url" content="coolwindjo.github.io/linux/2020/12/05/linux-kernel.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-12-05T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Linux Kernel Structure">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2020-12-05T00:00:00+00:00","datePublished":"2020-12-05T00:00:00+00:00","description":"Linux kernel structure Operating System is a resource manager Resource Physical resource Abstract resource CPU Task Memory Segment, Page Disk File Network Communication protocol, Packet Abstract resource only Security Access control Linux kernel’s conceptual structure Linux kernel offers services in the user space with system calls through the system call interfaces. Linux Kernel (Conceptual Structure) Task Manager Task creation Task execution State transition Scheduling Signal Handling Inter Process Communication Memory Manager Physical memory management Virtual memory management Segmentation Paging Page fault handling File System File creation Access control inode management Directory management Super block management Network Manager Socket interface TCP/IP communication protocol Device Drive Manager Manage device drivers for Disk, Terminal, CD, Network card, etc. Linux kernel source level structure Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”) /kernel directory Implementation of the Task manager HW dependent task managing logics are in /arch/$(ARCH)/kernel. $(ARCH) is i386, arm, etc. /arch directory Acronym of “architecture” /arch/$(ARCH)/kernel $(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc. /arch/x86 Source Directory Description /arch/x86/boot bootstrap code for system booting /arch/x86/kernel HW dependent task manage code like context switch /arch/x86/mm HW dependent memory manage code like page fault handling /arch/x86/lib library function code used by the kernel /arch/x86/math-emu FPU(Floating Point Unit) emulator /fs directory System call implementation like open(), read(), write() At least 60 different file systems are available for Linux Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc. Virtual File System for offering consistent interface for user /mm directory Implementation of the Memory manager Physical memory management Virtual memory management Memory object allocated for each task management /driver directory Implementation of the Device manager Management and virtualization of Disk, Terminal, Network card, etc. 3 different device drivers Block Device Driver accessed by the file system Character Device Driver accessed by user application program through its device file Network Device Driver accessed by TCP/IP Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc. /net directory Decent portion of the whole linux kernel source amount Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc. Implementation of Abstract layer of many different communication protocol Implementation of Socket offering user interface /ipc directory Implementation of Inter-Process Communication supported by linux kernel Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc. Implementation of message passing, shared memory, semaphore, etc. /init directory Implementation of main start function to initialize the kernel /arch/$(ARCH)/kernel: HW dependent initialization at “head.S” and “mics.c” Global kernel initialization at start_kernel() /include directory Linux kernel headers at /include/linux HW dependent headers at /include/asm-$(ARCH) other directory /Documentation directory for descriptions /lib directory for implementation of kernel library functions /scripts directory for scripts used when configure and compile the kernel Physical resource Abstract resource Conceptual Manager Source directory CPU Task Task Manager /kernel Memory Segment, Page Memory Manager /mm Disk File File System /fs Network Communication protocol, Packet Network Manager /ipc Devices Device drivers for each devices Device Manager /driver Linux kernel compile For new version of linux kernel, just compile and reboot the new kernel.   hello.out kernel executable hello.out bzImage or zImage stored at file system memory access level user level kernel level compile gcc gcc with make file 3 steps for making linux kernel Kernel configuration Kernel compile Kernel installation","headline":"Linux Kernel Structure","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/linux/2020/12/05/linux-kernel.html"},"url":"coolwindjo.github.io/linux/2020/12/05/linux-kernel.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Linux Kernel Structure</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-12-05T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Dec 05, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 4 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#kernel">#kernel</a></div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="linux-kernel-structure">Linux kernel structure</h2>
+
+<ul>
+  <li>Operating System is a resource manager</li>
+  <li>
+    <p>Resource</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Physical resource</th>
+          <th>Abstract resource</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CPU</td>
+          <td>Task</td>
+        </tr>
+        <tr>
+          <td>Memory</td>
+          <td>Segment, Page</td>
+        </tr>
+        <tr>
+          <td>Disk</td>
+          <td>File</td>
+        </tr>
+        <tr>
+          <td>Network</td>
+          <td>Communication protocol, Packet</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ul>
+      <li>Abstract resource only
+        <ul>
+          <li>Security</li>
+          <li>Access control</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>
+    <p>Linux kernel’s conceptual structure</p>
+
+    <p><img src="/assets/images/posts/2020-12-05/linux-conceptual-structure.png" alt="Linux kernel conceptual structure"></p>
+
+    <p>Linux kernel offers services in the user space with system calls through the system call interfaces.</p>
+    <ul>
+      <li>Linux Kernel (Conceptual Structure)
+        <ul>
+          <li>Task Manager
+            <ul>
+              <li>Task creation</li>
+              <li>Task execution</li>
+              <li>State transition</li>
+              <li>Scheduling</li>
+              <li>Signal Handling</li>
+              <li>Inter Process Communication</li>
+            </ul>
+          </li>
+          <li>Memory Manager
+            <ul>
+              <li>Physical memory management</li>
+              <li>Virtual memory management</li>
+              <li>Segmentation</li>
+              <li>Paging</li>
+              <li>Page fault handling</li>
+            </ul>
+          </li>
+          <li>File System
+            <ul>
+              <li>File creation</li>
+              <li>Access control</li>
+              <li>inode management</li>
+              <li>Directory management</li>
+              <li>Super block management</li>
+            </ul>
+          </li>
+          <li>Network Manager
+            <ul>
+              <li>Socket interface</li>
+              <li>TCP/IP communication protocol</li>
+            </ul>
+          </li>
+          <li>Device Drive Manager
+            <ul>
+              <li>Manage device drivers for Disk, Terminal, CD, Network card, etc.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Linux kernel source level structure
+    <ul>
+      <li>
+        <p>Source tree under “/usr/src/kernels/” (branch “linux-4.19.y”)</p>
+
+        <p><img src="/assets/images/posts/2020-12-05/linux-kernel-source-4.19.y_root.png" alt="Linux kernel source tree linux-4.19.y"></p>
+
+        <ul>
+          <li>/kernel directory
+            <ul>
+              <li>Implementation of the Task manager</li>
+              <li>HW dependent task managing logics are in /arch/$(ARCH)/kernel.
+                <ul>
+                  <li>$(ARCH) is i386, arm, etc.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>/arch directory
+            <ul>
+              <li>Acronym of “architecture”</li>
+              <li>/arch/$(ARCH)/kernel
+                <ul>
+                  <li>$(ARCH) is i386(Intel), arm (Advanced RISC Machine), 68 series(Motorolla), Sparc(SUN), PPC(Power PC, IBM) etc.
+                    <ul>
+                      <li>/arch/x86</li>
+                    </ul>
+
+                    <table>
+                      <thead>
+                        <tr>
+                          <th>Source Directory</th>
+                          <th>Description</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        <tr>
+                          <td>/arch/x86/boot</td>
+                          <td>bootstrap code for system booting</td>
+                        </tr>
+                        <tr>
+                          <td>/arch/x86/kernel</td>
+                          <td>HW dependent task manage code like context switch</td>
+                        </tr>
+                        <tr>
+                          <td>/arch/x86/mm</td>
+                          <td>HW dependent memory manage code like page fault handling</td>
+                        </tr>
+                        <tr>
+                          <td>/arch/x86/lib</td>
+                          <td>library function code used by the kernel</td>
+                        </tr>
+                        <tr>
+                          <td>/arch/x86/math-emu</td>
+                          <td>FPU(Floating Point Unit) emulator</td>
+                        </tr>
+                      </tbody>
+                    </table>
+                  </li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>/fs directory
+            <ul>
+              <li>System call implementation like open(), read(), write()</li>
+              <li>At least 60 different file systems are available for Linux
+                <ul>
+                  <li>Representative file systems are ext2, ext3, ext4, nfs, fat, proc, sysfs, devfs, isofs, ntfs, reiserfs, f2fs, xfs, etc.</li>
+                </ul>
+              </li>
+              <li>Virtual File System for offering consistent interface for user</li>
+            </ul>
+          </li>
+          <li>/mm directory
+            <ul>
+              <li>Implementation of the Memory manager</li>
+              <li>Physical memory management</li>
+              <li>Virtual memory management</li>
+              <li>Memory object allocated for each task management</li>
+            </ul>
+          </li>
+          <li>/driver directory
+            <ul>
+              <li>Implementation of the Device manager</li>
+              <li>Management and virtualization of Disk, Terminal, Network card, etc.</li>
+              <li>3 different device drivers
+                <ul>
+                  <li>Block Device Driver accessed by the file system</li>
+                  <li>Character Device Driver accessed by user application program through its device file</li>
+                  <li>Network Device Driver accessed by TCP/IP</li>
+                </ul>
+              </li>
+              <li>Others: 3 categories are not enough because of many kinds of different devices like USB, LCD, DSP, Sound, etc.</li>
+            </ul>
+          </li>
+          <li>/net directory
+            <ul>
+              <li>Decent portion of the whole linux kernel source amount</li>
+              <li>Many different network protocols are available like TCP/IP, UNIX domain communication protocol, 802.11, IPX, RPC, AppleTalk, bluetooth, etc.</li>
+              <li>Implementation of Abstract layer of many different communication protocol</li>
+              <li>Implementation of Socket offering user interface</li>
+            </ul>
+          </li>
+          <li>/ipc directory
+            <ul>
+              <li>Implementation of Inter-Process Communication supported by linux kernel</li>
+              <li>Representative IPCs are PIPE(/fs), Signal(/kernel), SYS V IPC, Socket(/net), etc.</li>
+              <li>Implementation of message passing, shared memory, semaphore, etc.</li>
+            </ul>
+          </li>
+          <li>/init directory
+            <ul>
+              <li>Implementation of main start function to initialize the kernel</li>
+              <li>/arch/$(ARCH)/kernel:
+                <ul>
+                  <li>HW dependent initialization at “head.S” and “mics.c”</li>
+                  <li>Global kernel initialization at start_kernel()</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+          <li>/include directory
+            <ul>
+              <li>Linux kernel headers at /include/linux</li>
+              <li>HW dependent headers at /include/asm-$(ARCH)</li>
+            </ul>
+          </li>
+          <li>other directory
+            <ul>
+              <li>/Documentation directory for descriptions</li>
+              <li>/lib directory for implementation of kernel library functions</li>
+              <li>/scripts directory for scripts used when configure and compile the kernel</li>
+            </ul>
+          </li>
+        </ul>
+
+        <table>
+          <thead>
+            <tr>
+              <th>Physical resource</th>
+              <th>Abstract resource</th>
+              <th>Conceptual Manager</th>
+              <th>Source directory</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>CPU</td>
+              <td>Task</td>
+              <td>Task Manager</td>
+              <td>/kernel</td>
+            </tr>
+            <tr>
+              <td>Memory</td>
+              <td>Segment, Page</td>
+              <td>Memory Manager</td>
+              <td>/mm</td>
+            </tr>
+            <tr>
+              <td>Disk</td>
+              <td>File</td>
+              <td>File System</td>
+              <td>/fs</td>
+            </tr>
+            <tr>
+              <td>Network</td>
+              <td>Communication protocol, Packet</td>
+              <td>Network Manager</td>
+              <td>/ipc</td>
+            </tr>
+            <tr>
+              <td>Devices</td>
+              <td>Device drivers for each devices</td>
+              <td>Device Manager</td>
+              <td>/driver</td>
+            </tr>
+          </tbody>
+        </table>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="linux-kernel-compile">Linux kernel compile</h2>
+
+<ul>
+  <li>
+    <p>For new version of linux kernel, just compile and reboot the new kernel.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th> </th>
+          <th>hello.out</th>
+          <th>kernel</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>executable</td>
+          <td>hello.out</td>
+          <td>bzImage or zImage</td>
+        </tr>
+        <tr>
+          <td>stored at</td>
+          <td>file system</td>
+          <td>memory</td>
+        </tr>
+        <tr>
+          <td>access level</td>
+          <td>user level</td>
+          <td>kernel level</td>
+        </tr>
+        <tr>
+          <td>compile</td>
+          <td>gcc</td>
+          <td>gcc with make file</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>3 steps for making linux kernel</p>
+    <ol>
+      <li>Kernel configuration</li>
+      <li>Kernel compile</li>
+      <li>Kernel installation</li>
+    </ol>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/skillorknowhow/2020/11/14/gui-from-docker.html" title="GUI from Docker Container">GUI from Docker Container</a><a class="next" href="/linux/2020/12/07/memory-management.html" title="Linux Memory Management">Linux Memory Management</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/blogging/2017/12/04/plantuml-example.html" title="Linux Memory Management">Plantuml example</a></li>
+<li><a class="post-link" href="/programming/2022/03/10/design-pattern-builder.html" title="Linux Memory Management">Design Pattern Builder</a></li>
+<li><a class="post-link" href="/raspberrypi/2020/10/24/mender-for-raspberrypi.html" title="Linux Memory Management">Mender for Raspberry Pi</a></li>
+<li><a class="post-link" href="/scripts/2021/11/20/dind-and-dood-for-jenkins.html" title="Linux Memory Management">Docker in Docker and Docker out of Docker for Jenkins</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

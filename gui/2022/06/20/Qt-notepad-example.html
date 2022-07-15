@@ -1,0 +1,1691 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Qt Notepad Example | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Qt Notepad Example">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Reference Links Qt Documentation - Notepad Example Qt Source code - Notepad Example Building and Running an Example Using Qt Creator Creating other kind of applications with Qt Creator QWindow and Dialog Widgets The Event System Qt Designer Manual Layout Management Widgets and Layouts Layout Examples Qt Widget Gallery Application Main Window Main Window Examples Object Model qmake Model MDI applications - QMdiArea MDI applications - MDI Example Files and I/O devices - QFile Files and I/O devices - QIODevice tr() and internationalization - Qt Linguist Manual tr() and internationalization - Writing Source Code for Translation tr() and internationalization - Internationalization with Qt Goals We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the QtWidgets module. The application is a small text editor which allows you to… create a text file, save it, print it, or reopen and edit it again. set the font to be used. Notepad Example Running the example To run the example from Qt Creator, open the Welcome mode and select the example from Examples. Creating the Notepad Project Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process. The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you. To create the Notepad project, select File &gt; New Project &gt; Application &gt; Qt Widgets Application &gt; Choose…, and follow the instructions of the wizard. In the Class Information dialog, type Notepad as the class name and select QMainWindow as the base class. The Qt Widgets Application wizard creates a project that contains a main source file and a set of files that specify a user interface (Notepad widget): file name description CMakeLists.txt the project file main.cpp the main source file for the application notepad.cpp the source file of the notepad class of the Notepad widget notepad.h the header file of the notepad class for the Notepad widget notepad.ui the UI form for the Notepad widget The files come with the necessary boiler plate code for you to be able to build and run the project. Main Source File The wizard generates the following code in th main.cpp file: #include &quot;notepad.h&quot; // 1. #include &lt;QApplication&gt; int main(int argc, char *argv[]) // 2. { QApplication a(argc, argv); // 3. Notepad w; // 4. w.show(); // 5. return a.exec(); // 6. } Include the header files for the Notepad widget and QApplication. Defines the main function that is the entry point for all C and C++ based applications. Creates a QApplication object. This object manages application-wide resources and is necessary to run any Qt program that uses Qt Widgets. It constructs an application object with argc command line arguments run in argv. (For GUI applications that do not use Qt Widgets, you can use QGuiApplication instead.) Creates the Notepad object. This is the object for which the wizard created the class and the UI file. The UI contains visual elements that are called widgets in Qt. Examples of widgets are text edits, scroll bars, labels, and radio buttons. A widget can also be a container for other widgets; a dialog or a main application window, Shows the Notepad widget on the screen in its own window. Widgets can also function as containers. e.g. QMainWindow which often contains several types of widgets. Widgets are not visible by default; the function show() makes the widget visible. Makes the QApplication enter its event loop. When a Qt application is running, events are generated and sent to the widgets of the application. e.g. mouse presses and key strokes Designing a UI The wizard generates a UI definition in XML format: notepad.ui. When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer. When you build the application, Qt Creator launches the Qt User Interface Compiler (uic) that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h. Using Qt Designer The wizard creates an application that uses a QMainWindow. It has its own layout to which you can add a menu bar, dock widgets, toolbars, a status bar. The center area can be occupied by any kind of widget. The wizard places the Notepad widget there. To add widgets in Qt Designer: In the Qt Creator Edit mode, double-click the notepad.ui file in the Projects view to launch the file in the integrated Qt Designer. Drag and drop widgets Text Edit (QTextEdit) to the form. Press Ctrl+A (or Cmd+A) to select the widgets and click Lay out Vertically (or press Ctrl+L) to apply a vertical layout (QVBoxLayout). Press Ctrl+S (or Cmd+S) to save your changes. The UI now looks as follows in Qt Designer: You can view the generated XML file in the code editor: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;!-- 1. --&gt; &lt;ui version=&quot;4.0&quot;&gt; &lt;!-- 2. --&gt; &lt;class&gt;Notepad&lt;/class&gt; &lt;widget class=&quot;QMainWindow&quot; name=&quot;Notepad&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;600&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;property name=&quot;windowTitle&quot;&gt; &lt;string&gt;Notepad&lt;/string&gt; &lt;/property&gt; &lt;widget class=&quot;QWidget&quot; name=&quot;centralwidget&quot;/&gt; &lt;widget class=&quot;QMenuBar&quot; name=&quot;menubar&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;20&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;/widget&gt; &lt;widget class=&quot;QStatusBar&quot; name=&quot;statusbar&quot;/&gt; &lt;/widget&gt; &lt;resources/&gt; &lt;connections/&gt; &lt;/ui&gt; Contains the XML declaration, which specifies the XML version and character encoding used in the document: The rest of the file specifies an ui element that defines a Notepad widget: The UI file is used together with the header and source file of the Notepad class. Notepad Header File The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object. #ifndef NOTEPAD_H #define NOTEPAD_H #include &lt;QMainWindow&gt; // 1. QT_BEGIN_NAMESPACE namespace Ui { class Notepad; } / /2. QT_END_NAMESPACE class Notepad : public QMainWindow // 3. { Q_OBJECT public: Notepad(QWidget *parent = nullptr); // 4. ~Notepad(); // 5. private: Ui::Notepad *ui; // 6. }; #endif // NOTEPAD_H Includes QMainWindow that provides a main application window. Declares the Notepad class in the Ui namespace, which is the standard namespace for the UI classes generated from .ui files by the uic tool. The class declaration contains the Q_OBJECT macro. It must come first in the class definition, and declares our class as a QObject. Naturally, it must also inherit from QObject. A QObject adds several abilities to a normal C++ class. Notably, the class name and slot names can be queried at runtime. It is also possible to query a slot’s parameter types and invoke it. Declares a constructor that has a default argument called parent. The value nullptr indicates that the widget has no parent (it is a top-level widget). Declares a virtual destructor to free the resources that were acquired by the object during its life-cycle. According to the C++ naming convention, destructors have the same name as the class they are associated with, prefixed with a tilde(~). In QObject , destructors are virtual to ensure that the destructors of derived classes are invoked properly when an object is deleted through a pointer-to-base-class. Declares a member variable which is a pointer to the Notepad UI class. A member variable is associated with a specific class, and accessible for all its methods. Notepad Source File The source file that the wizard generated for the Notepad class looks as follows: #include &quot;notepad.h&quot; // 1. #include &quot;./ui_notepad.h&quot; Notepad::Notepad(QWidget *parent) // 2. : QMainWindow(parent) // 3. , ui(new Ui::Notepad) // 4. { ui-&gt;setupUi(this); // 5. } Notepad::~Notepad() // 6. { delete ui; } Includes the Notepad class header file that was generated by the wizard and the UI header file that was generated by the uic tool. Defines the Notepad constructor. Calls the QMainWindow constructor, which is the base class for the Notepad class. Creates the UI class instance and assigns it to the ui member. Sets up the UI. In the destructor, we delete the ui. Project File The wizard generates the following project file, CMakeLists.txt, for us. cmake_minimum_required(VERSION 3.5) project(NotepadEx VERSION 0.1 LANGUAGES CXX) set(CMAKE_INCLUDE_CURRENT_DIR ON) set(CMAKE_AUTOUIC ON) set(CMAKE_AUTOMOC ON) set(CMAKE_AUTORCC ON) set(CMAKE_CXX_STANDARD 11) set(CMAKE_CXX_STANDARD_REQUIRED ON) find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED) find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED) set(PROJECT_SOURCES main.cpp notepad.cpp notepad.h notepad.ui ) if(${QT_VERSION_MAJOR} GREATER_EQUAL 6) qt_add_executable(NotepadEx MANUAL_FINALIZATION ${PROJECT_SOURCES} ) # Define target properties for Android with Qt 6 as: # set_property(TARGET NotepadEx APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR # ${CMAKE_CURRENT_SOURCE_DIR}/android) # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation else() if(ANDROID) add_library(NotepadEx SHARED ${PROJECT_SOURCES} ) # Define properties for Android with Qt 5 after find_package() calls as: # set(ANDROID_PACKAGE_SOURCE_DIR &quot;${CMAKE_CURRENT_SOURCE_DIR}/android&quot;) else() add_executable(NotepadEx ${PROJECT_SOURCES} ) endif() endif() target_link_libraries(NotepadEx PRIVATE Qt${QT_VERSION_MAJOR}::Widgets) set_target_properties(NotepadEx PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION} MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR} MACOSX_BUNDLE TRUE WIN32_EXECUTABLE TRUE ) if(QT_VERSION_MAJOR EQUAL 6) qt_finalize_executable(NotepadEx) endif() The project file specifies the source, header, and UI files included in the project. Adding User Interaction To add functionality to the editor, we start by adding menu items and buttons on a toolbar. Click on “Type Here”, and add the options New, Open, Save, Save as, Print and Exit. This creates 6 lines in the Action Editor below. To connect the actions to slots, right-click an action and select Go to slot &gt; triggered(), and complete the code for that given slot by changing the name of the function. If we also want to add the actions to a toolbar, we can assign an icon to each QAction, and then drag the QAction to the toolbar. You assign an icon by entering an icon name in the icon property of the action concerned. When the QAction has been dragged to the toolbar, clicking the icon will launch the associated slot. If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a QRC file. Add the notepad.qrc file to CMakeLists.txt. Complete the method newDocument(): void Notepad::on_actionNew_triggered() { currentFile.clear(); ui-&gt;textEdit-&gt;setText(QString()); } The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer. The currentFile variable is defined in the private part of notepad.h: private: Ui::Notepad *ui; QString currentFile; Opening a file In notepad.ui, right click on actionOpen and select Go to Slot Complete method open(). void Notepad::on_actionOpen_triggered() { QString fileName = QFileDialog::getOpenFileName(this, &quot;Open the file&quot;); if (fileName.isEmpty()) return; QFile file(fileName); currentFile = fileName; if (!file.open(QIODevice::ReadOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot open file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream in(&amp;file); QString text = in.readAll(); ui-&gt;textEdit-&gt;setText(text); file.close(); } QFileDialog::getOpenFileName opens a dialog enabling you to select a file. QFile object myfile has the selected file_name as parameter. We store the selected file also into the global variable currentFile for later purposes. We open the file with file.open as a readonly text file. If it cannot be opened, a warning is issued, and the program stops. We define a QTextStream instream for parameter myfile. The contents of file myfile is copied into QString text. setText(text) fills the buffer of out editor with text. Saving a file We create the method for saving a file in the same way as for Opening a file, by right clinking on actionSave, and selecting Go to Slot. void Notepad::on_actionSave_triggered() { QString fileName; // If we don't have a filename from before, get one. if (currentFile.isEmpty()) { fileName = QFileDialog::getSaveFileName(this, &quot;Save&quot;); if (fileName.isEmpty()) return; currentFile = fileName; } else { fileName = currentFile; } QFile file(fileName); if (!file.open(QIODevice::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } QFile object myfile is linked to a member variable current_file, the variable that contains the file we were working with. If we cannot open myfile, an error message is issued and the method stops. We create a QTextStream outstream. The contents of the editor buffer is converted to plain text, and then written to outstream. Saving a file under another name void Notepad::on_actionSave_as_triggered() { QString fileName = QFileDialog::getSaveFileName(this, &quot;Save as&quot;); if (fileName.isEmpty()) return; QFile file(fileName); if (!file.open(QFile::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } currentFile = fileName; setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } This is the same procedure as for Saving a file, the only difference being that here you need to enter a new file name for the file to be created. Printing a File If you want to use print functionalities, you need to add PrintSupport to the project file: find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS PrintSupport ) In notepad.cpp, we declare a QPrinter object called printDev: void Notepad::on_actionPrint_triggered() { #if defined(QT_PRINTSUPPORT_LIB) &amp;&amp; QT_CONFIG(printer) QPrinter printDev; #if QTCONFIG(printdialog) QPrintDialog dialog(&amp;printDev, this); if (dialog.exec() == QDialog::Rejected) return; #endif // QT_CONFIG(printdialog) ui-&gt;textEdit-&gt;print(&amp;printDev); #endif // QT_CONFIG(printer) } We launch a printer dialog box and store the selected printer in object printDev. If we clicked on Cancel and did not select a printer, the methods returns. The actual printer command is given with ui-&gt;textEdit-&gt;print with our QPrinter object as parameter. Select a Font void Notepad::on_actionFont_triggered() { bool fontSelected; QFont font = QFontDialog::getFont(&amp;fontSelected, this); if (fontSelected) ui-&gt;textEdit-&gt;setFont(font); } We declare a boolean indicating if we did select a font with QFontDialog. If so, we set the font with ui-&gt;textEdit-&gt;setFont(myfont). Copy, Cut, Paste, Undo and Redo If you select some text, and want to copy it to the clipboard, you call the appropriate method of ui-&gt;textEdit. The same counts for cut, paste, undo and redo. This table shows the method name to use. Task Method called Copy ui-&gt;textEdit-&gt;copy() Cut ui-&gt;textEdit-&gt;cut() Paste ui-&gt;textEdit-&gt;paste() Undo ui-&gt;textEdit-&gt;undo() Redo ui-&gt;textEdit-&gt;redo()">
+<meta property="og:description" content="Reference Links Qt Documentation - Notepad Example Qt Source code - Notepad Example Building and Running an Example Using Qt Creator Creating other kind of applications with Qt Creator QWindow and Dialog Widgets The Event System Qt Designer Manual Layout Management Widgets and Layouts Layout Examples Qt Widget Gallery Application Main Window Main Window Examples Object Model qmake Model MDI applications - QMdiArea MDI applications - MDI Example Files and I/O devices - QFile Files and I/O devices - QIODevice tr() and internationalization - Qt Linguist Manual tr() and internationalization - Writing Source Code for Translation tr() and internationalization - Internationalization with Qt Goals We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the QtWidgets module. The application is a small text editor which allows you to… create a text file, save it, print it, or reopen and edit it again. set the font to be used. Notepad Example Running the example To run the example from Qt Creator, open the Welcome mode and select the example from Examples. Creating the Notepad Project Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process. The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you. To create the Notepad project, select File &gt; New Project &gt; Application &gt; Qt Widgets Application &gt; Choose…, and follow the instructions of the wizard. In the Class Information dialog, type Notepad as the class name and select QMainWindow as the base class. The Qt Widgets Application wizard creates a project that contains a main source file and a set of files that specify a user interface (Notepad widget): file name description CMakeLists.txt the project file main.cpp the main source file for the application notepad.cpp the source file of the notepad class of the Notepad widget notepad.h the header file of the notepad class for the Notepad widget notepad.ui the UI form for the Notepad widget The files come with the necessary boiler plate code for you to be able to build and run the project. Main Source File The wizard generates the following code in th main.cpp file: #include &quot;notepad.h&quot; // 1. #include &lt;QApplication&gt; int main(int argc, char *argv[]) // 2. { QApplication a(argc, argv); // 3. Notepad w; // 4. w.show(); // 5. return a.exec(); // 6. } Include the header files for the Notepad widget and QApplication. Defines the main function that is the entry point for all C and C++ based applications. Creates a QApplication object. This object manages application-wide resources and is necessary to run any Qt program that uses Qt Widgets. It constructs an application object with argc command line arguments run in argv. (For GUI applications that do not use Qt Widgets, you can use QGuiApplication instead.) Creates the Notepad object. This is the object for which the wizard created the class and the UI file. The UI contains visual elements that are called widgets in Qt. Examples of widgets are text edits, scroll bars, labels, and radio buttons. A widget can also be a container for other widgets; a dialog or a main application window, Shows the Notepad widget on the screen in its own window. Widgets can also function as containers. e.g. QMainWindow which often contains several types of widgets. Widgets are not visible by default; the function show() makes the widget visible. Makes the QApplication enter its event loop. When a Qt application is running, events are generated and sent to the widgets of the application. e.g. mouse presses and key strokes Designing a UI The wizard generates a UI definition in XML format: notepad.ui. When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer. When you build the application, Qt Creator launches the Qt User Interface Compiler (uic) that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h. Using Qt Designer The wizard creates an application that uses a QMainWindow. It has its own layout to which you can add a menu bar, dock widgets, toolbars, a status bar. The center area can be occupied by any kind of widget. The wizard places the Notepad widget there. To add widgets in Qt Designer: In the Qt Creator Edit mode, double-click the notepad.ui file in the Projects view to launch the file in the integrated Qt Designer. Drag and drop widgets Text Edit (QTextEdit) to the form. Press Ctrl+A (or Cmd+A) to select the widgets and click Lay out Vertically (or press Ctrl+L) to apply a vertical layout (QVBoxLayout). Press Ctrl+S (or Cmd+S) to save your changes. The UI now looks as follows in Qt Designer: You can view the generated XML file in the code editor: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;!-- 1. --&gt; &lt;ui version=&quot;4.0&quot;&gt; &lt;!-- 2. --&gt; &lt;class&gt;Notepad&lt;/class&gt; &lt;widget class=&quot;QMainWindow&quot; name=&quot;Notepad&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;600&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;property name=&quot;windowTitle&quot;&gt; &lt;string&gt;Notepad&lt;/string&gt; &lt;/property&gt; &lt;widget class=&quot;QWidget&quot; name=&quot;centralwidget&quot;/&gt; &lt;widget class=&quot;QMenuBar&quot; name=&quot;menubar&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;20&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;/widget&gt; &lt;widget class=&quot;QStatusBar&quot; name=&quot;statusbar&quot;/&gt; &lt;/widget&gt; &lt;resources/&gt; &lt;connections/&gt; &lt;/ui&gt; Contains the XML declaration, which specifies the XML version and character encoding used in the document: The rest of the file specifies an ui element that defines a Notepad widget: The UI file is used together with the header and source file of the Notepad class. Notepad Header File The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object. #ifndef NOTEPAD_H #define NOTEPAD_H #include &lt;QMainWindow&gt; // 1. QT_BEGIN_NAMESPACE namespace Ui { class Notepad; } / /2. QT_END_NAMESPACE class Notepad : public QMainWindow // 3. { Q_OBJECT public: Notepad(QWidget *parent = nullptr); // 4. ~Notepad(); // 5. private: Ui::Notepad *ui; // 6. }; #endif // NOTEPAD_H Includes QMainWindow that provides a main application window. Declares the Notepad class in the Ui namespace, which is the standard namespace for the UI classes generated from .ui files by the uic tool. The class declaration contains the Q_OBJECT macro. It must come first in the class definition, and declares our class as a QObject. Naturally, it must also inherit from QObject. A QObject adds several abilities to a normal C++ class. Notably, the class name and slot names can be queried at runtime. It is also possible to query a slot’s parameter types and invoke it. Declares a constructor that has a default argument called parent. The value nullptr indicates that the widget has no parent (it is a top-level widget). Declares a virtual destructor to free the resources that were acquired by the object during its life-cycle. According to the C++ naming convention, destructors have the same name as the class they are associated with, prefixed with a tilde(~). In QObject , destructors are virtual to ensure that the destructors of derived classes are invoked properly when an object is deleted through a pointer-to-base-class. Declares a member variable which is a pointer to the Notepad UI class. A member variable is associated with a specific class, and accessible for all its methods. Notepad Source File The source file that the wizard generated for the Notepad class looks as follows: #include &quot;notepad.h&quot; // 1. #include &quot;./ui_notepad.h&quot; Notepad::Notepad(QWidget *parent) // 2. : QMainWindow(parent) // 3. , ui(new Ui::Notepad) // 4. { ui-&gt;setupUi(this); // 5. } Notepad::~Notepad() // 6. { delete ui; } Includes the Notepad class header file that was generated by the wizard and the UI header file that was generated by the uic tool. Defines the Notepad constructor. Calls the QMainWindow constructor, which is the base class for the Notepad class. Creates the UI class instance and assigns it to the ui member. Sets up the UI. In the destructor, we delete the ui. Project File The wizard generates the following project file, CMakeLists.txt, for us. cmake_minimum_required(VERSION 3.5) project(NotepadEx VERSION 0.1 LANGUAGES CXX) set(CMAKE_INCLUDE_CURRENT_DIR ON) set(CMAKE_AUTOUIC ON) set(CMAKE_AUTOMOC ON) set(CMAKE_AUTORCC ON) set(CMAKE_CXX_STANDARD 11) set(CMAKE_CXX_STANDARD_REQUIRED ON) find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED) find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED) set(PROJECT_SOURCES main.cpp notepad.cpp notepad.h notepad.ui ) if(${QT_VERSION_MAJOR} GREATER_EQUAL 6) qt_add_executable(NotepadEx MANUAL_FINALIZATION ${PROJECT_SOURCES} ) # Define target properties for Android with Qt 6 as: # set_property(TARGET NotepadEx APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR # ${CMAKE_CURRENT_SOURCE_DIR}/android) # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation else() if(ANDROID) add_library(NotepadEx SHARED ${PROJECT_SOURCES} ) # Define properties for Android with Qt 5 after find_package() calls as: # set(ANDROID_PACKAGE_SOURCE_DIR &quot;${CMAKE_CURRENT_SOURCE_DIR}/android&quot;) else() add_executable(NotepadEx ${PROJECT_SOURCES} ) endif() endif() target_link_libraries(NotepadEx PRIVATE Qt${QT_VERSION_MAJOR}::Widgets) set_target_properties(NotepadEx PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION} MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR} MACOSX_BUNDLE TRUE WIN32_EXECUTABLE TRUE ) if(QT_VERSION_MAJOR EQUAL 6) qt_finalize_executable(NotepadEx) endif() The project file specifies the source, header, and UI files included in the project. Adding User Interaction To add functionality to the editor, we start by adding menu items and buttons on a toolbar. Click on “Type Here”, and add the options New, Open, Save, Save as, Print and Exit. This creates 6 lines in the Action Editor below. To connect the actions to slots, right-click an action and select Go to slot &gt; triggered(), and complete the code for that given slot by changing the name of the function. If we also want to add the actions to a toolbar, we can assign an icon to each QAction, and then drag the QAction to the toolbar. You assign an icon by entering an icon name in the icon property of the action concerned. When the QAction has been dragged to the toolbar, clicking the icon will launch the associated slot. If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a QRC file. Add the notepad.qrc file to CMakeLists.txt. Complete the method newDocument(): void Notepad::on_actionNew_triggered() { currentFile.clear(); ui-&gt;textEdit-&gt;setText(QString()); } The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer. The currentFile variable is defined in the private part of notepad.h: private: Ui::Notepad *ui; QString currentFile; Opening a file In notepad.ui, right click on actionOpen and select Go to Slot Complete method open(). void Notepad::on_actionOpen_triggered() { QString fileName = QFileDialog::getOpenFileName(this, &quot;Open the file&quot;); if (fileName.isEmpty()) return; QFile file(fileName); currentFile = fileName; if (!file.open(QIODevice::ReadOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot open file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream in(&amp;file); QString text = in.readAll(); ui-&gt;textEdit-&gt;setText(text); file.close(); } QFileDialog::getOpenFileName opens a dialog enabling you to select a file. QFile object myfile has the selected file_name as parameter. We store the selected file also into the global variable currentFile for later purposes. We open the file with file.open as a readonly text file. If it cannot be opened, a warning is issued, and the program stops. We define a QTextStream instream for parameter myfile. The contents of file myfile is copied into QString text. setText(text) fills the buffer of out editor with text. Saving a file We create the method for saving a file in the same way as for Opening a file, by right clinking on actionSave, and selecting Go to Slot. void Notepad::on_actionSave_triggered() { QString fileName; // If we don't have a filename from before, get one. if (currentFile.isEmpty()) { fileName = QFileDialog::getSaveFileName(this, &quot;Save&quot;); if (fileName.isEmpty()) return; currentFile = fileName; } else { fileName = currentFile; } QFile file(fileName); if (!file.open(QIODevice::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } QFile object myfile is linked to a member variable current_file, the variable that contains the file we were working with. If we cannot open myfile, an error message is issued and the method stops. We create a QTextStream outstream. The contents of the editor buffer is converted to plain text, and then written to outstream. Saving a file under another name void Notepad::on_actionSave_as_triggered() { QString fileName = QFileDialog::getSaveFileName(this, &quot;Save as&quot;); if (fileName.isEmpty()) return; QFile file(fileName); if (!file.open(QFile::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } currentFile = fileName; setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } This is the same procedure as for Saving a file, the only difference being that here you need to enter a new file name for the file to be created. Printing a File If you want to use print functionalities, you need to add PrintSupport to the project file: find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS PrintSupport ) In notepad.cpp, we declare a QPrinter object called printDev: void Notepad::on_actionPrint_triggered() { #if defined(QT_PRINTSUPPORT_LIB) &amp;&amp; QT_CONFIG(printer) QPrinter printDev; #if QTCONFIG(printdialog) QPrintDialog dialog(&amp;printDev, this); if (dialog.exec() == QDialog::Rejected) return; #endif // QT_CONFIG(printdialog) ui-&gt;textEdit-&gt;print(&amp;printDev); #endif // QT_CONFIG(printer) } We launch a printer dialog box and store the selected printer in object printDev. If we clicked on Cancel and did not select a printer, the methods returns. The actual printer command is given with ui-&gt;textEdit-&gt;print with our QPrinter object as parameter. Select a Font void Notepad::on_actionFont_triggered() { bool fontSelected; QFont font = QFontDialog::getFont(&amp;fontSelected, this); if (fontSelected) ui-&gt;textEdit-&gt;setFont(font); } We declare a boolean indicating if we did select a font with QFontDialog. If so, we set the font with ui-&gt;textEdit-&gt;setFont(myfont). Copy, Cut, Paste, Undo and Redo If you select some text, and want to copy it to the clipboard, you call the appropriate method of ui-&gt;textEdit. The same counts for cut, paste, undo and redo. This table shows the method name to use. Task Method called Copy ui-&gt;textEdit-&gt;copy() Cut ui-&gt;textEdit-&gt;cut() Paste ui-&gt;textEdit-&gt;paste() Undo ui-&gt;textEdit-&gt;undo() Redo ui-&gt;textEdit-&gt;redo()">
+<link rel="canonical" href="coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html">
+<meta property="og:url" content="coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-06-20T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Qt Notepad Example">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2022-06-20T00:00:00+00:00","datePublished":"2022-06-20T00:00:00+00:00","description":"Reference Links Qt Documentation - Notepad Example Qt Source code - Notepad Example Building and Running an Example Using Qt Creator Creating other kind of applications with Qt Creator QWindow and Dialog Widgets The Event System Qt Designer Manual Layout Management Widgets and Layouts Layout Examples Qt Widget Gallery Application Main Window Main Window Examples Object Model qmake Model MDI applications - QMdiArea MDI applications - MDI Example Files and I/O devices - QFile Files and I/O devices - QIODevice tr() and internationalization - Qt Linguist Manual tr() and internationalization - Writing Source Code for Translation tr() and internationalization - Internationalization with Qt Goals We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the QtWidgets module. The application is a small text editor which allows you to… create a text file, save it, print it, or reopen and edit it again. set the font to be used. Notepad Example Running the example To run the example from Qt Creator, open the Welcome mode and select the example from Examples. Creating the Notepad Project Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process. The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you. To create the Notepad project, select File &gt; New Project &gt; Application &gt; Qt Widgets Application &gt; Choose…, and follow the instructions of the wizard. In the Class Information dialog, type Notepad as the class name and select QMainWindow as the base class. The Qt Widgets Application wizard creates a project that contains a main source file and a set of files that specify a user interface (Notepad widget): file name description CMakeLists.txt the project file main.cpp the main source file for the application notepad.cpp the source file of the notepad class of the Notepad widget notepad.h the header file of the notepad class for the Notepad widget notepad.ui the UI form for the Notepad widget The files come with the necessary boiler plate code for you to be able to build and run the project. Main Source File The wizard generates the following code in th main.cpp file: #include &quot;notepad.h&quot; // 1. #include &lt;QApplication&gt; int main(int argc, char *argv[]) // 2. { QApplication a(argc, argv); // 3. Notepad w; // 4. w.show(); // 5. return a.exec(); // 6. } Include the header files for the Notepad widget and QApplication. Defines the main function that is the entry point for all C and C++ based applications. Creates a QApplication object. This object manages application-wide resources and is necessary to run any Qt program that uses Qt Widgets. It constructs an application object with argc command line arguments run in argv. (For GUI applications that do not use Qt Widgets, you can use QGuiApplication instead.) Creates the Notepad object. This is the object for which the wizard created the class and the UI file. The UI contains visual elements that are called widgets in Qt. Examples of widgets are text edits, scroll bars, labels, and radio buttons. A widget can also be a container for other widgets; a dialog or a main application window, Shows the Notepad widget on the screen in its own window. Widgets can also function as containers. e.g. QMainWindow which often contains several types of widgets. Widgets are not visible by default; the function show() makes the widget visible. Makes the QApplication enter its event loop. When a Qt application is running, events are generated and sent to the widgets of the application. e.g. mouse presses and key strokes Designing a UI The wizard generates a UI definition in XML format: notepad.ui. When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer. When you build the application, Qt Creator launches the Qt User Interface Compiler (uic) that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h. Using Qt Designer The wizard creates an application that uses a QMainWindow. It has its own layout to which you can add a menu bar, dock widgets, toolbars, a status bar. The center area can be occupied by any kind of widget. The wizard places the Notepad widget there. To add widgets in Qt Designer: In the Qt Creator Edit mode, double-click the notepad.ui file in the Projects view to launch the file in the integrated Qt Designer. Drag and drop widgets Text Edit (QTextEdit) to the form. Press Ctrl+A (or Cmd+A) to select the widgets and click Lay out Vertically (or press Ctrl+L) to apply a vertical layout (QVBoxLayout). Press Ctrl+S (or Cmd+S) to save your changes. The UI now looks as follows in Qt Designer: You can view the generated XML file in the code editor: &lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt; &lt;!-- 1. --&gt; &lt;ui version=&quot;4.0&quot;&gt; &lt;!-- 2. --&gt; &lt;class&gt;Notepad&lt;/class&gt; &lt;widget class=&quot;QMainWindow&quot; name=&quot;Notepad&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;600&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;property name=&quot;windowTitle&quot;&gt; &lt;string&gt;Notepad&lt;/string&gt; &lt;/property&gt; &lt;widget class=&quot;QWidget&quot; name=&quot;centralwidget&quot;/&gt; &lt;widget class=&quot;QMenuBar&quot; name=&quot;menubar&quot;&gt; &lt;property name=&quot;geometry&quot;&gt; &lt;rect&gt; &lt;x&gt;0&lt;/x&gt; &lt;y&gt;0&lt;/y&gt; &lt;width&gt;800&lt;/width&gt; &lt;height&gt;20&lt;/height&gt; &lt;/rect&gt; &lt;/property&gt; &lt;/widget&gt; &lt;widget class=&quot;QStatusBar&quot; name=&quot;statusbar&quot;/&gt; &lt;/widget&gt; &lt;resources/&gt; &lt;connections/&gt; &lt;/ui&gt; Contains the XML declaration, which specifies the XML version and character encoding used in the document: The rest of the file specifies an ui element that defines a Notepad widget: The UI file is used together with the header and source file of the Notepad class. Notepad Header File The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object. #ifndef NOTEPAD_H #define NOTEPAD_H #include &lt;QMainWindow&gt; // 1. QT_BEGIN_NAMESPACE namespace Ui { class Notepad; } / /2. QT_END_NAMESPACE class Notepad : public QMainWindow // 3. { Q_OBJECT public: Notepad(QWidget *parent = nullptr); // 4. ~Notepad(); // 5. private: Ui::Notepad *ui; // 6. }; #endif // NOTEPAD_H Includes QMainWindow that provides a main application window. Declares the Notepad class in the Ui namespace, which is the standard namespace for the UI classes generated from .ui files by the uic tool. The class declaration contains the Q_OBJECT macro. It must come first in the class definition, and declares our class as a QObject. Naturally, it must also inherit from QObject. A QObject adds several abilities to a normal C++ class. Notably, the class name and slot names can be queried at runtime. It is also possible to query a slot’s parameter types and invoke it. Declares a constructor that has a default argument called parent. The value nullptr indicates that the widget has no parent (it is a top-level widget). Declares a virtual destructor to free the resources that were acquired by the object during its life-cycle. According to the C++ naming convention, destructors have the same name as the class they are associated with, prefixed with a tilde(~). In QObject , destructors are virtual to ensure that the destructors of derived classes are invoked properly when an object is deleted through a pointer-to-base-class. Declares a member variable which is a pointer to the Notepad UI class. A member variable is associated with a specific class, and accessible for all its methods. Notepad Source File The source file that the wizard generated for the Notepad class looks as follows: #include &quot;notepad.h&quot; // 1. #include &quot;./ui_notepad.h&quot; Notepad::Notepad(QWidget *parent) // 2. : QMainWindow(parent) // 3. , ui(new Ui::Notepad) // 4. { ui-&gt;setupUi(this); // 5. } Notepad::~Notepad() // 6. { delete ui; } Includes the Notepad class header file that was generated by the wizard and the UI header file that was generated by the uic tool. Defines the Notepad constructor. Calls the QMainWindow constructor, which is the base class for the Notepad class. Creates the UI class instance and assigns it to the ui member. Sets up the UI. In the destructor, we delete the ui. Project File The wizard generates the following project file, CMakeLists.txt, for us. cmake_minimum_required(VERSION 3.5) project(NotepadEx VERSION 0.1 LANGUAGES CXX) set(CMAKE_INCLUDE_CURRENT_DIR ON) set(CMAKE_AUTOUIC ON) set(CMAKE_AUTOMOC ON) set(CMAKE_AUTORCC ON) set(CMAKE_CXX_STANDARD 11) set(CMAKE_CXX_STANDARD_REQUIRED ON) find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED) find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED) set(PROJECT_SOURCES main.cpp notepad.cpp notepad.h notepad.ui ) if(${QT_VERSION_MAJOR} GREATER_EQUAL 6) qt_add_executable(NotepadEx MANUAL_FINALIZATION ${PROJECT_SOURCES} ) # Define target properties for Android with Qt 6 as: # set_property(TARGET NotepadEx APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR # ${CMAKE_CURRENT_SOURCE_DIR}/android) # For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation else() if(ANDROID) add_library(NotepadEx SHARED ${PROJECT_SOURCES} ) # Define properties for Android with Qt 5 after find_package() calls as: # set(ANDROID_PACKAGE_SOURCE_DIR &quot;${CMAKE_CURRENT_SOURCE_DIR}/android&quot;) else() add_executable(NotepadEx ${PROJECT_SOURCES} ) endif() endif() target_link_libraries(NotepadEx PRIVATE Qt${QT_VERSION_MAJOR}::Widgets) set_target_properties(NotepadEx PROPERTIES MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION} MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR} MACOSX_BUNDLE TRUE WIN32_EXECUTABLE TRUE ) if(QT_VERSION_MAJOR EQUAL 6) qt_finalize_executable(NotepadEx) endif() The project file specifies the source, header, and UI files included in the project. Adding User Interaction To add functionality to the editor, we start by adding menu items and buttons on a toolbar. Click on “Type Here”, and add the options New, Open, Save, Save as, Print and Exit. This creates 6 lines in the Action Editor below. To connect the actions to slots, right-click an action and select Go to slot &gt; triggered(), and complete the code for that given slot by changing the name of the function. If we also want to add the actions to a toolbar, we can assign an icon to each QAction, and then drag the QAction to the toolbar. You assign an icon by entering an icon name in the icon property of the action concerned. When the QAction has been dragged to the toolbar, clicking the icon will launch the associated slot. If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a QRC file. Add the notepad.qrc file to CMakeLists.txt. Complete the method newDocument(): void Notepad::on_actionNew_triggered() { currentFile.clear(); ui-&gt;textEdit-&gt;setText(QString()); } The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer. The currentFile variable is defined in the private part of notepad.h: private: Ui::Notepad *ui; QString currentFile; Opening a file In notepad.ui, right click on actionOpen and select Go to Slot Complete method open(). void Notepad::on_actionOpen_triggered() { QString fileName = QFileDialog::getOpenFileName(this, &quot;Open the file&quot;); if (fileName.isEmpty()) return; QFile file(fileName); currentFile = fileName; if (!file.open(QIODevice::ReadOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot open file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream in(&amp;file); QString text = in.readAll(); ui-&gt;textEdit-&gt;setText(text); file.close(); } QFileDialog::getOpenFileName opens a dialog enabling you to select a file. QFile object myfile has the selected file_name as parameter. We store the selected file also into the global variable currentFile for later purposes. We open the file with file.open as a readonly text file. If it cannot be opened, a warning is issued, and the program stops. We define a QTextStream instream for parameter myfile. The contents of file myfile is copied into QString text. setText(text) fills the buffer of out editor with text. Saving a file We create the method for saving a file in the same way as for Opening a file, by right clinking on actionSave, and selecting Go to Slot. void Notepad::on_actionSave_triggered() { QString fileName; // If we don&#39;t have a filename from before, get one. if (currentFile.isEmpty()) { fileName = QFileDialog::getSaveFileName(this, &quot;Save&quot;); if (fileName.isEmpty()) return; currentFile = fileName; } else { fileName = currentFile; } QFile file(fileName); if (!file.open(QIODevice::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } QFile object myfile is linked to a member variable current_file, the variable that contains the file we were working with. If we cannot open myfile, an error message is issued and the method stops. We create a QTextStream outstream. The contents of the editor buffer is converted to plain text, and then written to outstream. Saving a file under another name void Notepad::on_actionSave_as_triggered() { QString fileName = QFileDialog::getSaveFileName(this, &quot;Save as&quot;); if (fileName.isEmpty()) return; QFile file(fileName); if (!file.open(QFile::WriteOnly | QFile::Text)) { QMessageBox::warning(this, &quot;Warning&quot;, &quot;Cannot save file: &quot; + file.errorString()); return; } currentFile = fileName; setWindowTitle(fileName); QTextStream out(&amp;file); QString text = ui-&gt;textEdit-&gt;toPlainText(); out &lt;&lt; text; file.close(); } This is the same procedure as for Saving a file, the only difference being that here you need to enter a new file name for the file to be created. Printing a File If you want to use print functionalities, you need to add PrintSupport to the project file: find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Core Gui Widgets OPTIONAL_COMPONENTS PrintSupport ) In notepad.cpp, we declare a QPrinter object called printDev: void Notepad::on_actionPrint_triggered() { #if defined(QT_PRINTSUPPORT_LIB) &amp;&amp; QT_CONFIG(printer) QPrinter printDev; #if QTCONFIG(printdialog) QPrintDialog dialog(&amp;printDev, this); if (dialog.exec() == QDialog::Rejected) return; #endif // QT_CONFIG(printdialog) ui-&gt;textEdit-&gt;print(&amp;printDev); #endif // QT_CONFIG(printer) } We launch a printer dialog box and store the selected printer in object printDev. If we clicked on Cancel and did not select a printer, the methods returns. The actual printer command is given with ui-&gt;textEdit-&gt;print with our QPrinter object as parameter. Select a Font void Notepad::on_actionFont_triggered() { bool fontSelected; QFont font = QFontDialog::getFont(&amp;fontSelected, this); if (fontSelected) ui-&gt;textEdit-&gt;setFont(font); } We declare a boolean indicating if we did select a font with QFontDialog. If so, we set the font with ui-&gt;textEdit-&gt;setFont(myfont). Copy, Cut, Paste, Undo and Redo If you select some text, and want to copy it to the clipboard, you call the appropriate method of ui-&gt;textEdit. The same counts for cut, paste, undo and redo. This table shows the method name to use. Task Method called Copy ui-&gt;textEdit-&gt;copy() Cut ui-&gt;textEdit-&gt;cut() Paste ui-&gt;textEdit-&gt;paste() Undo ui-&gt;textEdit-&gt;undo() Redo ui-&gt;textEdit-&gt;redo()","headline":"Qt Notepad Example","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html"},"url":"coolwindjo.github.io/gui/2022/06/20/Qt-notepad-example.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Qt Notepad Example</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-06-20T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Jun 20, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 16 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#qt">#qt</a><a class="post-tag" href="/tags.html#notepad">#notepad</a><a class="post-tag" href="/tags.html#qt-example">#qt-example</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html" target="_blank">Qt Documentation - Notepad Example</a></li>
+  <li><a href="https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/tutorials/notepad" target="_blank">Qt Source code - Notepad Example</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/creator-build-example-application.html" target="_blank">Building and Running an Example</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/index.html" target="_blank">Using Qt Creator</a></li>
+  <li><a href="https://doc.qt.io/qtcreator/creator-tutorials.html" target="_blank">Creating other kind of applications with Qt Creator</a></li>
+  <li><a href="https://doc.qt.io/qt-6/application-windows.html" target="_blank">QWindow and Dialog Widgets</a></li>
+  <li><a href="https://doc.qt.io/qt-6/eventsandfilters.html" target="_blank">The Event System</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtdesigner-manual.html" target="_blank">Qt Designer Manual</a></li>
+  <li><a href="https://doc.qt.io/qt-6/layout.html" target="_blank">Layout Management</a></li>
+  <li><a href="https://doc.qt.io/qt-6/graphicsview.html#widgets-and-layouts" target="_blank">Widgets and Layouts</a></li>
+  <li><a href="https://doc.qt.io/qt-6/layout.html#layout-examples" target="_blank">Layout Examples</a></li>
+  <li><a href="https://doc.qt.io/qt-6/gallery.html" target="_blank">Qt Widget Gallery</a></li>
+  <li><a href="https://doc.qt.io/qt-6/mainwindow.html" target="_blank">Application Main Window</a></li>
+  <li><a href="https://doc.qt.io/qt-6/examples-mainwindow.html" target="_blank">Main Window Examples</a></li>
+  <li><a href="https://doc.qt.io/qt-6/object.html" target="_blank">Object Model</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qmake-manual.html" target="_blank">qmake Model</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qmdiarea.html" target="_blank">MDI applications - QMdiArea</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtwidgets-mainwindows-mdi-example.html" target="_blank">MDI applications - MDI Example</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qfile.html" target="_blank">Files and I/O devices - QFile</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qiodevice.html" target="_blank">Files and I/O devices - QIODevice</a></li>
+  <li><a href="https://doc.qt.io/qt-6/qtlinguist-index.html" target="_blank">tr() and internationalization - Qt Linguist Manual</a></li>
+  <li><a href="https://doc.qt.io/qt-6/i18n-source-translation.html" target="_blank">tr() and internationalization - Writing Source Code for Translation</a></li>
+  <li><a href="https://doc.qt.io/qt-6/internationalization.html" target="_blank">tr() and internationalization - Internationalization with Qt</a></li>
+</ul>
+
+<h2 id="goals">Goals</h2>
+
+<ul>
+  <li>We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the <a href="https://doc.qt.io/qt-6/qtwidgets-index.html" target="_blank">QtWidgets</a> module.
+    <ul>
+      <li>The application is a small text editor which allows you to…
+        <ul>
+          <li>create a text file,</li>
+          <li>save it,</li>
+          <li>print it,</li>
+          <li>or reopen and edit it again.</li>
+          <li>set the font to be used.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="notepad-example">Notepad Example</h2>
+
+<p><img src="/assets/images/posts/2022-06-20/notepad_example.png" alt="notepad_example"></p>
+
+<h3 id="running-the-example">Running the example</h3>
+
+<ul>
+  <li>To run the example from <a href="https://doc.qt.io/qtcreator/index.html">Qt Creator</a>, open the Welcome mode and select the example from Examples.</li>
+</ul>
+
+<h3 id="creating-the-notepad-project">Creating the Notepad Project</h3>
+
+<ul>
+  <li>Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process.
+    <ul>
+      <li>The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_new_project.png" alt="qtcreator_new_project">
+<img src="/assets/images/posts/2022-06-20/qtc_new_project_cmake.png" alt="qtcreator_new_project_cmake"></p>
+
+<ul>
+  <li>To create the Notepad project, select <strong>File</strong> &gt; <strong>New Project</strong> &gt;  <strong>Application</strong> &gt; <strong>Qt Widgets Application</strong> &gt; <strong>Choose…</strong>, and follow the instructions of the wizard.</li>
+  <li>In the <strong>Class Information</strong> dialog, type <em>Notepad</em> as the class name and select <strong>QMainWindow</strong> as the base class.</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_class_info.png" alt="qtcreator_class_information"></p>
+
+<ul>
+  <li>
+    <p>The <strong>Qt Widgets Application</strong> wizard creates a project that contains a main source file and a set of files that specify a user interface (Notepad widget):</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>file name</th>
+          <th>description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>CMakeLists.txt</td>
+          <td>the project file</td>
+        </tr>
+        <tr>
+          <td>main.cpp</td>
+          <td>the main source file for the application</td>
+        </tr>
+        <tr>
+          <td>notepad.cpp</td>
+          <td>the source file of the notepad class of the Notepad widget</td>
+        </tr>
+        <tr>
+          <td>notepad.h</td>
+          <td>the header file of the notepad class for the Notepad widget</td>
+        </tr>
+        <tr>
+          <td>notepad.ui</td>
+          <td>the UI form for the Notepad widget</td>
+        </tr>
+      </tbody>
+    </table>
+  </li>
+  <li>
+    <p>The files come with the necessary boiler plate code for you to be able to build and run the project.</p>
+  </li>
+</ul>
+
+<h3 id="main-source-file">Main Source File</h3>
+
+<ul>
+  <li>The wizard generates the following code in th main.cpp file:</li>
+</ul>
+
+<pre><code class="language-main.cpp">#include "notepad.h"    // 1.
+#include &lt;QApplication&gt;
+
+int main(int argc, char *argv[])    // 2.
+{
+    QApplication a(argc, argv);   // 3.
+    Notepad w;    // 4.
+    w.show();   // 5.
+    return a.exec();    // 6.
+}
+</code></pre>
+
+<ol>
+  <li>Include the header files for the Notepad widget and <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a>.</li>
+  <li>Defines the main function that is the entry point for all C and C++ based applications.</li>
+  <li>Creates a <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a> object.
+    <ul>
+      <li>This object manages application-wide resources and is necessary to run any Qt program that uses Qt Widgets.</li>
+      <li>It constructs an application object with argc command line arguments run in argv.</li>
+    </ul>
+    <ul>
+      <li>(For GUI applications that do not use Qt Widgets, you can use <a href="https://doc.qt.io/qt-6/qguiapplication.html" target="_blank">QGuiApplication</a> instead.)</li>
+    </ul>
+  </li>
+  <li>Creates the Notepad object.
+    <ul>
+      <li>This is the object for which the wizard created the class and the UI file.</li>
+    </ul>
+    <ul>
+      <li>The UI contains visual elements that are called <strong>widgets</strong> in Qt.
+        <ul>
+          <li>Examples of widgets are
+            <ul>
+              <li>text edits,</li>
+              <li>scroll bars,</li>
+              <li>labels,</li>
+              <li>and radio buttons.</li>
+            </ul>
+          </li>
+          <li>A widget can also be a container for other widgets;
+            <ul>
+              <li>a dialog</li>
+              <li>or a main application window,</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Shows the Notepad widget on the screen in its own window.
+    <ul>
+      <li>Widgets can also function as containers.</li>
+    </ul>
+    <ul>
+      <li>e.g. <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> which often contains several types of widgets.
+        <ul>
+          <li>Widgets are not visible by default;</li>
+          <li>the function <a href="https://doc.qt.io/qt-6/qwidget.html#show" target="_blank">show()</a> makes the widget visible.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Makes the <a href="https://doc.qt.io/qt-6/qapplication.html" target="_blank">QApplication</a> enter its event loop.
+    <ul>
+      <li>When a Qt application is running, events are generated and sent to the widgets of the application.</li>
+      <li>e.g. mouse presses and key strokes</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="designing-a-ui">Designing a UI</h3>
+
+<ul>
+  <li>The wizard generates a UI definition in XML format: notepad.ui.
+    <ul>
+      <li>When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer.</li>
+    </ul>
+  </li>
+  <li>When you build the application, Qt Creator launches the Qt <a href="https://doc.qt.io/qt-6/uic.html" target="_blank">User Interface Compiler (uic)</a> that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h.</li>
+</ul>
+
+<h3 id="using-qt-designer">Using Qt Designer</h3>
+
+<ul>
+  <li>The wizard creates an application that uses a <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a>.
+    <ul>
+      <li>It has its own layout to which you can add
+        <ul>
+          <li>a menu bar,</li>
+          <li>dock widgets,</li>
+          <li>toolbars,</li>
+          <li>a status bar.</li>
+        </ul>
+      </li>
+      <li>The center area can be occupied by any kind of widget.
+        <ul>
+          <li>The wizard places the Notepad widget there.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>To add widgets in Qt Designer:
+    <ol>
+      <li>In the Qt Creator <strong>Edit</strong> mode, double-click the notepad.ui file in the <strong>Projects</strong> view to launch the file in the integrated Qt Designer.</li>
+      <li>Drag and drop widgets Text Edit (<a href="https://doc.qt.io/qt-6/qtextedit.html" target="_blank">QTextEdit</a>) to the form.</li>
+      <li>Press <strong>Ctrl+A</strong> (or <strong>Cmd+A</strong>) to select the widgets and click <strong>Lay out Vertically</strong> (or press <strong>Ctrl+L</strong>) to apply a vertical layout (<a href="https://doc.qt.io/qt-6/qvboxlayout.html" target="_blank">QVBoxLayout</a>).</li>
+      <li>Press <strong>Ctrl+S</strong> (or <strong>Cmd+S</strong>) to save your changes.</li>
+    </ol>
+  </li>
+  <li>The UI now looks as follows in Qt Designer:</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_qtd_ui.png" alt="qtcreator_qtdesigner_ui"></p>
+
+<ul>
+  <li>You can view the generated XML file in the code editor:</li>
+</ul>
+
+<pre><code class="language-notepad.ui">&lt;?xml version="1.0" encoding="UTF-8"?&gt;    &lt;!-- 1. --&gt;
+&lt;ui version="4.0"&gt;    &lt;!-- 2. --&gt;
+ &lt;class&gt;Notepad&lt;/class&gt;
+ &lt;widget class="QMainWindow" name="Notepad"&gt;
+  &lt;property name="geometry"&gt;
+   &lt;rect&gt;
+    &lt;x&gt;0&lt;/x&gt;
+    &lt;y&gt;0&lt;/y&gt;
+    &lt;width&gt;800&lt;/width&gt;
+    &lt;height&gt;600&lt;/height&gt;
+   &lt;/rect&gt;
+  &lt;/property&gt;
+  &lt;property name="windowTitle"&gt;
+   &lt;string&gt;Notepad&lt;/string&gt;
+  &lt;/property&gt;
+  &lt;widget class="QWidget" name="centralwidget"/&gt;
+  &lt;widget class="QMenuBar" name="menubar"&gt;
+   &lt;property name="geometry"&gt;
+    &lt;rect&gt;
+     &lt;x&gt;0&lt;/x&gt;
+     &lt;y&gt;0&lt;/y&gt;
+     &lt;width&gt;800&lt;/width&gt;
+     &lt;height&gt;20&lt;/height&gt;
+    &lt;/rect&gt;
+   &lt;/property&gt;
+  &lt;/widget&gt;
+  &lt;widget class="QStatusBar" name="statusbar"/&gt;
+ &lt;/widget&gt;
+ &lt;resources/&gt;
+ &lt;connections/&gt;
+&lt;/ui&gt;
+</code></pre>
+
+<ol>
+  <li>Contains the XML declaration, which specifies the XML version and character encoding used in the document:</li>
+  <li>The rest of the file specifies an <strong>ui</strong> element that defines a Notepad widget:</li>
+</ol>
+
+<ul>
+  <li>The UI file is used together with the header and source file of the Notepad class.</li>
+</ul>
+
+<h3 id="notepad-header-file">Notepad Header File</h3>
+
+<ul>
+  <li>The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object.</li>
+</ul>
+
+<pre><code class="language-notepad.h">#ifndef NOTEPAD_H
+#define NOTEPAD_H
+
+#include &lt;QMainWindow&gt;    // 1.
+
+QT_BEGIN_NAMESPACE
+namespace Ui { class Notepad; }   / /2.
+QT_END_NAMESPACE
+
+class Notepad : public QMainWindow    // 3.
+{
+    Q_OBJECT
+
+public:
+    Notepad(QWidget *parent = nullptr);   // 4.
+    ~Notepad();   // 5.
+
+private:
+    Ui::Notepad *ui;    // 6.
+};
+#endif // NOTEPAD_H
+</code></pre>
+
+<ol>
+  <li>Includes <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> that provides a main application window.</li>
+  <li>Declares the Notepad class in the Ui namespace, which is the standard namespace for the UI classes generated from .ui files by the uic tool.</li>
+  <li>The class declaration contains the Q_OBJECT macro. It must come first in the class definition, and declares our class as a <a href="https://doc.qt.io/qt-6/qobject.html" target="_blank">QObject</a>.
+    <ul>
+      <li>Naturally, it must also inherit from <strong>QObject</strong>.</li>
+    </ul>
+    <ul>
+      <li>A <strong>QObject</strong> adds several abilities to a normal C++ class.</li>
+      <li>Notably, the class name and slot names can be queried at runtime.</li>
+      <li>It is also possible to query a slot’s parameter types and invoke it.</li>
+    </ul>
+  </li>
+  <li>Declares a constructor that has a default argument called <strong>parent</strong>.
+    <ul>
+      <li>The value nullptr indicates that the widget has no parent (it is a top-level widget).</li>
+    </ul>
+  </li>
+  <li>Declares a virtual destructor to free the resources that were acquired by the object during its life-cycle.
+    <ul>
+      <li>According to the C++ naming convention, destructors have the same name as the class they are associated with, prefixed with a tilde(~).</li>
+      <li>In <strong>QObject</strong> , destructors are virtual to ensure that the destructors of derived classes are invoked properly when an object is deleted through a pointer-to-base-class.</li>
+    </ul>
+  </li>
+  <li>Declares a member variable which is a pointer to the Notepad UI class.
+    <ul>
+      <li>A member variable is associated with a specific class, and accessible for all its methods.</li>
+    </ul>
+  </li>
+</ol>
+
+<h3 id="notepad-source-file">Notepad Source File</h3>
+
+<ul>
+  <li>The source file that the wizard generated for the Notepad class looks as follows:</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">#include "notepad.h"    // 1.
+#include "./ui_notepad.h"
+
+Notepad::Notepad(QWidget *parent)   // 2.
+    : QMainWindow(parent)   // 3.
+    , ui(new Ui::Notepad)   // 4.
+{
+    ui-&gt;setupUi(this);    // 5.
+}
+
+Notepad::~Notepad()   // 6.
+{
+    delete ui;
+}
+</code></pre>
+
+<ol>
+  <li>Includes the Notepad class header file that was generated by the wizard and the UI header file that was generated by the <strong>uic</strong> tool.</li>
+  <li>Defines the Notepad constructor.</li>
+  <li>Calls the <a href="https://doc.qt.io/qt-6/qmainwindow.html" target="_blank">QMainWindow</a> constructor, which is the base class for the Notepad class.</li>
+  <li>Creates the UI class instance and assigns it to the <strong>ui</strong> member.</li>
+  <li>Sets up the UI.</li>
+  <li>In the destructor, we delete the <strong>ui</strong>.</li>
+</ol>
+
+<h3 id="project-file">Project File</h3>
+
+<ul>
+  <li>The wizard generates the following project file, <strong>CMakeLists.txt</strong>, for us.</li>
+</ul>
+
+<pre><code class="language-CMakeLists.txt">cmake_minimum_required(VERSION 3.5)
+
+project(NotepadEx VERSION 0.1 LANGUAGES CXX)
+
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+
+set(CMAKE_AUTOUIC ON)
+set(CMAKE_AUTOMOC ON)
+set(CMAKE_AUTORCC ON)
+
+set(CMAKE_CXX_STANDARD 11)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
+
+find_package(QT NAMES Qt6 Qt5 COMPONENTS Widgets REQUIRED)
+find_package(Qt${QT_VERSION_MAJOR} COMPONENTS Widgets REQUIRED)
+
+set(PROJECT_SOURCES
+        main.cpp
+        notepad.cpp
+        notepad.h
+        notepad.ui
+)
+
+if(${QT_VERSION_MAJOR} GREATER_EQUAL 6)
+    qt_add_executable(NotepadEx
+        MANUAL_FINALIZATION
+        ${PROJECT_SOURCES}
+    )
+# Define target properties for Android with Qt 6 as:
+#    set_property(TARGET NotepadEx APPEND PROPERTY QT_ANDROID_PACKAGE_SOURCE_DIR
+#                 ${CMAKE_CURRENT_SOURCE_DIR}/android)
+# For more information, see https://doc.qt.io/qt-6/qt-add-executable.html#target-creation
+else()
+    if(ANDROID)
+        add_library(NotepadEx SHARED
+            ${PROJECT_SOURCES}
+        )
+# Define properties for Android with Qt 5 after find_package() calls as:
+#    set(ANDROID_PACKAGE_SOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/android")
+    else()
+        add_executable(NotepadEx
+            ${PROJECT_SOURCES}
+        )
+    endif()
+endif()
+
+target_link_libraries(NotepadEx PRIVATE Qt${QT_VERSION_MAJOR}::Widgets)
+
+set_target_properties(NotepadEx PROPERTIES
+    MACOSX_BUNDLE_GUI_IDENTIFIER my.example.com
+    MACOSX_BUNDLE_BUNDLE_VERSION ${PROJECT_VERSION}
+    MACOSX_BUNDLE_SHORT_VERSION_STRING ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}
+    MACOSX_BUNDLE TRUE
+    WIN32_EXECUTABLE TRUE
+)
+
+if(QT_VERSION_MAJOR EQUAL 6)
+    qt_finalize_executable(NotepadEx)
+endif()
+</code></pre>
+
+<ul>
+  <li>The project file specifies the source, header, and UI files included in the project.</li>
+</ul>
+
+<h3 id="adding-user-interaction">Adding User Interaction</h3>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_type_here.png" alt="qtcreator_ui_type_here"></p>
+
+<ul>
+  <li>To add functionality to the editor, we start by adding menu items and buttons on a toolbar.</li>
+  <li>Click on “Type Here”, and add the options New, Open, Save, Save as, Print and Exit.
+    <ul>
+      <li>This creates 6 lines in the Action Editor below.</li>
+      <li>To connect the actions to slots, right-click an action and select <strong>Go to slot</strong> &gt; <strong>triggered()</strong>, and complete the code for that given slot by changing the name of the function.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_action_slot.png" alt="qtcreator_ui_action_slot"></p>
+
+<ul>
+  <li>If we also want to add the actions to a toolbar, we can assign an icon to each <a href="https://doc.qt.io/qt-6/qaction.html" target="_blank">QAction</a>, and then drag the <strong>QAction</strong> to the toolbar.</li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_add_icon_toolbar.png" alt="qtcreator_ui_add_icon_toolbar"></p>
+
+<ul>
+  <li>You assign an icon by entering an icon name in the icon property of the action concerned.
+    <ul>
+      <li>When the <strong>QAction</strong> has been dragged to the toolbar, clicking the icon will launch the associated slot.</li>
+      <li>If the icon shows up fine in the toolbar in Qt Designer, but does not show when the project is running, then we should make a <a href="http://doc.qt.io/qt-5/resources.html" target="_blank">QRC file</a>.</li>
+      <li>Add the notepad.qrc file to CMakeLists.txt.</li>
+    </ul>
+  </li>
+</ul>
+
+<p><img src="/assets/images/posts/2022-06-20/qtc_ui_add_icon_resource.png" alt="qtcreator_ui_add_icon_resource"></p>
+
+<ul>
+  <li>Complete the method newDocument():</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionNew_triggered()
+{
+    currentFile.clear();
+    ui-&gt;textEdit-&gt;setText(QString());
+}
+</code></pre>
+
+<ul>
+  <li>The currentFile variable is a global variable containing the file presently being edited, and clear() clears the text buffer.</li>
+  <li>The currentFile variable is defined in the private part of notepad.h:</li>
+</ul>
+
+<pre><code class="language-notepad.h">private:
+  Ui::Notepad *ui;
+  QString currentFile;
+</code></pre>
+
+<h3 id="opening-a-file">Opening a file</h3>
+
+<ul>
+  <li>In notepad.ui, right click on actionOpen and select <strong>Go to Slot</strong>
+</li>
+  <li>Complete method open().</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionOpen_triggered()
+{
+    QString fileName = QFileDialog::getOpenFileName(this, "Open the file");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    currentFile = fileName;
+    if (!file.open(QIODevice::ReadOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot open file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+
+    QTextStream in(&amp;file);
+    QString text = in.readAll();
+    ui-&gt;textEdit-&gt;setText(text);
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li>QFileDialog::getOpenFileName opens a dialog enabling you to select a file. <a href="https://doc.qt.io/qt-6/qfile.html" target="_blank">QFile</a> object <em>myfile</em> has the selected <em>file_name</em> as parameter.
+    <ul>
+      <li>We store the selected file also into the global variable <em>currentFile</em> for later purposes.</li>
+      <li>We open the file with <em>file.open</em> as a readonly text file.</li>
+      <li>If it cannot be opened, a warning is issued, and the program stops.</li>
+    </ul>
+  </li>
+  <li>We define a <a href="https://doc.qt.io/qt-6/qtextstream.html" target="_blank">QTextStream</a> instream for parameter <em>myfile</em>.
+    <ul>
+      <li>The contents of file <em>myfile</em> is copied into <a href="https://doc.qt.io/qt-6/qstring.html" target="_blank">QString</a> text.</li>
+      <li>
+<em>setText(text)</em> fills the buffer of out editor with text.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="saving-a-file">Saving a file</h3>
+
+<ul>
+  <li>We create the method for saving a file in the same way as for <a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#opening-a-file" target="_blank">Opening a file</a>, by right clinking on <em>actionSave</em>, and selecting <strong>Go to Slot</strong>.</li>
+</ul>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionSave_triggered()
+{
+    QString fileName;
+
+    // If we don't have a filename from before, get one.
+    if (currentFile.isEmpty()) {
+        fileName = QFileDialog::getSaveFileName(this, "Save");
+        if (fileName.isEmpty()) return;
+        currentFile = fileName;
+    }
+    else {
+        fileName = currentFile;
+    }
+
+    QFile file(fileName);
+    if (!file.open(QIODevice::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    setWindowTitle(fileName);
+    QTextStream out(&amp;file);
+    QString text = ui-&gt;textEdit-&gt;toPlainText();
+    out &lt;&lt; text;
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li>
+<strong>QFile</strong> object <em>myfile</em> is linked to a member variable <em>current_file</em>, the variable that contains the file we were working with.
+    <ul>
+      <li>If we cannot open <em>myfile</em>, an error message is issued and the method stops.</li>
+      <li>We create a <strong>QTextStream</strong> <em>outstream</em>.</li>
+      <li>The contents of the editor buffer is converted to plain text, and then written to <em>outstream</em>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="saving-a-file-under-another-name">Saving a file under another name</h3>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionSave_as_triggered()
+{
+    QString fileName = QFileDialog::getSaveFileName(this, "Save as");
+    if (fileName.isEmpty()) return;
+
+    QFile file(fileName);
+    if (!file.open(QFile::WriteOnly | QFile::Text)) {
+        QMessageBox::warning(this, "Warning", "Cannot save file: " + file.errorString());
+        return;
+    }
+    currentFile = fileName;
+    setWindowTitle(fileName);
+    QTextStream out(&amp;file);
+    QString text = ui-&gt;textEdit-&gt;toPlainText();
+    out &lt;&lt; text;
+    file.close();
+}
+</code></pre>
+
+<ul>
+  <li>This is the same procedure as for <a href="https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#saving-a-file" target="_blank">Saving a file</a>, the only difference being that here you need to enter a new file name for the file to be created.</li>
+</ul>
+
+<h3 id="printing-a-file">Printing a File</h3>
+
+<p>If you want to use print functionalities, you need to add <em>PrintSupport</em> to the project file:</p>
+
+<pre><code class="language-CMakeLists.txt">find_package(Qt${QT_VERSION_MAJOR}
+  REQUIRED COMPONENTS Core Gui Widgets
+  OPTIONAL_COMPONENTS PrintSupport
+)
+</code></pre>
+
+<p>In <em>notepad.cpp</em>, we declare a QPrinter object called <em>printDev</em>:</p>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionPrint_triggered()
+{
+#if defined(QT_PRINTSUPPORT_LIB) &amp;&amp; QT_CONFIG(printer)
+    QPrinter printDev;
+#if QTCONFIG(printdialog)
+    QPrintDialog dialog(&amp;printDev, this);
+    if (dialog.exec() == QDialog::Rejected)
+        return;
+#endif	// QT_CONFIG(printdialog)
+    ui-&gt;textEdit-&gt;print(&amp;printDev);
+#endif	// QT_CONFIG(printer)
+}
+</code></pre>
+
+<ul>
+  <li>We launch a printer dialog box and store the selected printer in object <em>printDev</em>.
+    <ul>
+      <li>If we clicked on <em>Cancel</em> and did not select a printer, the methods returns.</li>
+      <li>The actual printer command is given with <em>ui-&gt;textEdit-&gt;print</em> with our QPrinter object as parameter.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="select-a-font">Select a Font</h3>
+
+<pre><code class="language-notepad.cpp">void Notepad::on_actionFont_triggered()
+{
+    bool fontSelected;
+    QFont font = QFontDialog::getFont(&amp;fontSelected, this);
+    if (fontSelected)
+        ui-&gt;textEdit-&gt;setFont(font);
+}
+</code></pre>
+
+<ul>
+  <li>We declare a boolean indicating  if we did select a font with <a href="https://doc.qt.io/qt-6/qfontdialog.html" target="_blank">QFontDialog</a>.
+    <ul>
+      <li>If so, we set the font with <em>ui-&gt;textEdit-&gt;setFont(myfont)</em>.</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="copy-cut-paste-undo-and-redo">Copy, Cut, Paste, Undo and Redo</h3>
+
+<ul>
+  <li>
+    <p>If you select some text, and want to copy it to the clipboard, you call the appropriate method of <em>ui-&gt;textEdit</em>. The same counts for cut, paste, undo and redo.</p>
+  </li>
+  <li>
+    <p>This table shows the method name to use.</p>
+  </li>
+</ul>
+
+<table>
+  <thead>
+    <tr>
+      <th>Task</th>
+      <th>Method called</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>Copy</td>
+      <td>ui-&gt;textEdit-&gt;copy()</td>
+    </tr>
+    <tr>
+      <td>Cut</td>
+      <td>ui-&gt;textEdit-&gt;cut()</td>
+    </tr>
+    <tr>
+      <td>Paste</td>
+      <td>ui-&gt;textEdit-&gt;paste()</td>
+    </tr>
+    <tr>
+      <td>Undo</td>
+      <td>ui-&gt;textEdit-&gt;undo()</td>
+    </tr>
+    <tr>
+      <td>Redo</td>
+      <td>ui-&gt;textEdit-&gt;redo()</td>
+    </tr>
+  </tbody>
+</table>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/gui/2022/06/06/Qt-menus-example.html" title="Qt Menus Example">Qt Menus Example</a><a class="next" href="/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html" title="Qt Bryan Lecture Episode 3 ~ 6">Qt Bryan Lecture Episode 3 ~...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/raspberrypi/2020/10/24/mender-for-raspberrypi.html" title="Qt Bryan Lecture Episode 3 ~ 6">Mender for Raspberry Pi</a></li>
+<li><a class="post-link" href="/raspberrypi/2020/10/24/raspberrypi4-sensors.html" title="Qt Bryan Lecture Episode 3 ~ 6">Sensors for Raspberry Pi</a></li>
+<li><a class="post-link" href="/gui/2022/07/11/Qt-implicit-sharing.html" title="Qt Bryan Lecture Episode 3 ~ 6">Qt Implicit Sharing</a></li>
+<li><a class="post-link" href="/skillorknowhow/2021/12/27/cheat-sheets.html" title="Qt Bryan Lecture Episode 3 ~ 6">Cheat Sheets</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

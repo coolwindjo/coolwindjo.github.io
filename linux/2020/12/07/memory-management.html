@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Linux Memory Management | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Linux Memory Management">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Memory management technic and virtual memory Virtual memory offers maximum sized Virtual Address Space to each Task. CPU Size 32bit 4GB 64bit 16EB In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses. More tasks can run with less physical memory No need of memory arrange policy Easy to share or protect memory between tasks Fast task creation Physical memory management data structure Linux has the information about entire physical memory. UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing) Memory and I/O BUS are shared by entire CPUs Possible bottleneck on the resource NUMA(Non-Uniform Memory Access) For the sake of the performance, each CPU should access to the nearest memory to fetch data. Node Implementation of Bank(Set of memory with the same access speed) Zone structure implemented in “/include/linux/mmzone.h” UMA has one Bank and NUMA has multiple Banks. UMA has one Node The only Node can be accessed with “contig_page_data” NUMA has multiple Nodes. They are managed using list called “pgdat_list” Linux can access the Physical Memory using consistent Node structure no matter what the system is. “pg_data_t” structure is used. “node_present_pages”: actual size of the physical memory in the node “node_start_pfn”: the index number of the physical memory in the memory map “node_zones”: zone structure “nr_zones”: the number of zones For the sake of the performance Linux tends to allocate the nearest memory from the CPU working on the Task. Linux tends to reallocate the CPU which have worked on the same task. Zone Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory. Zones are several regions of the physical memory for the Node. “/include/linux/mmzone.h” The memory in the same zone has the same properties. The memory in the different zone should be managed separately. Region Zone name Description 0 ~ 16M ZONE_DMA or ZONE_DMA32 saved for some ISA BUS-based devices 16 ~ 896M ZONE_NORMAL mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit) 896 ~ end ZONE_HIGHMEM dynamically allocated as it is needed Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM) Zone structure has Beginning address and the size of physical memory belong to the Zone free_area structure array for being used by Buddy “watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage. On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable. $ cat /proc/zoneinfo Node 0, zone DMA per-node stats nr_inactive_anon 62122 nr_active_anon 94246 nr_inactive_file 146827 nr_active_file 95508 ... pages free 3721 min 39 low 48 high 57 ... nr_free_pages 3721 nr_zone_inactive_anon 0 nr_zone_active_anon 0 ... pagesets cpu: 0 count: 0 high: 0 batch: 1 vm stats threshold: 8 cpu: 1 count: 0 high: 0 batch: 1 ... node_unreclaimable: 0 start_pfn: 1 Node 0, zone DMA32 pages free 988431 min 10549 low 13186 high 15823 nr_free_pages 988431 nr_zone_inactive_anon 0 nr_zone_active_anon 0 nr_zone_inactive_file 0 nr_zone_active_file 0 ... pagesets cpu: 0 count: 11 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 0 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 4096 Node 0, zone Normal pages free 158188 min 6306 low 7882 high 9458 spanned 619520 ... nr_free_pages 158188 nr_zone_inactive_anon 62122 nr_zone_active_anon 94246 nr_zone_inactive_file 146827 nr_zone_active_file 95508 nr_zone_unevictable 0 ... pagesets cpu: 0 count: 373 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 333 high: 378 batch: 63 vm stats threshold: 48 cpu: 2 count: 317 high: 378 batch: 63 vm stats threshold: 48 cpu: 3 count: 282 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 1048576 Node 0, zone Movable pages free 0 min 0 low 0 high 0 spanned 0 present 0 managed 0 protection: (0, 0, 0, 0) Page frame Managing unit of physical memory by Zone Page structure implemented in “/include/linux/mm_types.h” Pages are supposed to be created for every page frames when the system boots. Pages can be accessed by the global variable called “mem_map” Linux’s physical memory managing units Physical memory may be composed of one or more Nodes. Node may be composed of one or more Zones. Zone may be composed of many Page frames. Buddy and Slab Linux allocates physical memory to tasks by the “Page frame” unit. At least 4KB, which can be changed to be 8KB, 2MB, etc. External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame. Internal Fragmentation: When task requests smaller size than one page frame. Buddy Allocator External Fragmentation Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone) free_area structure has free_list map The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB) Example On 2 pages are requested On another 2 pages are requested On page 11 are freed Lazy Buddy “free_area::map” -&gt; “free_area::nr_free”: number of free Page frames $ cat /proc/buddyinfo Node 0, zone DMA 1 0 0 1 2 1 1 0 0 1 3 Node 0, zone DMA32 3 2 4 3 6 4 4 4 3 1 963 Node 0, zone Normal 54 244 185 109 41 22 7 3 2 9 145 Slab Allocator Internal Fragmentation Exercise 2. Answer: Understanding Stack based buffer overflow #include &lt;string.h&gt; #include &lt;stdio.h&gt; void function2() { printf(“Execution flow changed\n”); } void function1(char *str){ char buffer[5]; strcpy(buffer, str); // break point 1. } // break point 2. void main(int argc, char *argv[]) { function1(argv[1]); // break point 3. printf(“Executed normally\n”); } gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c -g tells GCC to add extra information for GDB -fno-stack-protector flag to turn off stack protection mechanism -z execstack, it makes stack executable. $ ./bufferoverflow AAAA Executed normally $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA Segmentation fault break point 3. break point 1. break point 2. Return address, EBP and ESP on function stack frame break point 3. When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address. Hijacking Execution Find the function2 address Overwrite the Return address with the function 2 address $ ./bufferoverflow $(python -c 'print &quot;A&quot;*17 + &quot;\x1b\x84\x04\x08&quot;') Execution flow changed Segmentation fault">
+<meta property="og:description" content="Memory management technic and virtual memory Virtual memory offers maximum sized Virtual Address Space to each Task. CPU Size 32bit 4GB 64bit 16EB In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses. More tasks can run with less physical memory No need of memory arrange policy Easy to share or protect memory between tasks Fast task creation Physical memory management data structure Linux has the information about entire physical memory. UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing) Memory and I/O BUS are shared by entire CPUs Possible bottleneck on the resource NUMA(Non-Uniform Memory Access) For the sake of the performance, each CPU should access to the nearest memory to fetch data. Node Implementation of Bank(Set of memory with the same access speed) Zone structure implemented in “/include/linux/mmzone.h” UMA has one Bank and NUMA has multiple Banks. UMA has one Node The only Node can be accessed with “contig_page_data” NUMA has multiple Nodes. They are managed using list called “pgdat_list” Linux can access the Physical Memory using consistent Node structure no matter what the system is. “pg_data_t” structure is used. “node_present_pages”: actual size of the physical memory in the node “node_start_pfn”: the index number of the physical memory in the memory map “node_zones”: zone structure “nr_zones”: the number of zones For the sake of the performance Linux tends to allocate the nearest memory from the CPU working on the Task. Linux tends to reallocate the CPU which have worked on the same task. Zone Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory. Zones are several regions of the physical memory for the Node. “/include/linux/mmzone.h” The memory in the same zone has the same properties. The memory in the different zone should be managed separately. Region Zone name Description 0 ~ 16M ZONE_DMA or ZONE_DMA32 saved for some ISA BUS-based devices 16 ~ 896M ZONE_NORMAL mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit) 896 ~ end ZONE_HIGHMEM dynamically allocated as it is needed Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM) Zone structure has Beginning address and the size of physical memory belong to the Zone free_area structure array for being used by Buddy “watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage. On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable. $ cat /proc/zoneinfo Node 0, zone DMA per-node stats nr_inactive_anon 62122 nr_active_anon 94246 nr_inactive_file 146827 nr_active_file 95508 ... pages free 3721 min 39 low 48 high 57 ... nr_free_pages 3721 nr_zone_inactive_anon 0 nr_zone_active_anon 0 ... pagesets cpu: 0 count: 0 high: 0 batch: 1 vm stats threshold: 8 cpu: 1 count: 0 high: 0 batch: 1 ... node_unreclaimable: 0 start_pfn: 1 Node 0, zone DMA32 pages free 988431 min 10549 low 13186 high 15823 nr_free_pages 988431 nr_zone_inactive_anon 0 nr_zone_active_anon 0 nr_zone_inactive_file 0 nr_zone_active_file 0 ... pagesets cpu: 0 count: 11 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 0 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 4096 Node 0, zone Normal pages free 158188 min 6306 low 7882 high 9458 spanned 619520 ... nr_free_pages 158188 nr_zone_inactive_anon 62122 nr_zone_active_anon 94246 nr_zone_inactive_file 146827 nr_zone_active_file 95508 nr_zone_unevictable 0 ... pagesets cpu: 0 count: 373 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 333 high: 378 batch: 63 vm stats threshold: 48 cpu: 2 count: 317 high: 378 batch: 63 vm stats threshold: 48 cpu: 3 count: 282 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 1048576 Node 0, zone Movable pages free 0 min 0 low 0 high 0 spanned 0 present 0 managed 0 protection: (0, 0, 0, 0) Page frame Managing unit of physical memory by Zone Page structure implemented in “/include/linux/mm_types.h” Pages are supposed to be created for every page frames when the system boots. Pages can be accessed by the global variable called “mem_map” Linux’s physical memory managing units Physical memory may be composed of one or more Nodes. Node may be composed of one or more Zones. Zone may be composed of many Page frames. Buddy and Slab Linux allocates physical memory to tasks by the “Page frame” unit. At least 4KB, which can be changed to be 8KB, 2MB, etc. External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame. Internal Fragmentation: When task requests smaller size than one page frame. Buddy Allocator External Fragmentation Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone) free_area structure has free_list map The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB) Example On 2 pages are requested On another 2 pages are requested On page 11 are freed Lazy Buddy “free_area::map” -&gt; “free_area::nr_free”: number of free Page frames $ cat /proc/buddyinfo Node 0, zone DMA 1 0 0 1 2 1 1 0 0 1 3 Node 0, zone DMA32 3 2 4 3 6 4 4 4 3 1 963 Node 0, zone Normal 54 244 185 109 41 22 7 3 2 9 145 Slab Allocator Internal Fragmentation Exercise 2. Answer: Understanding Stack based buffer overflow #include &lt;string.h&gt; #include &lt;stdio.h&gt; void function2() { printf(“Execution flow changed\n”); } void function1(char *str){ char buffer[5]; strcpy(buffer, str); // break point 1. } // break point 2. void main(int argc, char *argv[]) { function1(argv[1]); // break point 3. printf(“Executed normally\n”); } gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c -g tells GCC to add extra information for GDB -fno-stack-protector flag to turn off stack protection mechanism -z execstack, it makes stack executable. $ ./bufferoverflow AAAA Executed normally $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA Segmentation fault break point 3. break point 1. break point 2. Return address, EBP and ESP on function stack frame break point 3. When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address. Hijacking Execution Find the function2 address Overwrite the Return address with the function 2 address $ ./bufferoverflow $(python -c 'print &quot;A&quot;*17 + &quot;\x1b\x84\x04\x08&quot;') Execution flow changed Segmentation fault">
+<link rel="canonical" href="coolwindjo.github.io/linux/2020/12/07/memory-management.html">
+<meta property="og:url" content="coolwindjo.github.io/linux/2020/12/07/memory-management.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-12-07T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Linux Memory Management">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2020-12-07T00:00:00+00:00","datePublished":"2020-12-07T00:00:00+00:00","description":"Memory management technic and virtual memory Virtual memory offers maximum sized Virtual Address Space to each Task. CPU Size 32bit 4GB 64bit 16EB In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses. More tasks can run with less physical memory No need of memory arrange policy Easy to share or protect memory between tasks Fast task creation Physical memory management data structure Linux has the information about entire physical memory. UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing) Memory and I/O BUS are shared by entire CPUs Possible bottleneck on the resource NUMA(Non-Uniform Memory Access) For the sake of the performance, each CPU should access to the nearest memory to fetch data. Node Implementation of Bank(Set of memory with the same access speed) Zone structure implemented in “/include/linux/mmzone.h” UMA has one Bank and NUMA has multiple Banks. UMA has one Node The only Node can be accessed with “contig_page_data” NUMA has multiple Nodes. They are managed using list called “pgdat_list” Linux can access the Physical Memory using consistent Node structure no matter what the system is. “pg_data_t” structure is used. “node_present_pages”: actual size of the physical memory in the node “node_start_pfn”: the index number of the physical memory in the memory map “node_zones”: zone structure “nr_zones”: the number of zones For the sake of the performance Linux tends to allocate the nearest memory from the CPU working on the Task. Linux tends to reallocate the CPU which have worked on the same task. Zone Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory. Zones are several regions of the physical memory for the Node. “/include/linux/mmzone.h” The memory in the same zone has the same properties. The memory in the different zone should be managed separately. Region Zone name Description 0 ~ 16M ZONE_DMA or ZONE_DMA32 saved for some ISA BUS-based devices 16 ~ 896M ZONE_NORMAL mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit) 896 ~ end ZONE_HIGHMEM dynamically allocated as it is needed Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM) Zone structure has Beginning address and the size of physical memory belong to the Zone free_area structure array for being used by Buddy “watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage. On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable. $ cat /proc/zoneinfo Node 0, zone DMA per-node stats nr_inactive_anon 62122 nr_active_anon 94246 nr_inactive_file 146827 nr_active_file 95508 ... pages free 3721 min 39 low 48 high 57 ... nr_free_pages 3721 nr_zone_inactive_anon 0 nr_zone_active_anon 0 ... pagesets cpu: 0 count: 0 high: 0 batch: 1 vm stats threshold: 8 cpu: 1 count: 0 high: 0 batch: 1 ... node_unreclaimable: 0 start_pfn: 1 Node 0, zone DMA32 pages free 988431 min 10549 low 13186 high 15823 nr_free_pages 988431 nr_zone_inactive_anon 0 nr_zone_active_anon 0 nr_zone_inactive_file 0 nr_zone_active_file 0 ... pagesets cpu: 0 count: 11 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 0 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 4096 Node 0, zone Normal pages free 158188 min 6306 low 7882 high 9458 spanned 619520 ... nr_free_pages 158188 nr_zone_inactive_anon 62122 nr_zone_active_anon 94246 nr_zone_inactive_file 146827 nr_zone_active_file 95508 nr_zone_unevictable 0 ... pagesets cpu: 0 count: 373 high: 378 batch: 63 vm stats threshold: 48 cpu: 1 count: 333 high: 378 batch: 63 vm stats threshold: 48 cpu: 2 count: 317 high: 378 batch: 63 vm stats threshold: 48 cpu: 3 count: 282 high: 378 batch: 63 ... node_unreclaimable: 0 start_pfn: 1048576 Node 0, zone Movable pages free 0 min 0 low 0 high 0 spanned 0 present 0 managed 0 protection: (0, 0, 0, 0) Page frame Managing unit of physical memory by Zone Page structure implemented in “/include/linux/mm_types.h” Pages are supposed to be created for every page frames when the system boots. Pages can be accessed by the global variable called “mem_map” Linux’s physical memory managing units Physical memory may be composed of one or more Nodes. Node may be composed of one or more Zones. Zone may be composed of many Page frames. Buddy and Slab Linux allocates physical memory to tasks by the “Page frame” unit. At least 4KB, which can be changed to be 8KB, 2MB, etc. External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame. Internal Fragmentation: When task requests smaller size than one page frame. Buddy Allocator External Fragmentation Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone) free_area structure has free_list map The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB) Example On 2 pages are requested On another 2 pages are requested On page 11 are freed Lazy Buddy “free_area::map” -&gt; “free_area::nr_free”: number of free Page frames $ cat /proc/buddyinfo Node 0, zone DMA 1 0 0 1 2 1 1 0 0 1 3 Node 0, zone DMA32 3 2 4 3 6 4 4 4 3 1 963 Node 0, zone Normal 54 244 185 109 41 22 7 3 2 9 145 Slab Allocator Internal Fragmentation Exercise 2. Answer: Understanding Stack based buffer overflow #include &lt;string.h&gt; #include &lt;stdio.h&gt; void function2() { printf(“Execution flow changed\\n”); } void function1(char *str){ char buffer[5]; strcpy(buffer, str); // break point 1. } // break point 2. void main(int argc, char *argv[]) { function1(argv[1]); // break point 3. printf(“Executed normally\\n”); } gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c -g tells GCC to add extra information for GDB -fno-stack-protector flag to turn off stack protection mechanism -z execstack, it makes stack executable. $ ./bufferoverflow AAAA Executed normally $ ./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA Segmentation fault break point 3. break point 1. break point 2. Return address, EBP and ESP on function stack frame break point 3. When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address. Hijacking Execution Find the function2 address Overwrite the Return address with the function 2 address $ ./bufferoverflow $(python -c &#39;print &quot;A&quot;*17 + &quot;\\x1b\\x84\\x04\\x08&quot;&#39;) Execution flow changed Segmentation fault","headline":"Linux Memory Management","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/linux/2020/12/07/memory-management.html"},"url":"coolwindjo.github.io/linux/2020/12/07/memory-management.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Linux Memory Management</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-12-07T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Dec 07, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 9 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#memory">#memory</a></div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="memory-management-technic-and-virtual-memory">Memory management technic and virtual memory</h2>
+
+<ul>
+  <li>
+    <p>Virtual memory offers maximum sized Virtual Address Space to each Task.</p>
+
+    <table>
+      <thead>
+        <tr>
+          <th>CPU</th>
+          <th>Size</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>32bit</td>
+          <td>4GB</td>
+        </tr>
+        <tr>
+          <td>64bit</td>
+          <td>16EB</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ul>
+      <li>In case of 32bit CPU, Virtual Address Space of a Task does not require the 4GB of Physical memory but takes only as much as the Task uses.
+        <ul>
+          <li>More tasks can run with less physical memory</li>
+          <li>No need of memory arrange policy</li>
+          <li>Easy to share or protect memory between tasks</li>
+          <li>Fast task creation</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="physical-memory-management-data-structure">Physical memory management data structure</h2>
+
+<ul>
+  <li>Linux has the information about entire physical memory.</li>
+  <li>UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing)
+    <ul>
+      <li>Memory and I/O BUS are shared by entire CPUs</li>
+      <li>Possible bottleneck on the resource</li>
+    </ul>
+  </li>
+  <li>NUMA(Non-Uniform Memory Access)
+    <ul>
+      <li>For the sake of the performance, each CPU should access to the nearest memory to fetch data.</li>
+    </ul>
+  </li>
+  <li>Node
+    <ul>
+      <li>Implementation of Bank(Set of memory with the same access speed)
+        <ul>
+          <li>Zone structure implemented in “/include/linux/mmzone.h”</li>
+          <li>UMA has one Bank and NUMA has multiple Banks.</li>
+        </ul>
+      </li>
+      <li>UMA has one Node
+        <ul>
+          <li>The only Node can be accessed with “contig_page_data”</li>
+        </ul>
+      </li>
+      <li>NUMA has multiple Nodes.
+        <ul>
+          <li>They are managed using list called “pgdat_list”</li>
+        </ul>
+      </li>
+      <li>Linux can access the Physical Memory using consistent Node structure no matter what the system is.
+        <ul>
+          <li>“pg_data_t” structure is used.
+            <ul>
+              <li>“node_present_pages”: actual size of the physical memory in the node</li>
+              <li>“node_start_pfn”: the index number of the physical memory in the memory map</li>
+              <li>“node_zones”: zone structure</li>
+              <li>“nr_zones”: the number of zones</li>
+            </ul>
+          </li>
+          <li>For the sake of the performance
+            <ul>
+              <li>Linux tends to allocate the nearest memory from the CPU working on the Task.</li>
+              <li>Linux tends to reallocate the CPU which have worked on the same task.</li>
+            </ul>
+          </li>
+        </ul>
+
+        <p><img src="/assets/images/posts/2020-12-07/bank-node.png" alt="Bank-Node"></p>
+      </li>
+    </ul>
+  </li>
+  <li>Zone
+    <ul>
+      <li>Some ISA BUS-based devices are necessary to allocate the region under 16MB of the physical memory.</li>
+      <li>Zones are several regions of the physical memory for the Node.
+        <ul>
+          <li>“/include/linux/mmzone.h”</li>
+        </ul>
+      </li>
+      <li>The memory in the same zone has the same properties.</li>
+      <li>The memory in the different zone should be managed separately.</li>
+    </ul>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Region</th>
+          <th>Zone name</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td>0 ~ 16M</td>
+          <td>ZONE_DMA or ZONE_DMA32</td>
+          <td>saved for some ISA BUS-based devices</td>
+        </tr>
+        <tr>
+          <td>16 ~ 896M</td>
+          <td>ZONE_NORMAL</td>
+          <td>mapped from the beginning of the Kernel Space in the Virtual Address Space (e.g. 3072 ~ 3968 M for 32bit)</td>
+        </tr>
+        <tr>
+          <td>896 ~ end</td>
+          <td>ZONE_HIGHMEM</td>
+          <td>dynamically allocated as it is needed</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <ul>
+      <li>Zone can be the only one in one Node. (e.g. ARM CPU system with 64MB SDRAM)</li>
+      <li>Zone structure has
+        <ul>
+          <li>Beginning address and the size of physical memory belong to the Zone</li>
+          <li>free_area structure array for being used by Buddy</li>
+          <li>“watermark” and “vm_stat” determine appropriate memory freeing policy at memory shortage.
+            <ul>
+              <li>On the memory shortage, the processes failed to fetch memory are put into “wait_queue” with hashing on “wait_table” variable.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <div class="language-terminal highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="nb">cat</span> /proc/zoneinfo
+<span class="go">Node 0, zone      DMA
+  per-node stats
+      nr_inactive_anon 62122
+      nr_active_anon 94246
+      nr_inactive_file 146827
+      nr_active_file 95508
+</span><span class="c">      ...
+</span><span class="go">  pages free     3721
+          min      39
+          low      48
+          high     57
+</span><span class="c">          ...
+</span><span class="go">      nr_free_pages 3721
+      nr_zone_inactive_anon 0
+      nr_zone_active_anon 0
+</span><span class="c">      ...
+</span><span class="go">  pagesets
+      cpu: 0
+              count: 0
+              high:  0
+              batch: 1
+  vm stats threshold: 8
+      cpu: 1
+              count: 0
+              high:  0
+              batch: 1
+</span><span class="c">      ...
+</span><span class="go">  node_unreclaimable:  0
+  start_pfn:           1
+Node 0, zone    DMA32
+  pages free     988431
+          min      10549
+          low      13186
+          high     15823
+      nr_free_pages 988431
+      nr_zone_inactive_anon 0
+      nr_zone_active_anon 0
+      nr_zone_inactive_file 0
+      nr_zone_active_file 0
+</span><span class="c">      ...
+</span><span class="go">  pagesets
+      cpu: 0
+              count: 11
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 1
+              count: 0
+              high:  378
+              batch: 63
+</span><span class="c">              ...
+</span><span class="go">  node_unreclaimable:  0
+  start_pfn:           4096
+Node 0, zone   Normal
+  pages free     158188
+          min      6306
+          low      7882
+          high     9458
+          spanned  619520
+</span><span class="c">          ...
+</span><span class="go">      nr_free_pages 158188
+      nr_zone_inactive_anon 62122
+      nr_zone_active_anon 94246
+      nr_zone_inactive_file 146827
+      nr_zone_active_file 95508
+      nr_zone_unevictable 0
+</span><span class="c">      ...
+</span><span class="go">  pagesets
+      cpu: 0
+              count: 373
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 1
+              count: 333
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 2
+              count: 317
+              high:  378
+              batch: 63
+  vm stats threshold: 48
+      cpu: 3
+              count: 282
+              high:  378
+              batch: 63
+</span><span class="c">      ...
+</span><span class="go">  node_unreclaimable:  0
+  start_pfn:           1048576
+Node 0, zone  Movable
+  pages free     0
+          min      0
+          low      0
+          high     0
+          spanned  0
+          present  0
+          managed  0
+          protection: (0, 0, 0, 0)
+</span></code></pre></div>    </div>
+  </li>
+  <li>Page frame
+    <ul>
+      <li>Managing unit of physical memory by Zone</li>
+      <li>Page structure implemented in “/include/linux/mm_types.h”</li>
+      <li>Pages are supposed to be created for every page frames when the system boots.</li>
+      <li>Pages can be accessed by the global variable called “mem_map”</li>
+    </ul>
+  </li>
+  <li>Linux’s physical memory managing units
+    <ul>
+      <li>Physical memory may be composed of one or more Nodes.</li>
+      <li>Node may be composed of one or more Zones.</li>
+      <li>Zone may be composed of many Page frames.</li>
+    </ul>
+
+    <p><img src="/assets/images/posts/2020-12-07/node-zone.png" alt="Node-Zone"></p>
+  </li>
+</ul>
+
+<h2 id="buddy-and-slab">Buddy and Slab</h2>
+
+<ul>
+  <li>Linux allocates physical memory to tasks by the “Page frame” unit.
+    <ul>
+      <li>At least 4KB, which can be changed to be 8KB, 2MB, etc.</li>
+      <li>External Fragmentation: When task requests bigger size than several page frames and the residual is smaller than one page frame.</li>
+      <li>Internal Fragmentation: When task requests smaller size than one page frame.</li>
+    </ul>
+  </li>
+  <li>Buddy Allocator
+    <ul>
+      <li>External Fragmentation</li>
+      <li>Implemented through the free_area structure array in the Zone structure (one Buddy for one Zone)
+        <ul>
+          <li>free_area structure has
+            <ul>
+              <li>free_list</li>
+              <li>map</li>
+            </ul>
+
+            <p><img src="/assets/images/posts/2020-12-07/free_area.png" alt="free_area"></p>
+
+            <ul>
+              <li>The number of free_area will be the number of squares of 2 which calculates the maximum number of page frames for one buddy. (e.g. 4KB, 8KB, 16KB, …, 4MB)</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Example
+        <ul>
+          <li>
+            <p>On 2 pages are requested</p>
+
+            <p><img src="/assets/images/posts/2020-12-07/buddy-allocator1.png" alt="Buddy allocator procedure 1"></p>
+          </li>
+          <li>
+            <p>On another 2 pages are requested</p>
+
+            <p><img src="/assets/images/posts/2020-12-07/buddy-allocator2.png" alt="Buddy allocator procedure 2"></p>
+          </li>
+          <li>
+            <p>On page 11 are freed</p>
+
+            <p><img src="/assets/images/posts/2020-12-07/buddy-allocator3.png" alt="Buddy allocator procedure 3"></p>
+          </li>
+        </ul>
+      </li>
+      <li>
+        <p>Lazy Buddy</p>
+
+        <p><img src="/assets/images/posts/2020-12-07/lazy-buddy.png" alt="Lazy Buddy"></p>
+
+        <ul>
+          <li>“free_area::map” -&gt; “free_area::nr_free”: number of free Page frames</li>
+        </ul>
+
+        <div class="language-terminal highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span><span class="nb">cat</span> /proc/buddyinfo
+<span class="go">Node 0, zone      DMA      1      0      0      1      2      1      1      0      0      1      3
+Node 0, zone    DMA32      3      2      4      3      6      4      4      4      3      1    963
+Node 0, zone   Normal     54    244    185    109     41     22      7      3      2      9    145
+</span></code></pre></div>        </div>
+      </li>
+    </ul>
+  </li>
+  <li>Slab Allocator
+    <ul>
+      <li>Internal Fragmentation</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="exercise-2-answer-understanding-stack-based-buffer-overflow"><a href="https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow" target="_blank">Exercise 2. Answer: Understanding Stack based buffer overflow</a></h2>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;string.h&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;stdio.h&gt;</span><span class="cp">
+</span>
+<span class="kt">void</span> <span class="nf">function2</span><span class="p">()</span> <span class="p">{</span>
+  <span class="n">printf</span><span class="p">(</span><span class="err">“</span><span class="n">Execution</span> <span class="n">flow</span> <span class="n">changed</span><span class="err">\</span><span class="n">n</span><span class="err">”</span><span class="p">);</span>
+<span class="p">}</span>
+
+<span class="kt">void</span> <span class="nf">function1</span><span class="p">(</span><span class="kt">char</span> <span class="o">*</span><span class="n">str</span><span class="p">){</span>
+  <span class="kt">char</span> <span class="n">buffer</span><span class="p">[</span><span class="mi">5</span><span class="p">];</span>
+  <span class="n">strcpy</span><span class="p">(</span><span class="n">buffer</span><span class="p">,</span> <span class="n">str</span><span class="p">);</span>  <span class="c1">// break point 1.</span>
+<span class="p">}</span>                       <span class="c1">// break point 2.</span>
+
+<span class="kt">void</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">*</span><span class="n">argv</span><span class="p">[])</span>
+<span class="p">{</span>
+  <span class="n">function1</span><span class="p">(</span><span class="n">argv</span><span class="p">[</span><span class="mi">1</span><span class="p">]);</span>   <span class="c1">// break point 3.</span>
+  <span class="n">printf</span><span class="p">(</span><span class="err">“</span><span class="n">Executed</span> <span class="n">normally</span><span class="err">\</span><span class="n">n</span><span class="err">”</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-terminal highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="go">gcc -g -fno-stack-protector -z execstack -o bufferoverflow overflow.c
+</span></code></pre></div></div>
+
+<ul>
+  <li>-g tells GCC to add extra information for GDB</li>
+  <li>-fno-stack-protector flag to turn off stack protection mechanism</li>
+  <li>-z execstack, it makes stack executable.</li>
+</ul>
+
+<div class="language-terminal highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>./bufferoverflow AAAA
+<span class="go">Executed normally
+</span><span class="gp">$</span><span class="w"> </span>./bufferoverflow AAAAAAAAAAAAAAAAAAAAAA
+<span class="go">Segmentation fault
+</span></code></pre></div></div>
+
+<ul>
+  <li>
+    <p>break point 3.</p>
+
+    <p><img src="/assets/images/posts/2020-12-07/breakpoint3-1.png" alt="break point 3."></p>
+  </li>
+  <li>
+    <p>break point 1.</p>
+
+    <p><img src="/assets/images/posts/2020-12-07/breakpoint1.png" alt="break point 1."></p>
+  </li>
+  <li>
+    <p>break point 2.</p>
+
+    <p><img src="/assets/images/posts/2020-12-07/breakpoint2.png" alt="break point 2."></p>
+  </li>
+  <li>
+    <p>Return address, EBP and ESP on function stack frame</p>
+
+    <p><img src="/assets/images/posts/2020-12-07/esp_ebp_on_func_call_stack.png" alt="EBP and ESP on function stack frame"></p>
+  </li>
+  <li>
+    <p>break point 3.</p>
+
+    <p>When you overwrite the return address with As you will get segmentation fault with message 0x41414141 in ?? () in GDB. This means you successfully overwritten the return address.</p>
+
+    <p><img src="/assets/images/posts/2020-12-07/breakpoint3-2.png" alt="break point 3."></p>
+  </li>
+  <li>
+    <p>Hijacking Execution</p>
+    <ul>
+      <li>
+        <p>Find the function2 address</p>
+
+        <p><img src="/assets/images/posts/2020-12-07/function2address.png" alt="function 2 address"></p>
+      </li>
+      <li>
+        <p>Overwrite the Return address with the function 2 address</p>
+
+        <p><img src="/assets/images/posts/2020-12-07/run_function2address.png" alt="run with function 2 address"></p>
+      </li>
+    </ul>
+
+    <div class="language-terminal highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="gp">$</span><span class="w"> </span>./bufferoverflow <span class="si">$(</span>python <span class="nt">-c</span> <span class="s1">'print "A"*17 + "\x1b\x84\x04\x08"'</span><span class="si">)</span>
+<span class="go">Execution flow changed
+Segmentation fault
+</span></code></pre></div>    </div>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/linux/2020/12/05/linux-kernel.html" title="Linux Kernel Structure">Linux Kernel Structure</a><a class="next" href="/linux/2020/12/07/task-management.html" title="Linux Task Management">Linux Task Management</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/blogging/2017/06/10/quick-mardown-example.html" title="Linux Task Management">Quick markdown example</a></li>
+<li><a class="post-link" href="/blogging/2021/12/05/markdown-cheat-sheet.html" title="Linux Task Management">Markdown Cheat Sheet</a></li>
+<li><a class="post-link" href="/skillorknowhow/2021/12/27/cheat-sheets.html" title="Linux Task Management">Cheat Sheets</a></li>
+<li><a class="post-link" href="/blogging/2018/05/26/mathjax-test.html" title="Linux Task Management">Mathjax Test</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

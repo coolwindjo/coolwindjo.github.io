@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>ROS Technical Terms | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="ROS Technical Terms">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Technical Terms Term Description ROS (Robot Operating System) Robot SW를 작성하기 위한 Framework or Platform Master Node 사이 연결과 Message 통신을 위한 Name server 역할 Node ROS에서 실행되는 최소 단위의 Processor를 지칭 XML-RPC (XML - Remote Procedure Call) RPC Protocol의 일종으로서, Encoding 형식에는 XML, 전송 방식에서는 HTTP Protocol을 사용 Message Node 간 Data를 주고 받을 때 사용하는 Medium으로, int, float, bool, point 등 변수 형태이며, 간단한 Nested 구조나, Message Array 등을 사용가능 Topic Publisher - Subscriber 관계에서 사용하는 Medium Service 요청과 응답을 사용하는 동기 방식의 Message교환 방법의 일종 Action Service처럼 양방향 통신이 필요하지만, 요청 처리 후 응답까지 오랜 시간이 걸리고, 처리 상태가 필요한 경우 사용됨 Bag ROS에서 주고받는 Message Data를 저장할 때 사용하는 File format, Bag을 재생하여 이전 상황을 그대로 재현 가능(같은 실험을 수행하지 않아도 Sensor값을 반복하여 사용가능) Catkin ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음 Meta-OS (Meta-Operating System) Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어) Detailed description ROS 일반 OS에서 제공하는 HW 추상화, 저수준 기기제어, 빈번히 사용되는 기능들이 구현되어 있음 Process간 Message 전달 Package 관리 기능 등을 제공 여러 Computer system 에서 작동하는 Code를 Fetch, Build, Implementation, Run하기 위한 Tools &amp; Library를 제공 일종의 MOM (Message-Oriented Middleware)라고 할 수 있음 Master roscore를 통해 실행 Master를 실행하면 각 Node의 이름을 등록하고 필요에 따라 정보를 받을 수 있다. Master를 제외한 Node간에는 접속, Message 통신이 불가하다. HTTP 기반의 XMLRPC Protocol을 사용하여 통신한다. Node는 필요할 때만 Master에 접속하여 정보를 등록하거나 다른 Node의 정보를 요청한다. Server 주소와 Port로는 ROS_MASTER_URI 변수에 기재된 URI 주소와 Port를 사용한다. 기본값은 ${Current Local IP}:11311이다. Node ROS에서는 하나의 목적에 하나의 Node 작성을 권장 재사용이 쉽게 구성하여 개발하는 것이 권장됨 Mirco-service Architecture 개념 Mobile Robot의 경우, 아래와 같이 Node를 세분화 하여 작성 Sensor drive Sensor data를 이용한 변환 장애물 판단 Motor 구동 Encoder 입력 Navigation Node 구동시 Master에 다음 항목들이 등록됨 이름, Publisher Subscriber Service Server Service Client가 사용하는 Topic 및 Service 이름 Message 형태 URI주소와 Port Master에 등록된 이러한 정보를 기반으로 Node 간 통신이 가능 URI 주소는 ROS_HOSTNAME 환경변수 값으로 지정 Port는 임의의 고유값으로 설정 Node - Master 간 통신에서 XMLRPC를 사용 Node - Node 간, 접속 요청과 응답은 XMLRPC Message 통신은 TCP/IP 기반의 TCPROS 사용 Topic Publisher가 Master에 Topic을 등록한 뒤, Message를 일방 출력하면 Master에 등록된 Subscriber가 Data를 수신하는 형태 Topic은 Publisher가 Subscriber에게 일방적으로 Data를 전달하는 단방향 통신이며, 비동기 적으로 연속적인 Message를 전달하는 통신방법이기 때문에 Sensor Data 전송에 적합 Service Client의 요청이 있을 때 응답하는 Server를 가진다. 일회성 Message 통신으로 요청과 응답이 완료되면 두 Node간 접속이 끊긴다. Action 요청과 응답에 해당하는 Gool과 Result가 있으며, 중간 결과에 해당하는 Feedback이 추가됨 Action Client가 Goal을 Action Server에 전달하면, Action Server가 수행 상태에 따라 Feedback과 Result를 반환 Catkin CMakeLists.txt를 이용해서 사용 rosbuild -&gt; catkin (ROS1) -&gt; ament -&gt; colcon (ROS2) Meta OS Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System 즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함 기존 OS의 다음과 같은 기능 사용 Process Management System File System User Interface Program Utilities (Compiler, Thread model) 추가적으로 다음과 같은 Robot Application 개발을 위한 필수 기능들을 Library 형태로 제공 다수의 이기종 HW간의 Data communication Scheduling Error handling 이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공 User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.">
+<meta property="og:description" content="Technical Terms Term Description ROS (Robot Operating System) Robot SW를 작성하기 위한 Framework or Platform Master Node 사이 연결과 Message 통신을 위한 Name server 역할 Node ROS에서 실행되는 최소 단위의 Processor를 지칭 XML-RPC (XML - Remote Procedure Call) RPC Protocol의 일종으로서, Encoding 형식에는 XML, 전송 방식에서는 HTTP Protocol을 사용 Message Node 간 Data를 주고 받을 때 사용하는 Medium으로, int, float, bool, point 등 변수 형태이며, 간단한 Nested 구조나, Message Array 등을 사용가능 Topic Publisher - Subscriber 관계에서 사용하는 Medium Service 요청과 응답을 사용하는 동기 방식의 Message교환 방법의 일종 Action Service처럼 양방향 통신이 필요하지만, 요청 처리 후 응답까지 오랜 시간이 걸리고, 처리 상태가 필요한 경우 사용됨 Bag ROS에서 주고받는 Message Data를 저장할 때 사용하는 File format, Bag을 재생하여 이전 상황을 그대로 재현 가능(같은 실험을 수행하지 않아도 Sensor값을 반복하여 사용가능) Catkin ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음 Meta-OS (Meta-Operating System) Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어) Detailed description ROS 일반 OS에서 제공하는 HW 추상화, 저수준 기기제어, 빈번히 사용되는 기능들이 구현되어 있음 Process간 Message 전달 Package 관리 기능 등을 제공 여러 Computer system 에서 작동하는 Code를 Fetch, Build, Implementation, Run하기 위한 Tools &amp; Library를 제공 일종의 MOM (Message-Oriented Middleware)라고 할 수 있음 Master roscore를 통해 실행 Master를 실행하면 각 Node의 이름을 등록하고 필요에 따라 정보를 받을 수 있다. Master를 제외한 Node간에는 접속, Message 통신이 불가하다. HTTP 기반의 XMLRPC Protocol을 사용하여 통신한다. Node는 필요할 때만 Master에 접속하여 정보를 등록하거나 다른 Node의 정보를 요청한다. Server 주소와 Port로는 ROS_MASTER_URI 변수에 기재된 URI 주소와 Port를 사용한다. 기본값은 ${Current Local IP}:11311이다. Node ROS에서는 하나의 목적에 하나의 Node 작성을 권장 재사용이 쉽게 구성하여 개발하는 것이 권장됨 Mirco-service Architecture 개념 Mobile Robot의 경우, 아래와 같이 Node를 세분화 하여 작성 Sensor drive Sensor data를 이용한 변환 장애물 판단 Motor 구동 Encoder 입력 Navigation Node 구동시 Master에 다음 항목들이 등록됨 이름, Publisher Subscriber Service Server Service Client가 사용하는 Topic 및 Service 이름 Message 형태 URI주소와 Port Master에 등록된 이러한 정보를 기반으로 Node 간 통신이 가능 URI 주소는 ROS_HOSTNAME 환경변수 값으로 지정 Port는 임의의 고유값으로 설정 Node - Master 간 통신에서 XMLRPC를 사용 Node - Node 간, 접속 요청과 응답은 XMLRPC Message 통신은 TCP/IP 기반의 TCPROS 사용 Topic Publisher가 Master에 Topic을 등록한 뒤, Message를 일방 출력하면 Master에 등록된 Subscriber가 Data를 수신하는 형태 Topic은 Publisher가 Subscriber에게 일방적으로 Data를 전달하는 단방향 통신이며, 비동기 적으로 연속적인 Message를 전달하는 통신방법이기 때문에 Sensor Data 전송에 적합 Service Client의 요청이 있을 때 응답하는 Server를 가진다. 일회성 Message 통신으로 요청과 응답이 완료되면 두 Node간 접속이 끊긴다. Action 요청과 응답에 해당하는 Gool과 Result가 있으며, 중간 결과에 해당하는 Feedback이 추가됨 Action Client가 Goal을 Action Server에 전달하면, Action Server가 수행 상태에 따라 Feedback과 Result를 반환 Catkin CMakeLists.txt를 이용해서 사용 rosbuild -&gt; catkin (ROS1) -&gt; ament -&gt; colcon (ROS2) Meta OS Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System 즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함 기존 OS의 다음과 같은 기능 사용 Process Management System File System User Interface Program Utilities (Compiler, Thread model) 추가적으로 다음과 같은 Robot Application 개발을 위한 필수 기능들을 Library 형태로 제공 다수의 이기종 HW간의 Data communication Scheduling Error handling 이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공 User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.">
+<link rel="canonical" href="coolwindjo.github.io/ros/2020/10/09/ros-tech-terms.html">
+<meta property="og:url" content="coolwindjo.github.io/ros/2020/10/09/ros-tech-terms.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2020-10-09T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="ROS Technical Terms">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2020-10-09T00:00:00+00:00","datePublished":"2020-10-09T00:00:00+00:00","description":"Technical Terms Term Description ROS (Robot Operating System) Robot SW를 작성하기 위한 Framework or Platform Master Node 사이 연결과 Message 통신을 위한 Name server 역할 Node ROS에서 실행되는 최소 단위의 Processor를 지칭 XML-RPC (XML - Remote Procedure Call) RPC Protocol의 일종으로서, Encoding 형식에는 XML, 전송 방식에서는 HTTP Protocol을 사용 Message Node 간 Data를 주고 받을 때 사용하는 Medium으로, int, float, bool, point 등 변수 형태이며, 간단한 Nested 구조나, Message Array 등을 사용가능 Topic Publisher - Subscriber 관계에서 사용하는 Medium Service 요청과 응답을 사용하는 동기 방식의 Message교환 방법의 일종 Action Service처럼 양방향 통신이 필요하지만, 요청 처리 후 응답까지 오랜 시간이 걸리고, 처리 상태가 필요한 경우 사용됨 Bag ROS에서 주고받는 Message Data를 저장할 때 사용하는 File format, Bag을 재생하여 이전 상황을 그대로 재현 가능(같은 실험을 수행하지 않아도 Sensor값을 반복하여 사용가능) Catkin ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음 Meta-OS (Meta-Operating System) Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어) Detailed description ROS 일반 OS에서 제공하는 HW 추상화, 저수준 기기제어, 빈번히 사용되는 기능들이 구현되어 있음 Process간 Message 전달 Package 관리 기능 등을 제공 여러 Computer system 에서 작동하는 Code를 Fetch, Build, Implementation, Run하기 위한 Tools &amp; Library를 제공 일종의 MOM (Message-Oriented Middleware)라고 할 수 있음 Master roscore를 통해 실행 Master를 실행하면 각 Node의 이름을 등록하고 필요에 따라 정보를 받을 수 있다. Master를 제외한 Node간에는 접속, Message 통신이 불가하다. HTTP 기반의 XMLRPC Protocol을 사용하여 통신한다. Node는 필요할 때만 Master에 접속하여 정보를 등록하거나 다른 Node의 정보를 요청한다. Server 주소와 Port로는 ROS_MASTER_URI 변수에 기재된 URI 주소와 Port를 사용한다. 기본값은 ${Current Local IP}:11311이다. Node ROS에서는 하나의 목적에 하나의 Node 작성을 권장 재사용이 쉽게 구성하여 개발하는 것이 권장됨 Mirco-service Architecture 개념 Mobile Robot의 경우, 아래와 같이 Node를 세분화 하여 작성 Sensor drive Sensor data를 이용한 변환 장애물 판단 Motor 구동 Encoder 입력 Navigation Node 구동시 Master에 다음 항목들이 등록됨 이름, Publisher Subscriber Service Server Service Client가 사용하는 Topic 및 Service 이름 Message 형태 URI주소와 Port Master에 등록된 이러한 정보를 기반으로 Node 간 통신이 가능 URI 주소는 ROS_HOSTNAME 환경변수 값으로 지정 Port는 임의의 고유값으로 설정 Node - Master 간 통신에서 XMLRPC를 사용 Node - Node 간, 접속 요청과 응답은 XMLRPC Message 통신은 TCP/IP 기반의 TCPROS 사용 Topic Publisher가 Master에 Topic을 등록한 뒤, Message를 일방 출력하면 Master에 등록된 Subscriber가 Data를 수신하는 형태 Topic은 Publisher가 Subscriber에게 일방적으로 Data를 전달하는 단방향 통신이며, 비동기 적으로 연속적인 Message를 전달하는 통신방법이기 때문에 Sensor Data 전송에 적합 Service Client의 요청이 있을 때 응답하는 Server를 가진다. 일회성 Message 통신으로 요청과 응답이 완료되면 두 Node간 접속이 끊긴다. Action 요청과 응답에 해당하는 Gool과 Result가 있으며, 중간 결과에 해당하는 Feedback이 추가됨 Action Client가 Goal을 Action Server에 전달하면, Action Server가 수행 상태에 따라 Feedback과 Result를 반환 Catkin CMakeLists.txt를 이용해서 사용 rosbuild -&gt; catkin (ROS1) -&gt; ament -&gt; colcon (ROS2) Meta OS Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System 즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함 기존 OS의 다음과 같은 기능 사용 Process Management System File System User Interface Program Utilities (Compiler, Thread model) 추가적으로 다음과 같은 Robot Application 개발을 위한 필수 기능들을 Library 형태로 제공 다수의 이기종 HW간의 Data communication Scheduling Error handling 이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공 User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.","headline":"ROS Technical Terms","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/ros/2020/10/09/ros-tech-terms.html"},"url":"coolwindjo.github.io/ros/2020/10/09/ros-tech-terms.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">ROS Technical Terms</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2020-10-09T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Oct 09, 2020
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 3 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#ros">#ros</a><a class="post-tag" href="/tags.html#term">#term</a><a class="post-tag" href="/tags.html#jargon">#jargon</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="technical-terms">Technical Terms</h2>
+
+<table>
+  <thead>
+    <tr>
+      <th>Term</th>
+      <th>Description</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+<a href="#ros">ROS</a> (Robot Operating System)</td>
+      <td>Robot SW를 작성하기 위한 Framework or Platform</td>
+    </tr>
+    <tr>
+      <td><a href="#master">Master</a></td>
+      <td>Node 사이 연결과 Message 통신을 위한 Name server 역할</td>
+    </tr>
+    <tr>
+      <td><a href="#node">Node</a></td>
+      <td>ROS에서 실행되는 최소 단위의 Processor를 지칭</td>
+    </tr>
+    <tr>
+      <td>XML-RPC (XML - Remote Procedure Call)</td>
+      <td>RPC Protocol의 일종으로서, Encoding 형식에는 XML, 전송 방식에서는 HTTP Protocol을 사용</td>
+    </tr>
+    <tr>
+      <td>Message</td>
+      <td>Node 간 Data를 주고 받을 때 사용하는 Medium으로, int, float, bool, point 등 변수 형태이며, 간단한 Nested 구조나, Message Array 등을 사용가능</td>
+    </tr>
+    <tr>
+      <td><a href="#topic">Topic</a></td>
+      <td>Publisher - Subscriber 관계에서 사용하는 Medium</td>
+    </tr>
+    <tr>
+      <td><a href="#service">Service</a></td>
+      <td>요청과 응답을 사용하는 동기 방식의 Message교환 방법의 일종</td>
+    </tr>
+    <tr>
+      <td><a href="#action">Action</a></td>
+      <td>Service처럼 양방향 통신이 필요하지만, 요청 처리 후 응답까지 오랜 시간이 걸리고, 처리 상태가 필요한 경우 사용됨</td>
+    </tr>
+    <tr>
+      <td>Bag</td>
+      <td>ROS에서 주고받는 Message Data를 저장할 때 사용하는 File format, Bag을 재생하여 이전 상황을 그대로 재현 가능(같은 실험을 수행하지 않아도 Sensor값을 반복하여 사용가능)</td>
+    </tr>
+    <tr>
+      <td><a href="#catkin">Catkin</a></td>
+      <td>ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음</td>
+    </tr>
+    <tr>
+      <td>
+<a href="#meta-os">Meta-OS</a> (Meta-Operating System)</td>
+      <td>Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어)</td>
+    </tr>
+  </tbody>
+</table>
+
+<h2 id="detailed-description">Detailed description</h2>
+
+<h3 id="ros">ROS</h3>
+
+<ul>
+  <li>일반 OS에서 제공하는 HW 추상화, 저수준 기기제어, 빈번히 사용되는 기능들이 구현되어 있음</li>
+  <li>Process간 Message 전달 Package 관리 기능 등을 제공</li>
+  <li>여러 Computer system 에서 작동하는 Code를 Fetch, Build, Implementation, Run하기 위한 Tools &amp; Library를 제공</li>
+  <li>일종의 MOM (Message-Oriented Middleware)라고 할 수 있음</li>
+</ul>
+
+<h3 id="master">Master</h3>
+
+<ul>
+  <li>roscore를 통해 실행</li>
+  <li>Master를 실행하면 각 Node의 이름을 등록하고 필요에 따라 정보를 받을 수 있다.</li>
+  <li>Master를 제외한 Node간에는 접속, Message 통신이 불가하다.</li>
+  <li>HTTP 기반의 XMLRPC Protocol을 사용하여 통신한다.</li>
+  <li>Node는 필요할 때만 Master에 접속하여 정보를 등록하거나 다른 Node의 정보를 요청한다.</li>
+  <li>Server 주소와 Port로는 ROS_MASTER_URI 변수에 기재된 URI 주소와 Port를 사용한다.</li>
+  <li>기본값은 ${Current Local IP}:11311이다.</li>
+</ul>
+
+<h3 id="node">Node</h3>
+
+<ul>
+  <li>ROS에서는 하나의 목적에 하나의 Node 작성을 권장
+    <ul>
+      <li>재사용이 쉽게 구성하여 개발하는 것이 권장됨</li>
+    </ul>
+  </li>
+  <li>Mirco-service Architecture 개념</li>
+  <li>Mobile Robot의 경우, 아래와 같이 Node를 세분화 하여 작성
+    <ul>
+      <li>Sensor drive</li>
+      <li>Sensor data를 이용한 변환</li>
+      <li>장애물 판단</li>
+      <li>Motor 구동</li>
+      <li>Encoder 입력</li>
+      <li>Navigation</li>
+    </ul>
+  </li>
+  <li>Node 구동시 Master에 다음 항목들이 등록됨
+    <ul>
+      <li>이름,</li>
+      <li>Publisher</li>
+      <li>Subscriber</li>
+      <li>Service Server</li>
+      <li>Service Client가 사용하는 Topic 및 Service 이름</li>
+      <li>Message 형태</li>
+      <li>URI주소와 Port</li>
+    </ul>
+  </li>
+  <li>Master에 등록된 이러한 정보를 기반으로 Node 간 통신이 가능
+    <ul>
+      <li>URI 주소는 ROS_HOSTNAME 환경변수 값으로 지정</li>
+      <li>Port는 임의의 고유값으로 설정</li>
+    </ul>
+  </li>
+  <li>Node - Master 간 통신에서 XMLRPC를 사용</li>
+  <li>Node - Node 간,
+    <ul>
+      <li>접속 요청과 응답은 XMLRPC</li>
+      <li>Message 통신은 TCP/IP 기반의 TCPROS 사용</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="topic">Topic</h3>
+
+<ul>
+  <li>Publisher가 Master에 Topic을 등록한 뒤, Message를 일방 출력하면 Master에 등록된 Subscriber가 Data를 수신하는 형태</li>
+  <li>Topic은 Publisher가 Subscriber에게 일방적으로 Data를 전달하는 단방향 통신이며, 비동기 적으로 연속적인 Message를 전달하는 통신방법이기 때문에 Sensor Data 전송에 적합</li>
+</ul>
+
+<h3 id="service">Service</h3>
+
+<ul>
+  <li>Client의 요청이 있을 때 응답하는 Server를 가진다.</li>
+  <li>일회성 Message 통신으로 요청과 응답이 완료되면 두 Node간 접속이 끊긴다.</li>
+</ul>
+
+<h3 id="action">Action</h3>
+
+<ul>
+  <li>요청과 응답에 해당하는 Gool과 Result가 있으며, 중간 결과에 해당하는 Feedback이 추가됨</li>
+  <li>Action Client가 Goal을 Action Server에 전달하면, Action Server가 수행 상태에 따라 Feedback과 Result를 반환</li>
+</ul>
+
+<h3 id="catkin">Catkin</h3>
+
+<ul>
+  <li>CMakeLists.txt를 이용해서 사용</li>
+  <li>rosbuild -&gt; catkin (ROS1) -&gt; ament -&gt; colcon (ROS2)</li>
+</ul>
+
+<h3 id="meta-os">Meta OS</h3>
+
+<ul>
+  <li>Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System</li>
+  <li>즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함
+    <ul>
+      <li>기존 OS의 다음과 같은 기능 사용
+        <ul>
+          <li>Process Management System</li>
+          <li>File System</li>
+          <li>User Interface</li>
+          <li>Program Utilities (Compiler, Thread model)</li>
+        </ul>
+      </li>
+      <li>추가적으로 다음과 같은 Robot Application 개발을 위한 필수 기능들을 Library 형태로 제공
+        <ul>
+          <li>다수의 이기종 HW간의 Data communication</li>
+          <li>Scheduling</li>
+          <li>Error handling</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>이러한 Robot SW Framework 를 기반으로 다양한 목적의 Application을 개발, 관리, 제공</li>
+  <li>
+    <p>User들이 개발한 Package를 유통하는 Ecosystem 을 갖추고 있다.</p>
+
+    <p><img src="/assets/images/posts/2020-10-09/robotis-lec-1_2.png" alt="Image of Meta-OS"></p>
+  </li>
+</ul>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/ros/2020/10/08/ros-lecture.html" title="ROS - ROBOTIS Lecture 1, 2, 4 (with Links)">ROS - ROBOTIS Lecture 1, 2,...</a><a class="next" href="/raspberrypi/2020/10/15/ros-yocto-raspberrypi4.html" title="ROS with Yocto for Raspberry Pi 4">ROS with Yocto for Raspberry Pi...</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/ros/2020/12/17/ros-basic-programming.html" title="ROS with Yocto for Raspberry Pi 4">ROS Basic Programming</a></li>
+<li><a class="post-link" href="/blogging/2021/12/05/markdown-cheat-sheet.html" title="ROS with Yocto for Raspberry Pi 4">Markdown Cheat Sheet</a></li>
+<li><a class="post-link" href="/blogging/2018/05/26/mathjax-test.html" title="ROS with Yocto for Raspberry Pi 4">Mathjax Test</a></li>
+<li><a class="post-link" href="/raspberrypi/2020/10/15/ros-yocto-raspberrypi4.html" title="ROS with Yocto for Raspberry Pi 4">ROS with Yocto for Raspberry Pi 4</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

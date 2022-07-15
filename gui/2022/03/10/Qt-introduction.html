@@ -1,0 +1,1371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Qt Introduction | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Qt Introduction">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content='Reference Links Qt for Beginners Introduction to Qt Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications. Qt has an impressive collection of modules, including QtCore, a base library that provides containers, thread management, event management, and much more QtGui and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications. QtNetwork, that provides a useful set of classes to deal with network communications QtWebkit, the webkit engine, that enable the use of web pages and web apps in a Qt application. QtSQL, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box QtXML, support for simple XML parsing (SAX) and DOM QtXmlPatterns, support for XSLT, XPath, XQuery and Schema validation Run the first Qt app. via Docker Container Scripts run-qt5-container.sh xhost +local:docker docker build \ -t qt5-image . &amp;&amp; \ docker run \ --privileged \ --rm \ -it \ --net=host \ --name qt5-container \ -e DISPLAY=$DISPLAY \ -v /tmp/.X11-unix:/tmp/.X11-unix:ro \ -v /sandbox/workspace_qt5:/workspace \ --workdir /workspace \ qt5-image \ /bin/bash Dockerfile FROM ubuntu:18.04 # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ git wget \ build-essential \ perl \ python \ libgl-dev \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ qt5-default \ qtcreator \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* #ENTRYPOINT [ "qtcreator" ] Create window Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us. TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories. TARGET is the name of the app or the library. QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui. TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job. Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator : TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets SOURCES += main.cpp #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button ("Hello world !"); button.show(); return app.exec(); } How a Qt program is compiled Qt apps are compiled in 3 steps A .pro file is written to describe the project to compile A makefile is generated using qmake The program is built using make (or nmake or jom on windows) cd HelloWorld mkdir -p ../build &amp;&amp; cd ../build qmake ../HelloWorld/ make ./hello_world_app Widgets Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures T foo() const; void setFoo(const T); In fact, Qt extends this system of attributes and getters and setters to something called property. A property is a value of any type that can be accessed, be modified or constant, and can notify a change. The property system is useful, especially in the third part (QML). For now, we will use “attribute” or “property” to do the same thing. A QPushButton has plenty of properties : text font QFont(const QString &amp; family, int pointSize = –1, int weight = -1, bool italic = false) QFont font ("Courier"); button.setFont(font); icon QIcon Qicon::fromTheme ( const QString &amp;name, const QIcon &amp;fallback = QIcon()) QIcon icon ("/path/to/my/icon/icon.png"); button.setIcon(icon); tooltip … Qt class hierarchy QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like: object name: you cans set a name, as a string, to an object and search for objects by names. parenting system signals and slots event management Widgets are able to respond to events and use parenting system and signals and slots mechanism. All widget inherit from QObject. The most basic widget is the QWidget. QWidget contains most properties that are used to describe a window, or a widget, like position and size, mouse cursor, tooltips, etc. Remark: in Qt, a widget can also be a window. In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class This inheritance is done in order to facilitate properties management. Shared properties like size and cursors can be used on other graphical components, and QAbstractButton provides basic properties that are shared by all buttons. Parenting system Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient: When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases. All QObjects have findChild and findChildren methods that can be used to search for children of a given object. Child widgets in a QWidget automatically appear inside the parent widget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button1 ("test"); QPushButton button2 ("other", &amp;button1); button1.show(); return app.exec(); } You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also. You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any. There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything. This container is simply the QWidget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QWidget window; window.setFixedSize(100, 50); QPushButton *button = new QPushButton("Hello World", &amp;window); button-&gt;setGeometry(10, 10, 80, 30); window.show(); return app.exec(); } Note that we create a fixed size widget (that acts as a window) using setFixedSize. We also positioned the button using setGeometry. These method have the following signatures: void QWidget::setFixedSize(int width, int height) void QWidget::setGeometry(int x, int y, int width, int height) Subclassing QWidget We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class. #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = 0); signals: public slots: }; #endif // WINDOW_H #include "window.h" Window::Window(QWidget *parent) : QWidget(parent) {} Qt Creator automatically generates a class template. Notice that there are some new elements in the header: The Q_OBJECT macro. A new category of methods: signals public slots We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way: #include &lt;QApplication&gt; #include "window.h" int main(int argc, char **argv) { QApplication app (argc, argv); Window window; window.show(); return app.exec(); } #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { public: explicit Window(QWidget *parent = 0); private: QPushButton *m_button; }; #endif // WINDOW_H #include "window.h" #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_button = new QPushButton("Hello World", this); m_button-&gt;setGeometry(10, 10, 80, 30); } Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.'>
+<meta property="og:description" content='Reference Links Qt for Beginners Introduction to Qt Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications. Qt has an impressive collection of modules, including QtCore, a base library that provides containers, thread management, event management, and much more QtGui and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications. QtNetwork, that provides a useful set of classes to deal with network communications QtWebkit, the webkit engine, that enable the use of web pages and web apps in a Qt application. QtSQL, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box QtXML, support for simple XML parsing (SAX) and DOM QtXmlPatterns, support for XSLT, XPath, XQuery and Schema validation Run the first Qt app. via Docker Container Scripts run-qt5-container.sh xhost +local:docker docker build \ -t qt5-image . &amp;&amp; \ docker run \ --privileged \ --rm \ -it \ --net=host \ --name qt5-container \ -e DISPLAY=$DISPLAY \ -v /tmp/.X11-unix:/tmp/.X11-unix:ro \ -v /sandbox/workspace_qt5:/workspace \ --workdir /workspace \ qt5-image \ /bin/bash Dockerfile FROM ubuntu:18.04 # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ git wget \ build-essential \ perl \ python \ libgl-dev \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN apt-get update &amp;&amp; apt-get install -q -y \ --no-install-recommends \ qt5-default \ qtcreator \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* #ENTRYPOINT [ "qtcreator" ] Create window Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us. TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories. TARGET is the name of the app or the library. QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui. TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job. Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator : TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets SOURCES += main.cpp #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button ("Hello world !"); button.show(); return app.exec(); } How a Qt program is compiled Qt apps are compiled in 3 steps A .pro file is written to describe the project to compile A makefile is generated using qmake The program is built using make (or nmake or jom on windows) cd HelloWorld mkdir -p ../build &amp;&amp; cd ../build qmake ../HelloWorld/ make ./hello_world_app Widgets Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures T foo() const; void setFoo(const T); In fact, Qt extends this system of attributes and getters and setters to something called property. A property is a value of any type that can be accessed, be modified or constant, and can notify a change. The property system is useful, especially in the third part (QML). For now, we will use “attribute” or “property” to do the same thing. A QPushButton has plenty of properties : text font QFont(const QString &amp; family, int pointSize = –1, int weight = -1, bool italic = false) QFont font ("Courier"); button.setFont(font); icon QIcon Qicon::fromTheme ( const QString &amp;name, const QIcon &amp;fallback = QIcon()) QIcon icon ("/path/to/my/icon/icon.png"); button.setIcon(icon); tooltip … Qt class hierarchy QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like: object name: you cans set a name, as a string, to an object and search for objects by names. parenting system signals and slots event management Widgets are able to respond to events and use parenting system and signals and slots mechanism. All widget inherit from QObject. The most basic widget is the QWidget. QWidget contains most properties that are used to describe a window, or a widget, like position and size, mouse cursor, tooltips, etc. Remark: in Qt, a widget can also be a window. In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class This inheritance is done in order to facilitate properties management. Shared properties like size and cursors can be used on other graphical components, and QAbstractButton provides basic properties that are shared by all buttons. Parenting system Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient: When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases. All QObjects have findChild and findChildren methods that can be used to search for children of a given object. Child widgets in a QWidget automatically appear inside the parent widget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button1 ("test"); QPushButton button2 ("other", &amp;button1); button1.show(); return app.exec(); } You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also. You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any. There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything. This container is simply the QWidget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QWidget window; window.setFixedSize(100, 50); QPushButton *button = new QPushButton("Hello World", &amp;window); button-&gt;setGeometry(10, 10, 80, 30); window.show(); return app.exec(); } Note that we create a fixed size widget (that acts as a window) using setFixedSize. We also positioned the button using setGeometry. These method have the following signatures: void QWidget::setFixedSize(int width, int height) void QWidget::setGeometry(int x, int y, int width, int height) Subclassing QWidget We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class. #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = 0); signals: public slots: }; #endif // WINDOW_H #include "window.h" Window::Window(QWidget *parent) : QWidget(parent) {} Qt Creator automatically generates a class template. Notice that there are some new elements in the header: The Q_OBJECT macro. A new category of methods: signals public slots We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way: #include &lt;QApplication&gt; #include "window.h" int main(int argc, char **argv) { QApplication app (argc, argv); Window window; window.show(); return app.exec(); } #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { public: explicit Window(QWidget *parent = 0); private: QPushButton *m_button; }; #endif // WINDOW_H #include "window.h" #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_button = new QPushButton("Hello World", this); m_button-&gt;setGeometry(10, 10, 80, 30); } Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.'>
+<link rel="canonical" href="coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html">
+<meta property="og:url" content="coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2022-03-10T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Qt Introduction">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2022-03-10T00:00:00+00:00","datePublished":"2022-03-10T00:00:00+00:00","description":"Reference Links Qt for Beginners Introduction to Qt Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications. Qt has an impressive collection of modules, including QtCore, a base library that provides containers, thread management, event management, and much more QtGui and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications. QtNetwork, that provides a useful set of classes to deal with network communications QtWebkit, the webkit engine, that enable the use of web pages and web apps in a Qt application. QtSQL, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box QtXML, support for simple XML parsing (SAX) and DOM QtXmlPatterns, support for XSLT, XPath, XQuery and Schema validation Run the first Qt app. via Docker Container Scripts run-qt5-container.sh xhost +local:docker docker build \\ -t qt5-image . &amp;&amp; \\ docker run \\ --privileged \\ --rm \\ -it \\ --net=host \\ --name qt5-container \\ -e DISPLAY=$DISPLAY \\ -v /tmp/.X11-unix:/tmp/.X11-unix:ro \\ -v /sandbox/workspace_qt5:/workspace \\ --workdir /workspace \\ qt5-image \\ /bin/bash Dockerfile FROM ubuntu:18.04 # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y \\ --no-install-recommends \\ git wget \\ build-essential \\ perl \\ python \\ libgl-dev \\ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN apt-get update &amp;&amp; apt-get install -q -y \\ --no-install-recommends \\ qt5-default \\ qtcreator \\ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* #ENTRYPOINT [ &quot;qtcreator&quot; ] Create window Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us. TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories. TARGET is the name of the app or the library. QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui. TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job. Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator : TEMPLATE = app TARGET = name_of_the_app QT = core gui greaterThan(QT_MAJOR_VERSION, 4): QT += widgets SOURCES += main.cpp #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button (&quot;Hello world !&quot;); button.show(); return app.exec(); } How a Qt program is compiled Qt apps are compiled in 3 steps A .pro file is written to describe the project to compile A makefile is generated using qmake The program is built using make (or nmake or jom on windows) cd HelloWorld mkdir -p ../build &amp;&amp; cd ../build qmake ../HelloWorld/ make ./hello_world_app Widgets Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures T foo() const; void setFoo(const T); In fact, Qt extends this system of attributes and getters and setters to something called property. A property is a value of any type that can be accessed, be modified or constant, and can notify a change. The property system is useful, especially in the third part (QML). For now, we will use “attribute” or “property” to do the same thing. A QPushButton has plenty of properties : text font QFont(const QString &amp; family, int pointSize = –1, int weight = -1, bool italic = false) QFont font (&quot;Courier&quot;); button.setFont(font); icon QIcon Qicon::fromTheme ( const QString &amp;name, const QIcon &amp;fallback = QIcon()) QIcon icon (&quot;/path/to/my/icon/icon.png&quot;); button.setIcon(icon); tooltip … Qt class hierarchy QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like: object name: you cans set a name, as a string, to an object and search for objects by names. parenting system signals and slots event management Widgets are able to respond to events and use parenting system and signals and slots mechanism. All widget inherit from QObject. The most basic widget is the QWidget. QWidget contains most properties that are used to describe a window, or a widget, like position and size, mouse cursor, tooltips, etc. Remark: in Qt, a widget can also be a window. In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class This inheritance is done in order to facilitate properties management. Shared properties like size and cursors can be used on other graphical components, and QAbstractButton provides basic properties that are shared by all buttons. Parenting system Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient: When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases. All QObjects have findChild and findChildren methods that can be used to search for children of a given object. Child widgets in a QWidget automatically appear inside the parent widget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QPushButton button1 (&quot;test&quot;); QPushButton button2 (&quot;other&quot;, &amp;button1); button1.show(); return app.exec(); } You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also. You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any. There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything. This container is simply the QWidget. #include &lt;QApplication&gt; #include &lt;QPushButton&gt; int main(int argc, char **argv) { QApplication app (argc, argv); QWidget window; window.setFixedSize(100, 50); QPushButton *button = new QPushButton(&quot;Hello World&quot;, &amp;window); button-&gt;setGeometry(10, 10, 80, 30); window.show(); return app.exec(); } Note that we create a fixed size widget (that acts as a window) using setFixedSize. We also positioned the button using setGeometry. These method have the following signatures: void QWidget::setFixedSize(int width, int height) void QWidget::setGeometry(int x, int y, int width, int height) Subclassing QWidget We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class. #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class Window : public QWidget { Q_OBJECT public: explicit Window(QWidget *parent = 0); signals: public slots: }; #endif // WINDOW_H #include &quot;window.h&quot; Window::Window(QWidget *parent) : QWidget(parent) {} Qt Creator automatically generates a class template. Notice that there are some new elements in the header: The Q_OBJECT macro. A new category of methods: signals public slots We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way: #include &lt;QApplication&gt; #include &quot;window.h&quot; int main(int argc, char **argv) { QApplication app (argc, argv); Window window; window.show(); return app.exec(); } #ifndef WINDOW_H #define WINDOW_H #include &lt;QWidget&gt; class QPushButton; class Window : public QWidget { public: explicit Window(QWidget *parent = 0); private: QPushButton *m_button; }; #endif // WINDOW_H #include &quot;window.h&quot; #include &lt;QPushButton&gt; Window::Window(QWidget *parent) : QWidget(parent) { // Set size of the window setFixedSize(100, 50); // Create and position the button m_button = new QPushButton(&quot;Hello World&quot;, this); m_button-&gt;setGeometry(10, 10, 80, 30); } Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.","headline":"Qt Introduction","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html"},"url":"coolwindjo.github.io/gui/2022/03/10/Qt-introduction.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Qt Introduction</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2022-03-10T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Mar 10, 2022
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 12 mins</span>
+  </p>
+<div class="post-tags"><a class="post-tag" href="/tags.html#qt">#qt</a></div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="reference-links">Reference Links</h2>
+
+<ul>
+  <li><a href="https://wiki.qt.io/Qt_for_Beginners" target="_blank">Qt for Beginners</a></li>
+</ul>
+
+<h2 id="introduction-to-qt">Introduction to Qt</h2>
+
+<ul>
+  <li>
+    <p>Qt (pronounced as “cute”, not “cu-tee”) is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications.</p>
+  </li>
+  <li>
+    <p>Qt has an impressive collection of modules, including</p>
+    <ul>
+      <li>
+<strong>QtCore</strong>, a base library that provides
+        <ul>
+          <li>containers,</li>
+          <li>thread management,</li>
+          <li>event management, and much more</li>
+        </ul>
+      </li>
+      <li>
+<strong>QtGui</strong> and QtWidgets, a GUI toolkit for Desktop, that provides a lot of graphical components to design applications.</li>
+      <li>
+<strong>QtNetwork</strong>, that provides a useful set of classes to deal with network communications</li>
+      <li>
+<strong>QtWebkit</strong>, the webkit engine, that enable the use of web pages and web apps in a Qt application.</li>
+      <li>
+<strong>QtSQL</strong>, a full featured SQL RDBM abstraction layer extensible with own drivers, support for ODBC, SQLITE, MySQL and PostgreSQL is available out of the box</li>
+      <li>
+<strong>QtXML</strong>, support for simple XML parsing (SAX) and DOM</li>
+      <li>
+<strong>QtXmlPatterns</strong>, support for XSLT, XPath, XQuery and Schema validation</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="run-the-first-qt-app-via-docker-container">Run the first Qt app. via Docker Container</h2>
+
+<h3 id="scripts">Scripts</h3>
+
+<ul>
+  <li>
+    <p>run-qt5-container.sh</p>
+
+    <div class="language-shell highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code>xhost +local:docker
+docker build <span class="se">\</span>
+    <span class="nt">-t</span> qt5-image <span class="nb">.</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker run <span class="se">\</span>
+    <span class="nt">--privileged</span> <span class="se">\</span>
+    <span class="nt">--rm</span> <span class="se">\</span>
+    <span class="nt">-it</span> <span class="se">\</span>
+    <span class="nt">--net</span><span class="o">=</span>host <span class="se">\</span>
+    <span class="nt">--name</span> qt5-container <span class="se">\</span>
+    <span class="nt">-e</span> <span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span> <span class="se">\</span>
+    <span class="nt">-v</span> /tmp/.X11-unix:/tmp/.X11-unix:ro <span class="se">\</span>
+    <span class="nt">-v</span> /sandbox/workspace_qt5:/workspace <span class="se">\</span>
+    <span class="nt">--workdir</span> /workspace <span class="se">\</span>
+    qt5-image <span class="se">\</span>
+    /bin/bash
+</code></pre></div>    </div>
+  </li>
+  <li>
+    <p>Dockerfile</p>
+
+    <div class="language-dockerfile highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> ubuntu:18.04</span>
+
+<span class="c"># Install packages</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="se">\
+</span>    <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>    git wget <span class="se">\
+</span>    build-essential <span class="se">\
+</span>    perl <span class="se">\
+</span>    python <span class="se">\
+</span>    libgl-dev <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="se">\
+</span>    <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>    qt5-default <span class="se">\
+</span>    qtcreator <span class="se">\
+</span>    <span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="c">#ENTRYPOINT [ "qtcreator" ]</span>
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="create-window">Create window</h3>
+
+<ul>
+  <li>
+    <p>Let’s start by creating our first project. It will be an empty project, so we have to proceed with: File &gt; New file or project &gt; Other Projects &gt; Empty Qt Project
+  <img src="https://qt-wiki-uploads.s3.amazonaws.com/images/thumb/0/0f/Beginners-01-NewProject.jpg/600px-Beginners-01-NewProject.jpg" alt="image of the new project wizard"></p>
+  </li>
+  <li>This is the project file (extension .pro). Qt uses a command line tool that parses these project files in order to generate “makefiles”, files that are used by compilers to build an application. This tool is called qmake. But, we shouldn’t bother too much about qmake, since Qt Creator will do the job for us.
+    <ul>
+      <li>TEMPLATE describes the type to build. It can be an application, a library, or simply subdirectories.</li>
+      <li>TARGET is the name of the app or the library.</li>
+      <li>QT is used to indicate what libraries (Qt modules) are being used in this project. Since our first app is a small GUI, we will need QtCore and QtGui.</li>
+    </ul>
+
+    <pre><code class="language-HelloWorld.pro">TEMPLATE = app
+TARGET = name_of_the_app
+
+QT = core gui
+
+greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+</code></pre>
+  </li>
+  <li>
+    <p>Let’s now add the entry point of our application. Using File &gt; New file or project &gt; C++ &gt; C++ Source file should do the job.
+  <img src="https://qt-wiki-uploads.s3.amazonaws.com/images/thumb/3/3f/Beginners-03-NewFile.jpg/600px-Beginners-03-NewFile.jpg" alt="image of the new file wizard"></p>
+  </li>
+  <li>Follow the wizard once again, naming the file “main”, and you are done. You will notice that in the project file, a new line has been added automatically by Qt Creator :</li>
+</ul>
+
+<pre><code class="language-HelloWord.pro">  TEMPLATE = app
+  TARGET = name_of_the_app
+
+  QT = core gui
+
+  greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+
+  SOURCES +=  main.cpp
+</code></pre>
+
+<pre><code class="language-main.cpp">  #include &lt;QApplication&gt;
+  #include &lt;QPushButton&gt;
+
+  int main(int argc, char **argv)
+  {
+    QApplication app (argc, argv);
+
+    QPushButton button ("Hello world !");
+    button.show();
+
+    return app.exec();
+  }
+</code></pre>
+
+<h2 id="how-a-qt-program-is-compiled">How a Qt program is compiled</h2>
+
+<ul>
+  <li>Qt apps are compiled in 3 steps
+    <ul>
+      <li>A .pro file is written to describe the project to compile</li>
+      <li>A makefile is generated using qmake</li>
+      <li>The program is built using make (or nmake or jom on windows)</li>
+    </ul>
+
+    <div class="language-sh highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="nb">cd </span>HelloWorld
+<span class="nb">mkdir</span> <span class="nt">-p</span> ../build <span class="o">&amp;&amp;</span> <span class="nb">cd</span> ../build
+qmake ../HelloWorld/
+make
+./hello_world_app
+</code></pre></div>    </div>
+  </li>
+</ul>
+
+<h3 id="widgets">Widgets</h3>
+
+<p>Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="n">T</span> <span class="n">foo</span><span class="p">()</span> <span class="k">const</span><span class="p">;</span>
+<span class="kt">void</span> <span class="nf">setFoo</span><span class="p">(</span><span class="k">const</span> <span class="n">T</span><span class="p">);</span>
+</code></pre></div></div>
+
+<p>In fact, Qt extends this system of attributes and getters and setters to something called property.</p>
+
+<p>A property is a value of any type that can be accessed, be modified or constant, and can notify a change.</p>
+
+<p>The property system is useful, especially in the third part (QML).</p>
+
+<p>For now, we will use “attribute” or “property” to do the same thing.</p>
+<ul>
+  <li>A QPushButton has plenty of properties :
+    <ul>
+      <li>text</li>
+      <li>font
+        <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">QFont</span><span class="p">(</span><span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span> <span class="n">family</span><span class="p">,</span> <span class="kt">int</span> <span class="n">pointSize</span> <span class="o">=</span> <span class="err">–</span><span class="mi">1</span><span class="p">,</span> <span class="kt">int</span> <span class="n">weight</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="kt">bool</span> <span class="n">italic</span> <span class="o">=</span> <span class="nb">false</span><span class="p">)</span>
+
+<span class="n">QFont</span> <span class="nf">font</span> <span class="p">(</span><span class="s">"Courier"</span><span class="p">);</span>
+<span class="n">button</span><span class="p">.</span><span class="n">setFont</span><span class="p">(</span><span class="n">font</span><span class="p">);</span>
+</code></pre></div>        </div>
+      </li>
+      <li>icon
+        <div class="language-cpp highlighter-rouge">
+<div class="highlight"><pre class="highlight"><code><span class="n">QIcon</span> <span class="n">Qicon</span><span class="o">::</span><span class="n">fromTheme</span> <span class="p">(</span> <span class="k">const</span> <span class="n">QString</span> <span class="o">&amp;</span><span class="n">name</span><span class="p">,</span> <span class="k">const</span> <span class="n">QIcon</span> <span class="o">&amp;</span><span class="n">fallback</span> <span class="o">=</span> <span class="n">QIcon</span><span class="p">())</span>
+
+<span class="n">QIcon</span> <span class="nf">icon</span> <span class="p">(</span><span class="s">"/path/to/my/icon/icon.png"</span><span class="p">);</span>
+<span class="n">button</span><span class="p">.</span><span class="n">setIcon</span><span class="p">(</span><span class="n">icon</span><span class="p">);</span>
+</code></pre></div>        </div>
+      </li>
+      <li>tooltip
+…</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="qt-class-hierarchy">Qt class hierarchy</h3>
+
+<p><img class="plantuml" src="http://www.plantuml.com/plantuml/svg/~h407374617274756d6c0d0a514f626a656374203c7c2d2d20515468726561640d0a514f626a656374203c7c2d2d20515769646765740d0a51576964676574203c7c2d2d20514162737472616374427574746f6e203a2061206261736520636c61737320666f7220616c6c20627574746f6e2074797065730d0a51576964676574203c7c2d2d20514672616d65203a20646973706c6179732061206672616d650d0a51576964676574203c7c2d2d205150726f67726573734261720d0a514162737472616374427574746f6e203c7c2d2d2051436865636b426f780d0a514162737472616374427574746f6e203c7c2d2d205150757368427574746f6e0d0a514162737472616374427574746f6e203c7c2d2d2051526164696f427574746f6e0d0a514672616d65203c7c2d2d205141627374726163745363726f6c6c417265610d0a514672616d65203c7c2d2d20514c6162656c203a20646973706c6179732074657874206f7220706963747572650d0a5141627374726163745363726f6c6c41726561203c7c2d2d2051477261706968696373566965770d0a5141627374726163745363726f6c6c41726561203c7c2d2d205154657874456469740d0a68696465206d656d626572730d0a40656e64756d6c"></p>
+
+<p>QObject is the most basic class in Qt. Most of classes in Qt inherit from this class. QObject provides some very powerful capabilities like:</p>
+<ul>
+  <li>object name: you cans set a name, as a string, to an object and search for objects by names.</li>
+  <li>parenting system</li>
+  <li>signals and slots</li>
+  <li>event management</li>
+</ul>
+
+<p>Widgets are able to</p>
+<ul>
+  <li>respond to events and</li>
+  <li>use parenting system and signals and slots mechanism.</li>
+</ul>
+
+<p>All widget inherit from QObject.</p>
+
+<p>The most basic widget is the QWidget.
+QWidget contains most properties that are used to describe a window, or a widget, like</p>
+<ul>
+  <li>position and size,</li>
+  <li>mouse cursor,</li>
+  <li>tooltips, etc.</li>
+</ul>
+
+<p>Remark: in Qt, a <strong>widget</strong> can also be a <strong>window</strong>.
+In the previous section, we displayed a button that is a widget, but it appears directly as a window. There is no need for a “QWindow” class</p>
+
+<p>This inheritance is done in order to facilitate properties management.</p>
+<ul>
+  <li>Shared properties like size and cursors can be used on other graphical components, and</li>
+  <li>QAbstractButton provides basic properties that are shared by all buttons.</li>
+</ul>
+
+<h3 id="parenting-system">Parenting system</h3>
+
+<p>Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient:</p>
+<ul>
+  <li>When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases.</li>
+  <li>All QObjects have findChild and findChildren methods that can be used to search for children of a given object.</li>
+  <li>Child widgets in a QWidget automatically appear inside the parent widget.</li>
+</ul>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">QPushButton</span> <span class="n">button1</span> <span class="p">(</span><span class="s">"test"</span><span class="p">);</span>
+ <span class="n">QPushButton</span> <span class="n">button2</span> <span class="p">(</span><span class="s">"other"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">button1</span><span class="p">);</span>
+
+ <span class="n">button1</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+<p>You can also note that when the application is closed, button1, which is allocated on the stack, is deallocated. Since button2 has button1 as a parent, it is deleted also.</p>
+
+<p>You can even test this in Qt Creator in the analyze section, by searching for a memory leak — there won’t be any.</p>
+
+<p>There is clearly no benefit in putting a button inside a button, but based on this idea, we might want to put buttons inside a container, that does not display anything.</p>
+
+<p>This container is simply the QWidget.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">QWidget</span> <span class="n">window</span><span class="p">;</span>
+ <span class="n">window</span><span class="p">.</span><span class="n">setFixedSize</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+ <span class="n">QPushButton</span> <span class="o">*</span><span class="n">button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span> <span class="o">&amp;</span><span class="n">window</span><span class="p">);</span>
+ <span class="n">button</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+
+ <span class="n">window</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Note that we create a fixed size widget (that acts as a window) using setFixedSize.</p>
+
+<p>We also positioned the button using  setGeometry.</p>
+
+<p>These method have the following signatures:</p>
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="kt">void</span> <span class="n">QWidget</span><span class="o">::</span><span class="n">setFixedSize</span><span class="p">(</span><span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="kt">int</span> <span class="n">height</span><span class="p">)</span>
+<span class="kt">void</span> <span class="n">QWidget</span><span class="o">::</span><span class="n">setGeometry</span><span class="p">(</span><span class="kt">int</span> <span class="n">x</span><span class="p">,</span> <span class="kt">int</span> <span class="n">y</span><span class="p">,</span> <span class="kt">int</span> <span class="n">width</span><span class="p">,</span> <span class="kt">int</span> <span class="n">height</span><span class="p">)</span>
+</code></pre></div></div>
+
+<h3 id="subclassing-qwidget">Subclassing QWidget</h3>
+
+<p>We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class.</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#ifndef WINDOW_H
+#define WINDOW_H
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;QWidget&gt;</span><span class="cp">
+</span>
+<span class="k">class</span> <span class="nc">Window</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QWidget</span>
+<span class="p">{</span>
+ <span class="n">Q_OBJECT</span>
+ <span class="nl">public:</span>
+  <span class="k">explicit</span> <span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+
+ <span class="nl">signals:</span>
+ <span class="k">public</span> <span class="n">slots</span><span class="o">:</span>
+<span class="p">};</span>
+
+<span class="cp">#endif // WINDOW_H
+</span></code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"window.h"</span><span class="cp">
+</span>
+<span class="n">Window</span><span class="o">::</span><span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span><span class="p">)</span> <span class="o">:</span>
+ <span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span> <span class="p">{}</span>
+</code></pre></div></div>
+
+<p>Qt Creator automatically generates a class template. Notice that there are some new elements in the header:</p>
+<ul>
+  <li>The Q_OBJECT macro.</li>
+  <li>A new category of methods:
+    <ul>
+      <li>signals</li>
+      <li>public slots</li>
+    </ul>
+  </li>
+</ul>
+
+<p>We can declare the size of the window, as well as the widgets that this window contains and their positions. For example, implementing the previous window that contains a button can be done in this way:</p>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">&lt;QApplication&gt;</span><span class="cp">
+#include</span> <span class="cpf">"window.h"</span><span class="cp">
+</span>
+<span class="kt">int</span> <span class="nf">main</span><span class="p">(</span><span class="kt">int</span> <span class="n">argc</span><span class="p">,</span> <span class="kt">char</span> <span class="o">**</span><span class="n">argv</span><span class="p">)</span>
+<span class="p">{</span>
+ <span class="n">QApplication</span> <span class="n">app</span> <span class="p">(</span><span class="n">argc</span><span class="p">,</span> <span class="n">argv</span><span class="p">);</span>
+
+ <span class="n">Window</span> <span class="n">window</span><span class="p">;</span>
+ <span class="n">window</span><span class="p">.</span><span class="n">show</span><span class="p">();</span>
+
+ <span class="k">return</span> <span class="n">app</span><span class="p">.</span><span class="n">exec</span><span class="p">();</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#ifndef WINDOW_H
+#define WINDOW_H
+</span>
+<span class="cp">#include</span> <span class="cpf">&lt;QWidget&gt;</span><span class="cp">
+</span>
+<span class="k">class</span> <span class="nc">QPushButton</span><span class="p">;</span>
+<span class="k">class</span> <span class="nc">Window</span> <span class="o">:</span> <span class="k">public</span> <span class="n">QWidget</span>
+<span class="p">{</span>
+ <span class="nl">public:</span>
+  <span class="k">explicit</span> <span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span> <span class="o">=</span> <span class="mi">0</span><span class="p">);</span>
+ <span class="nl">private:</span>
+ <span class="n">QPushButton</span> <span class="o">*</span><span class="n">m_button</span><span class="p">;</span>
+<span class="p">};</span>
+
+<span class="cp">#endif // WINDOW_H
+</span></code></pre></div></div>
+
+<div class="language-cpp highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="cp">#include</span> <span class="cpf">"window.h"</span><span class="cp">
+#include</span> <span class="cpf">&lt;QPushButton&gt;</span><span class="cp">
+</span>
+<span class="n">Window</span><span class="o">::</span><span class="n">Window</span><span class="p">(</span><span class="n">QWidget</span> <span class="o">*</span><span class="n">parent</span><span class="p">)</span> <span class="o">:</span>
+ <span class="n">QWidget</span><span class="p">(</span><span class="n">parent</span><span class="p">)</span>
+ <span class="p">{</span>
+ <span class="c1">// Set size of the window</span>
+ <span class="n">setFixedSize</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="mi">50</span><span class="p">);</span>
+
+ <span class="c1">// Create and position the button</span>
+ <span class="n">m_button</span> <span class="o">=</span> <span class="k">new</span> <span class="n">QPushButton</span><span class="p">(</span><span class="s">"Hello World"</span><span class="p">,</span> <span class="k">this</span><span class="p">);</span>
+ <span class="n">m_button</span><span class="o">-&gt;</span><span class="n">setGeometry</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">30</span><span class="p">);</span>
+<span class="p">}</span>
+</code></pre></div></div>
+
+<p>Please note that there is no need for writing a destructor for deleting m_button. With the parenting system, when the Window instance is out of the stack, the m_button is automatically deleted.</p>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/skillorknowhow/2021/12/27/cheat-sheets.html" title="Cheat Sheets">Cheat Sheets</a><a class="next" href="/programming/2022/03/10/design-pattern-builder.html" title="Design Pattern Builder">Design Pattern Builder</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/gui/2022/06/23/Qt-bryan-lecture-episode-3-~-6.html" title="Design Pattern Builder">Qt Bryan Lecture Episode 3 ~ 6</a></li>
+<li><a class="post-link" href="/ros/2020/12/17/ros-basic-programming.html" title="Design Pattern Builder">ROS Basic Programming</a></li>
+<li><a class="post-link" href="/gui/2022/06/06/Qt-menus-example.html" title="Design Pattern Builder">Qt Menus Example</a></li>
+<li><a class="post-link" href="/blogging/2017/05/20/this-post-demonstrates-post-content-styles.html" title="Design Pattern Builder">This post demonstrates post content styles</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>

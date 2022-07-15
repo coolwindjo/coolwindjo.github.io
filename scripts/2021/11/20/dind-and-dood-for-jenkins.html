@@ -1,0 +1,1405 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="google-translate-customization" content="108d9124921d80c3-80e20d618ff053c8-g4f02ec6f3dba68b7-c">
+<!-- Begin Jekyll SEO tag v2.8.0 -->
+<title>Docker in Docker and Docker out of Docker for Jenkins | Cool Wind on Study</title>
+<meta name="generator" content="Jekyll v4.2.2">
+<meta property="og:title" content="Docker in Docker and Docker out of Docker for Jenkins">
+<meta name="author" content="CoolWind">
+<meta property="og:locale" content="en_US">
+<meta name="description" content="Jenkins in Docker Reference Links Install Jenkins via Docker Official Manual - Jenkins via Docker Useful guide for Downloading and running Jenkins in Docker Official GitHub Documentation for Jenkins Docker Image Not yet to be used but, useful someday… Official Docker Hub for Jenkins Docker Image Not yet to be used but, useful someday… Getting Started with Jenkins Official Manual - Create your first Pipeline Useful step by step guide for pipelilne plugin Official Manaual - Creating Jenkins Pipeline with Blueocean Useful guide for creating pipeline with blueocean plugin Official Manaual - Pipeline Syntax Useful guide for writing pipeline syntax with blueocean plugin Blog - Description of Jenkins Blueocean (Korean) Good to understand the what the Blueocean plugin is… Blog - Guide for Jenkins Blueocean Useful guide for using blueocean plugin Groovy Official Manaual - Pipeline &amp; Groovy Snippet Generator Useful guide for writing pipeline syntax and groovy Official Manual - Groovy Useful guide for writing groovy file to be loaded by Jenkinsfile Blog - Groovy Working with Lines in Strings When you want to write multiple lines of strings Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile Miscellaneous knowledges about Jenkinsfile Blog - Guide for Jenkins Role-based Authorization Strategy Useful guide for access control on jenkins DinD and DooD for jenkins Reference Links Background knowledges Blog - Docker Client - Server Arhitecture Docker Client - Server Arhitecture Official Docs - Runtime privilege and Linux capabilities Explains several options for running docker container Github - NVIDIA DinD Container (not for jenkins) Simple dind container for general purposes Comparisons of DinD vs DooD Blog - DinD vs. DooD (Korean) Simple descriptions of DinD and DooD with refer to the nastybox blog Blog - DinD vs DooD by NastyBox Good explaination about DinD and DooD while introducing their own secure dind solution Which one should I use? DinD or DooD? Blog - DooD rather than DinD by jpetazzo Most quoted blog that explains the drawbacks of Docker in Docker Blog - DinD rather than DooD on K8s by applatix DinD can be better structure when you use kubernetes Docker Client - Server Arhitecture Client (e.g. docker CLI) requests to the Docker Daemon (dockerd) Using belows for communication RESTAPI Unix Socket (in a local host) TCP Socket (between remote machines) Docker in Docker Two docker daemons exist. One on the host The other on a container (e.g. dind) on a host Requires “–privieged” option System-level program does not run inside a regular Docker container because Container does not expose sufficient kernel resources and appropriate permissions Issues related to Docker’s use of overlay filesystems, security profiles, etc. Reference Links Github - NVIDIA DinD (Docker in Docker) Container by ehfd GPU enabled DinD but not suitable for Jenkins (which create a separate DinD container apart from the jenkins container) Sample Source Codes Scripts for Jenkins in Docker Dockerfiles FROM jenkins/jenkins:2.303.2-jdk11 # if we want to install via apt USER root # install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \ apt-transport-https \ ca-certificates curl gnupg2 \ software-properties-common \ tar \ xz-utils \ bash-completion \ vim \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - RUN apt-key fingerprint 0EBFCD88 RUN add-apt-repository \ &quot;deb [arch=amd64] https://download.docker.com/linux/debian \ $(lsb_release -cs) stable&quot; RUN apt-get update &amp;&amp; apt-get install -y docker-ce-cli # drop back to the regular jenkins user - good practice USER jenkins RUN jenkins-plugin-cli --plugins \ &quot;blueocean:1.25.1&quot; \ &quot;docker-workflow:1.26&quot; \ &quot;extended-choice-parameter&quot; \ &quot;role-strategy&quot; \ &quot;pipeline-model-definition&quot; COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04 RUN apt-get update &amp;&amp; apt-get install -y \ apt-utils \ ca-certificates \ openssh-client \ curl \ iptables \ git \ gnupg \ supervisor &amp;&amp; \ rm -rf /var/lib/apt/list/* # NVIDIA Container Toolkit &amp; Docker RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - &amp;&amp; \ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list &amp;&amp; \ apt-get update &amp;&amp; apt-get install -y nvidia-docker2 docker.io docker-compose &amp;&amp; \ rm -rf /var/lib/apt/list/* COPY modprobe startup.sh /usr/local/bin/ COPY supervisor/ /etc/supervisor/conf.d/ COPY logger.sh /opt/bash-utils/logger.sh RUN chmod +x /usr/local/bin/startup.sh /usr/local/bin/modprobe VOLUME /var/lib/docker ENTRYPOINT [&quot;startup.sh&quot;] CMD [&quot;sh&quot;] Run Jenkins Docker (for Docker in Docker) JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data docker network create jenkins cd ./nvidia-dind &amp;&amp; \ docker build -t nvidia-dind-image . &amp;&amp; \ docker run \ --name nvidia-dind-container \ --rm \ --detach \ --privileged \ --gpus 1 \ --network jenkins \ --network-alias docker \ # Makes the Docker in Docker container available as the hostname docker within the jenkins network. --env DOCKER_TLS_CERTDIR=/certs \ # Enables the use of TLS in the Docker server. Due to the use of a privileged container, this is recommended, though it requires the use of the shared volume described below. This environment variable controls the root directory where Docker TLS certificates are managed. --volume jenkins-dind-certs:/certs/client \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume /mnt/motional_database:/mnt/motional_database \ --publish 2376:2376 \ # ( Optional ) Exposes the Docker daemon port on the host machine. This is useful for executing docker commands on the host machine to control this inner Docker daemon. nvidia-dind-image:latest \ --storage-driver overlay2 # The storage driver for the Docker volume. See &quot;Docker storage drivers&quot; for supported options. Stop Jenkins Docker (for Docker in Docker) docker stop nvidia-dind-container docker rmi nvidia-dind-image docker network rm jenkins docker volume rm jenkins-docker-certs Run Jenkins (installed) Container JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data sudo chown -R 1000.1000 ${JENKINS_DATA} sudo chmod 777 ${JENKINS_DATA}/.. cd ./jenkins-dind &amp;&amp; \ docker build -t jenkins-image . &amp;&amp; \ docker run \ --name jenkins-container \ --rm \ --detach \ --network jenkins \ --env DOCKER_HOST=tcp://docker:2376 \ --env DOCKER_CERT_PATH=/certs/client \ --env DOCKER_TLS_VERIFY=1 \ --publish 8081:8080 \ --publish 50000:50000 \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume ${JENKINS_DATA}/..:/var/jenkins_out \ --volume jenkins-docker-certs:/certs/client \ --volume /mnt/motional_database:/mnt/motional_database \ --workdir=/var/jenkins_home \ jenkins-image Stop Jenkins Container docker stop jenkins-container docker rmi jenkins-image Docker out of Docker Only docker daemon runs on the host. Client (e.g. docker CLI) is on a container on a host The connection is done by mounting the host’s Docker’s socket into the container that runs the Docker CLI. For example: $ docker run -it -v /var/run/docker.sock:/var/run/docker.sock docker Benefits One key benefit: it bypasses the complexities of running the Docker daemon inside a container and does not require an unsecure privileged container. Avoids having multiple Docker image caches in the system since there is only one Docker daemon on the host if your system is constrained on storage space Drawbacks. Main drawback: it results in poor context isolation because the Docker CLI runs within a different context than the Docker daemon. While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as: Container naming collisions Mount paths confusion: Container running the Docker CLI creates a container with a bind mount, the mount path must be relative to the host (as otherwise the host Docker daemon on the host won’t be able to perform the mount correctly). Port mappings: Container running the Docker CLI creates a container with a port mapping, the port mapping occurs at the host level, potentially colliding with other port mappings. Not good on Kubernetes Any containers created by the containerized Docker CLI will not be encapsulated within the associated Kubernetes pod, and will thus be outside of Kubernetes’ visibility and control. Finally, there are security concerns too: Container running the Docker CLI can manipulate any containers running on the host. It can remove containers created by other entities on the host, or even create unsecure privileged containers putting the host at risk. Reference Links Jekins using DooD Gitee - Jenkins with DooD (Docker outside of Docker) by onisuly Simple Dockerfile being referred most Github - Jenkins + DOOD (Docker-Outside-Of-Docker) by psharkey refer it for adding jenkins to sudoers Github - Jenkins with DooD (Docker outside of Docker) by axltxl Last commit is done in 2016 and it is using supervisor Github - Simple-Jenkins-DooD by toto1310 Last commit is done in 2019 and refer it for making the Dockerfile to use latest jenkins docker image Sample Source Codes Scripts for Jenkins in Docker Dockerfile ARG tag=${DOCKER_TAG:-lts} FROM jenkins/jenkins:${tag} # if we want to install via apt USER root # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \ libltdl7 \ apt-transport-https \ ca-certificates curl gnupg2 \ software-properties-common \ tar \ xz-utils \ bash-completion \ vim \ python3 \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* # Add jenkins user to docker group to make sure jenkins user has docker privileges # getent group docker | awk -F: '{printf &quot;%d\n&quot;, $3}' ARG dockerGid=1013 RUN echo &quot;${dockerGid}&quot; RUN echo &quot;docker:x:${dockerGid}:jenkins&quot; &gt;&gt; /etc/group # drop back to the regular jenkins user - good practice USER jenkins COPY plugins.txt /usr/share/jenkins/ref/plugins.txt RUN jenkins-plugin-cli --plugins &lt; /usr/share/jenkins/ref/plugins.txt Run Jenkins Docker JENKINS_DATA=/var/jenkins_home cd jenkins-nvidia-dood sudo mkdir -p ${JENKINS_DATA} sudo mkdir -p ${JENKINS_DATA}/out sudo chown -R 1000.1000 ${JENKINS_DATA} docker build -t jenkins-dood-image . &amp;&amp; \ docker run \ --name jenkins-dood-container \ --rm \ --detach \ --publish 8080:8080 \ --publish 50000:50000 \ --volume $(which docker):/usr/bin/docker \ --volume /var/run/docker.sock:/var/run/docker.sock \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume ${JENKINS_DATA}/out:/var/jenkins_home/out \ --volume /mnt/motional_database:/mnt/motional_database \ --workdir=/var/jenkins_home \ jenkins-dood-image Stop Jenkins Docker docker stop jenkins-dood-container &amp;&amp; \ docker rmi jenkins-dood-image">
+<meta property="og:description" content="Jenkins in Docker Reference Links Install Jenkins via Docker Official Manual - Jenkins via Docker Useful guide for Downloading and running Jenkins in Docker Official GitHub Documentation for Jenkins Docker Image Not yet to be used but, useful someday… Official Docker Hub for Jenkins Docker Image Not yet to be used but, useful someday… Getting Started with Jenkins Official Manual - Create your first Pipeline Useful step by step guide for pipelilne plugin Official Manaual - Creating Jenkins Pipeline with Blueocean Useful guide for creating pipeline with blueocean plugin Official Manaual - Pipeline Syntax Useful guide for writing pipeline syntax with blueocean plugin Blog - Description of Jenkins Blueocean (Korean) Good to understand the what the Blueocean plugin is… Blog - Guide for Jenkins Blueocean Useful guide for using blueocean plugin Groovy Official Manaual - Pipeline &amp; Groovy Snippet Generator Useful guide for writing pipeline syntax and groovy Official Manual - Groovy Useful guide for writing groovy file to be loaded by Jenkinsfile Blog - Groovy Working with Lines in Strings When you want to write multiple lines of strings Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile Miscellaneous knowledges about Jenkinsfile Blog - Guide for Jenkins Role-based Authorization Strategy Useful guide for access control on jenkins DinD and DooD for jenkins Reference Links Background knowledges Blog - Docker Client - Server Arhitecture Docker Client - Server Arhitecture Official Docs - Runtime privilege and Linux capabilities Explains several options for running docker container Github - NVIDIA DinD Container (not for jenkins) Simple dind container for general purposes Comparisons of DinD vs DooD Blog - DinD vs. DooD (Korean) Simple descriptions of DinD and DooD with refer to the nastybox blog Blog - DinD vs DooD by NastyBox Good explaination about DinD and DooD while introducing their own secure dind solution Which one should I use? DinD or DooD? Blog - DooD rather than DinD by jpetazzo Most quoted blog that explains the drawbacks of Docker in Docker Blog - DinD rather than DooD on K8s by applatix DinD can be better structure when you use kubernetes Docker Client - Server Arhitecture Client (e.g. docker CLI) requests to the Docker Daemon (dockerd) Using belows for communication RESTAPI Unix Socket (in a local host) TCP Socket (between remote machines) Docker in Docker Two docker daemons exist. One on the host The other on a container (e.g. dind) on a host Requires “–privieged” option System-level program does not run inside a regular Docker container because Container does not expose sufficient kernel resources and appropriate permissions Issues related to Docker’s use of overlay filesystems, security profiles, etc. Reference Links Github - NVIDIA DinD (Docker in Docker) Container by ehfd GPU enabled DinD but not suitable for Jenkins (which create a separate DinD container apart from the jenkins container) Sample Source Codes Scripts for Jenkins in Docker Dockerfiles FROM jenkins/jenkins:2.303.2-jdk11 # if we want to install via apt USER root # install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \ apt-transport-https \ ca-certificates curl gnupg2 \ software-properties-common \ tar \ xz-utils \ bash-completion \ vim \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - RUN apt-key fingerprint 0EBFCD88 RUN add-apt-repository \ &quot;deb [arch=amd64] https://download.docker.com/linux/debian \ $(lsb_release -cs) stable&quot; RUN apt-get update &amp;&amp; apt-get install -y docker-ce-cli # drop back to the regular jenkins user - good practice USER jenkins RUN jenkins-plugin-cli --plugins \ &quot;blueocean:1.25.1&quot; \ &quot;docker-workflow:1.26&quot; \ &quot;extended-choice-parameter&quot; \ &quot;role-strategy&quot; \ &quot;pipeline-model-definition&quot; COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04 RUN apt-get update &amp;&amp; apt-get install -y \ apt-utils \ ca-certificates \ openssh-client \ curl \ iptables \ git \ gnupg \ supervisor &amp;&amp; \ rm -rf /var/lib/apt/list/* # NVIDIA Container Toolkit &amp; Docker RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - &amp;&amp; \ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list &amp;&amp; \ apt-get update &amp;&amp; apt-get install -y nvidia-docker2 docker.io docker-compose &amp;&amp; \ rm -rf /var/lib/apt/list/* COPY modprobe startup.sh /usr/local/bin/ COPY supervisor/ /etc/supervisor/conf.d/ COPY logger.sh /opt/bash-utils/logger.sh RUN chmod +x /usr/local/bin/startup.sh /usr/local/bin/modprobe VOLUME /var/lib/docker ENTRYPOINT [&quot;startup.sh&quot;] CMD [&quot;sh&quot;] Run Jenkins Docker (for Docker in Docker) JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data docker network create jenkins cd ./nvidia-dind &amp;&amp; \ docker build -t nvidia-dind-image . &amp;&amp; \ docker run \ --name nvidia-dind-container \ --rm \ --detach \ --privileged \ --gpus 1 \ --network jenkins \ --network-alias docker \ # Makes the Docker in Docker container available as the hostname docker within the jenkins network. --env DOCKER_TLS_CERTDIR=/certs \ # Enables the use of TLS in the Docker server. Due to the use of a privileged container, this is recommended, though it requires the use of the shared volume described below. This environment variable controls the root directory where Docker TLS certificates are managed. --volume jenkins-dind-certs:/certs/client \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume /mnt/motional_database:/mnt/motional_database \ --publish 2376:2376 \ # ( Optional ) Exposes the Docker daemon port on the host machine. This is useful for executing docker commands on the host machine to control this inner Docker daemon. nvidia-dind-image:latest \ --storage-driver overlay2 # The storage driver for the Docker volume. See &quot;Docker storage drivers&quot; for supported options. Stop Jenkins Docker (for Docker in Docker) docker stop nvidia-dind-container docker rmi nvidia-dind-image docker network rm jenkins docker volume rm jenkins-docker-certs Run Jenkins (installed) Container JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data sudo chown -R 1000.1000 ${JENKINS_DATA} sudo chmod 777 ${JENKINS_DATA}/.. cd ./jenkins-dind &amp;&amp; \ docker build -t jenkins-image . &amp;&amp; \ docker run \ --name jenkins-container \ --rm \ --detach \ --network jenkins \ --env DOCKER_HOST=tcp://docker:2376 \ --env DOCKER_CERT_PATH=/certs/client \ --env DOCKER_TLS_VERIFY=1 \ --publish 8081:8080 \ --publish 50000:50000 \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume ${JENKINS_DATA}/..:/var/jenkins_out \ --volume jenkins-docker-certs:/certs/client \ --volume /mnt/motional_database:/mnt/motional_database \ --workdir=/var/jenkins_home \ jenkins-image Stop Jenkins Container docker stop jenkins-container docker rmi jenkins-image Docker out of Docker Only docker daemon runs on the host. Client (e.g. docker CLI) is on a container on a host The connection is done by mounting the host’s Docker’s socket into the container that runs the Docker CLI. For example: $ docker run -it -v /var/run/docker.sock:/var/run/docker.sock docker Benefits One key benefit: it bypasses the complexities of running the Docker daemon inside a container and does not require an unsecure privileged container. Avoids having multiple Docker image caches in the system since there is only one Docker daemon on the host if your system is constrained on storage space Drawbacks. Main drawback: it results in poor context isolation because the Docker CLI runs within a different context than the Docker daemon. While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as: Container naming collisions Mount paths confusion: Container running the Docker CLI creates a container with a bind mount, the mount path must be relative to the host (as otherwise the host Docker daemon on the host won’t be able to perform the mount correctly). Port mappings: Container running the Docker CLI creates a container with a port mapping, the port mapping occurs at the host level, potentially colliding with other port mappings. Not good on Kubernetes Any containers created by the containerized Docker CLI will not be encapsulated within the associated Kubernetes pod, and will thus be outside of Kubernetes’ visibility and control. Finally, there are security concerns too: Container running the Docker CLI can manipulate any containers running on the host. It can remove containers created by other entities on the host, or even create unsecure privileged containers putting the host at risk. Reference Links Jekins using DooD Gitee - Jenkins with DooD (Docker outside of Docker) by onisuly Simple Dockerfile being referred most Github - Jenkins + DOOD (Docker-Outside-Of-Docker) by psharkey refer it for adding jenkins to sudoers Github - Jenkins with DooD (Docker outside of Docker) by axltxl Last commit is done in 2016 and it is using supervisor Github - Simple-Jenkins-DooD by toto1310 Last commit is done in 2019 and refer it for making the Dockerfile to use latest jenkins docker image Sample Source Codes Scripts for Jenkins in Docker Dockerfile ARG tag=${DOCKER_TAG:-lts} FROM jenkins/jenkins:${tag} # if we want to install via apt USER root # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \ libltdl7 \ apt-transport-https \ ca-certificates curl gnupg2 \ software-properties-common \ tar \ xz-utils \ bash-completion \ vim \ python3 \ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* # Add jenkins user to docker group to make sure jenkins user has docker privileges # getent group docker | awk -F: '{printf &quot;%d\n&quot;, $3}' ARG dockerGid=1013 RUN echo &quot;${dockerGid}&quot; RUN echo &quot;docker:x:${dockerGid}:jenkins&quot; &gt;&gt; /etc/group # drop back to the regular jenkins user - good practice USER jenkins COPY plugins.txt /usr/share/jenkins/ref/plugins.txt RUN jenkins-plugin-cli --plugins &lt; /usr/share/jenkins/ref/plugins.txt Run Jenkins Docker JENKINS_DATA=/var/jenkins_home cd jenkins-nvidia-dood sudo mkdir -p ${JENKINS_DATA} sudo mkdir -p ${JENKINS_DATA}/out sudo chown -R 1000.1000 ${JENKINS_DATA} docker build -t jenkins-dood-image . &amp;&amp; \ docker run \ --name jenkins-dood-container \ --rm \ --detach \ --publish 8080:8080 \ --publish 50000:50000 \ --volume $(which docker):/usr/bin/docker \ --volume /var/run/docker.sock:/var/run/docker.sock \ --volume ${JENKINS_DATA}:/var/jenkins_home \ --volume ${JENKINS_DATA}/out:/var/jenkins_home/out \ --volume /mnt/motional_database:/mnt/motional_database \ --workdir=/var/jenkins_home \ jenkins-dood-image Stop Jenkins Docker docker stop jenkins-dood-container &amp;&amp; \ docker rmi jenkins-dood-image">
+<link rel="canonical" href="coolwindjo.github.io/scripts/2021/11/20/dind-and-dood-for-jenkins.html">
+<meta property="og:url" content="coolwindjo.github.io/scripts/2021/11/20/dind-and-dood-for-jenkins.html">
+<meta property="og:site_name" content="Cool Wind on Study">
+<meta property="og:type" content="article">
+<meta property="article:published_time" content="2021-11-20T00:00:00+00:00">
+<meta name="twitter:card" content="summary">
+<meta property="twitter:title" content="Docker in Docker and Docker out of Docker for Jenkins">
+<script type="application/ld+json">
+{"@context":"https://schema.org","@type":"BlogPosting","author":{"@type":"Person","name":"CoolWind"},"dateModified":"2021-11-20T00:00:00+00:00","datePublished":"2021-11-20T00:00:00+00:00","description":"Jenkins in Docker Reference Links Install Jenkins via Docker Official Manual - Jenkins via Docker Useful guide for Downloading and running Jenkins in Docker Official GitHub Documentation for Jenkins Docker Image Not yet to be used but, useful someday… Official Docker Hub for Jenkins Docker Image Not yet to be used but, useful someday… Getting Started with Jenkins Official Manual - Create your first Pipeline Useful step by step guide for pipelilne plugin Official Manaual - Creating Jenkins Pipeline with Blueocean Useful guide for creating pipeline with blueocean plugin Official Manaual - Pipeline Syntax Useful guide for writing pipeline syntax with blueocean plugin Blog - Description of Jenkins Blueocean (Korean) Good to understand the what the Blueocean plugin is… Blog - Guide for Jenkins Blueocean Useful guide for using blueocean plugin Groovy Official Manaual - Pipeline &amp; Groovy Snippet Generator Useful guide for writing pipeline syntax and groovy Official Manual - Groovy Useful guide for writing groovy file to be loaded by Jenkinsfile Blog - Groovy Working with Lines in Strings When you want to write multiple lines of strings Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile Miscellaneous knowledges about Jenkinsfile Blog - Guide for Jenkins Role-based Authorization Strategy Useful guide for access control on jenkins DinD and DooD for jenkins Reference Links Background knowledges Blog - Docker Client - Server Arhitecture Docker Client - Server Arhitecture Official Docs - Runtime privilege and Linux capabilities Explains several options for running docker container Github - NVIDIA DinD Container (not for jenkins) Simple dind container for general purposes Comparisons of DinD vs DooD Blog - DinD vs. DooD (Korean) Simple descriptions of DinD and DooD with refer to the nastybox blog Blog - DinD vs DooD by NastyBox Good explaination about DinD and DooD while introducing their own secure dind solution Which one should I use? DinD or DooD? Blog - DooD rather than DinD by jpetazzo Most quoted blog that explains the drawbacks of Docker in Docker Blog - DinD rather than DooD on K8s by applatix DinD can be better structure when you use kubernetes Docker Client - Server Arhitecture Client (e.g. docker CLI) requests to the Docker Daemon (dockerd) Using belows for communication RESTAPI Unix Socket (in a local host) TCP Socket (between remote machines) Docker in Docker Two docker daemons exist. One on the host The other on a container (e.g. dind) on a host Requires “–privieged” option System-level program does not run inside a regular Docker container because Container does not expose sufficient kernel resources and appropriate permissions Issues related to Docker’s use of overlay filesystems, security profiles, etc. Reference Links Github - NVIDIA DinD (Docker in Docker) Container by ehfd GPU enabled DinD but not suitable for Jenkins (which create a separate DinD container apart from the jenkins container) Sample Source Codes Scripts for Jenkins in Docker Dockerfiles FROM jenkins/jenkins:2.303.2-jdk11 # if we want to install via apt USER root # install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \\ apt-transport-https \\ ca-certificates curl gnupg2 \\ software-properties-common \\ tar \\ xz-utils \\ bash-completion \\ vim \\ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* RUN curl -fsSL https://download.docker.com/linux/debian/gpg | apt-key add - RUN apt-key fingerprint 0EBFCD88 RUN add-apt-repository \\ &quot;deb [arch=amd64] https://download.docker.com/linux/debian \\ $(lsb_release -cs) stable&quot; RUN apt-get update &amp;&amp; apt-get install -y docker-ce-cli # drop back to the regular jenkins user - good practice USER jenkins RUN jenkins-plugin-cli --plugins \\ &quot;blueocean:1.25.1&quot; \\ &quot;docker-workflow:1.26&quot; \\ &quot;extended-choice-parameter&quot; \\ &quot;role-strategy&quot; \\ &quot;pipeline-model-definition&quot; COPY --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy FROM nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04 RUN apt-get update &amp;&amp; apt-get install -y \\ apt-utils \\ ca-certificates \\ openssh-client \\ curl \\ iptables \\ git \\ gnupg \\ supervisor &amp;&amp; \\ rm -rf /var/lib/apt/list/* # NVIDIA Container Toolkit &amp; Docker RUN distribution=$(. /etc/os-release;echo $ID$VERSION_ID) &amp;&amp; \\ curl -s -L https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - &amp;&amp; \\ curl -s -L https://nvidia.github.io/nvidia-docker/$distribution/nvidia-docker.list | tee /etc/apt/sources.list.d/nvidia-docker.list &amp;&amp; \\ apt-get update &amp;&amp; apt-get install -y nvidia-docker2 docker.io docker-compose &amp;&amp; \\ rm -rf /var/lib/apt/list/* COPY modprobe startup.sh /usr/local/bin/ COPY supervisor/ /etc/supervisor/conf.d/ COPY logger.sh /opt/bash-utils/logger.sh RUN chmod +x /usr/local/bin/startup.sh /usr/local/bin/modprobe VOLUME /var/lib/docker ENTRYPOINT [&quot;startup.sh&quot;] CMD [&quot;sh&quot;] Run Jenkins Docker (for Docker in Docker) JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data docker network create jenkins cd ./nvidia-dind &amp;&amp; \\ docker build -t nvidia-dind-image . &amp;&amp; \\ docker run \\ --name nvidia-dind-container \\ --rm \\ --detach \\ --privileged \\ --gpus 1 \\ --network jenkins \\ --network-alias docker \\ # Makes the Docker in Docker container available as the hostname docker within the jenkins network. --env DOCKER_TLS_CERTDIR=/certs \\ # Enables the use of TLS in the Docker server. Due to the use of a privileged container, this is recommended, though it requires the use of the shared volume described below. This environment variable controls the root directory where Docker TLS certificates are managed. --volume jenkins-dind-certs:/certs/client \\ --volume ${JENKINS_DATA}:/var/jenkins_home \\ --volume /mnt/motional_database:/mnt/motional_database \\ --publish 2376:2376 \\ # ( Optional ) Exposes the Docker daemon port on the host machine. This is useful for executing docker commands on the host machine to control this inner Docker daemon. nvidia-dind-image:latest \\ --storage-driver overlay2 # The storage driver for the Docker volume. See &quot;Docker storage drivers&quot; for supported options. Stop Jenkins Docker (for Docker in Docker) docker stop nvidia-dind-container docker rmi nvidia-dind-image docker network rm jenkins docker volume rm jenkins-docker-certs Run Jenkins (installed) Container JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data sudo chown -R 1000.1000 ${JENKINS_DATA} sudo chmod 777 ${JENKINS_DATA}/.. cd ./jenkins-dind &amp;&amp; \\ docker build -t jenkins-image . &amp;&amp; \\ docker run \\ --name jenkins-container \\ --rm \\ --detach \\ --network jenkins \\ --env DOCKER_HOST=tcp://docker:2376 \\ --env DOCKER_CERT_PATH=/certs/client \\ --env DOCKER_TLS_VERIFY=1 \\ --publish 8081:8080 \\ --publish 50000:50000 \\ --volume ${JENKINS_DATA}:/var/jenkins_home \\ --volume ${JENKINS_DATA}/..:/var/jenkins_out \\ --volume jenkins-docker-certs:/certs/client \\ --volume /mnt/motional_database:/mnt/motional_database \\ --workdir=/var/jenkins_home \\ jenkins-image Stop Jenkins Container docker stop jenkins-container docker rmi jenkins-image Docker out of Docker Only docker daemon runs on the host. Client (e.g. docker CLI) is on a container on a host The connection is done by mounting the host’s Docker’s socket into the container that runs the Docker CLI. For example: $ docker run -it -v /var/run/docker.sock:/var/run/docker.sock docker Benefits One key benefit: it bypasses the complexities of running the Docker daemon inside a container and does not require an unsecure privileged container. Avoids having multiple Docker image caches in the system since there is only one Docker daemon on the host if your system is constrained on storage space Drawbacks. Main drawback: it results in poor context isolation because the Docker CLI runs within a different context than the Docker daemon. While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as: Container naming collisions Mount paths confusion: Container running the Docker CLI creates a container with a bind mount, the mount path must be relative to the host (as otherwise the host Docker daemon on the host won’t be able to perform the mount correctly). Port mappings: Container running the Docker CLI creates a container with a port mapping, the port mapping occurs at the host level, potentially colliding with other port mappings. Not good on Kubernetes Any containers created by the containerized Docker CLI will not be encapsulated within the associated Kubernetes pod, and will thus be outside of Kubernetes’ visibility and control. Finally, there are security concerns too: Container running the Docker CLI can manipulate any containers running on the host. It can remove containers created by other entities on the host, or even create unsecure privileged containers putting the host at risk. Reference Links Jekins using DooD Gitee - Jenkins with DooD (Docker outside of Docker) by onisuly Simple Dockerfile being referred most Github - Jenkins + DOOD (Docker-Outside-Of-Docker) by psharkey refer it for adding jenkins to sudoers Github - Jenkins with DooD (Docker outside of Docker) by axltxl Last commit is done in 2016 and it is using supervisor Github - Simple-Jenkins-DooD by toto1310 Last commit is done in 2019 and refer it for making the Dockerfile to use latest jenkins docker image Sample Source Codes Scripts for Jenkins in Docker Dockerfile ARG tag=${DOCKER_TAG:-lts} FROM jenkins/jenkins:${tag} # if we want to install via apt USER root # Install packages RUN apt-get update &amp;&amp; apt-get install -q -y --no-install-recommends \\ libltdl7 \\ apt-transport-https \\ ca-certificates curl gnupg2 \\ software-properties-common \\ tar \\ xz-utils \\ bash-completion \\ vim \\ python3 \\ &amp;&amp; apt-get clean &amp;&amp; rm -rf /var/lib/apt/lists/* # Add jenkins user to docker group to make sure jenkins user has docker privileges # getent group docker | awk -F: &#39;{printf &quot;%d\\n&quot;, $3}&#39; ARG dockerGid=1013 RUN echo &quot;${dockerGid}&quot; RUN echo &quot;docker:x:${dockerGid}:jenkins&quot; &gt;&gt; /etc/group # drop back to the regular jenkins user - good practice USER jenkins COPY plugins.txt /usr/share/jenkins/ref/plugins.txt RUN jenkins-plugin-cli --plugins &lt; /usr/share/jenkins/ref/plugins.txt Run Jenkins Docker JENKINS_DATA=/var/jenkins_home cd jenkins-nvidia-dood sudo mkdir -p ${JENKINS_DATA} sudo mkdir -p ${JENKINS_DATA}/out sudo chown -R 1000.1000 ${JENKINS_DATA} docker build -t jenkins-dood-image . &amp;&amp; \\ docker run \\ --name jenkins-dood-container \\ --rm \\ --detach \\ --publish 8080:8080 \\ --publish 50000:50000 \\ --volume $(which docker):/usr/bin/docker \\ --volume /var/run/docker.sock:/var/run/docker.sock \\ --volume ${JENKINS_DATA}:/var/jenkins_home \\ --volume ${JENKINS_DATA}/out:/var/jenkins_home/out \\ --volume /mnt/motional_database:/mnt/motional_database \\ --workdir=/var/jenkins_home \\ jenkins-dood-image Stop Jenkins Docker docker stop jenkins-dood-container &amp;&amp; \\ docker rmi jenkins-dood-image","headline":"Docker in Docker and Docker out of Docker for Jenkins","mainEntityOfPage":{"@type":"WebPage","@id":"coolwindjo.github.io/scripts/2021/11/20/dind-and-dood-for-jenkins.html"},"url":"coolwindjo.github.io/scripts/2021/11/20/dind-and-dood-for-jenkins.html"}</script>
+<!-- End Jekyll SEO tag -->
+<link rel="shortcut icon" href="/assets/images/cls.png">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/typeface-noto-sans@0.0.72/index.min.css">
+  <link rel="stylesheet" href="/assets/css/main.css">
+  <script src="/assets/js/main.js"></script><link type="application/atom+xml" rel="alternate" href="coolwindjo.github.io/feed.xml" title="Cool Wind on Study">
+<link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/styles/default.min.css">
+<script src="//cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/highlight.min.js"></script>
+<!-- and it's easy to individually load additional languages -->
+<script charset="UTF-8" src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/10.1.1/languages/go.min.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+// Init highlight js
+document.addEventListener('DOMContentLoaded', function(event) {
+  var els = document.querySelectorAll('pre code')
+
+  function addLangData(block) {
+    var outer = block.parentElement.parentElement.parentElement;
+    var lang = block.getAttribute('data-lang');
+    for (var i = 0; i < outer.classList.length; i++) {
+      var cls = outer.classList[i];
+      if (cls.startsWith('language-')) {
+        lang = cls;
+        break;
+      }
+    }
+    if (!lang) {
+      cls = block.getAttribute('class');
+      lang = cls ? cls.replace('hljs ', '') : '';
+    }
+    if (lang.startsWith('language-')) {
+      lang = lang.substr(9);
+    }
+    block.setAttribute('class', 'hljs ' + lang);
+    block.parentNode.setAttribute('data-lang', lang);
+  }
+
+  function addBadge(block) {
+    var enabled = ('true' || 'true').toLowerCase();
+    if (enabled == 'true') {
+      var pre = block.parentElement;
+      pre.classList.add('badge');
+    }
+  }
+
+  function handle(block) {
+    addLangData(block);
+    addBadge(block)
+    hljs.highlightBlock(block);
+  }
+
+  for (var i = 0; i < els.length; i++) {
+    var el = els[i];
+    handle(el);
+  }
+});
+</script>
+
+<style>
+  /* code language badge */
+  pre.badge::before {
+    content: attr(data-lang);
+    color: #fff;
+    background-color: #ff4e00;
+    padding: 0 .5em;
+    border-radius: 0 2px;
+    text-transform: uppercase;
+    text-align: center;
+    min-width: 32px;
+    display: inline-block;
+    position: absolute;
+    right: 0;
+  }
+
+  /* fix wrong badge display for firefox browser */
+  code > table pre::before {
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<header class="site-header " role="banner">
+
+  <div class="wrapper">
+    <div class="site-header-inner">
+<span class="site-brand"><a class="site-brand-inner" rel="author" href="/">
+  <img class="site-favicon" title="Cool Wind on Study" src="/assets/images/cls.png" onerror="this.style.display='none'">
+  Cool Wind on Study
+</a>
+</span><nav class="site-nav">
+          <input type="checkbox" id="nav-trigger" class="nav-trigger">
+          <label for="nav-trigger">
+            <span class="menu-icon">
+              <svg viewbox="0 0 18 15" width="18px" height="15px">
+                <path d="M18,1.484c0,0.82-0.665,1.484-1.484,1.484H1.484C0.665,2.969,0,2.304,0,1.484l0,0C0,0.665,0.665,0,1.484,0 h15.032C17.335,0,18,0.665,18,1.484L18,1.484z M18,7.516C18,8.335,17.335,9,16.516,9H1.484C0.665,9,0,8.335,0,7.516l0,0 c0-0.82,0.665-1.484,1.484-1.484h15.032C17.335,6.031,18,6.696,18,7.516L18,7.516z M18,13.516C18,14.335,17.335,15,16.516,15H1.484 C0.665,15,0,14.335,0,13.516l0,0c0-0.82,0.665-1.483,1.484-1.483h15.032C17.335,12.031,18,12.695,18,13.516L18,13.516z"></path>
+              </svg>
+            </span>
+          </label>
+
+          <div class="trigger">
+<a class="page-link" href="/about.html">ABOUT</a><a class="page-link" href="/archives.html">ARCHIVES</a><a class="page-link" href="/categories.html">CATEGORIES</a><a class="page-link" href="/tags.html">TAGS</a>
+
+
+
+
+
+
+
+
+
+<span class="page-link">
+
+
+
+<div id="google_translate_element" style="display: none;">
+</div>
+
+<span class="ct-language">
+  <ul class="list-unstyled ct-language-dropdown">
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="en">
+          
+          <img src="https://cdn.countryflags.com/thumbs/united-states-of-america/flag-400.png" title="English">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="fr">
+          
+          <img src="https://cdn.countryflags.com/thumbs/france/flag-400.png" title="French">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="zh-CN">
+          
+          <img src="https://cdn.countryflags.com/thumbs/china/flag-400.png" title="Chinese(Simple)">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ja">
+          
+          <img src="https://cdn.countryflags.com/thumbs/japan/flag-400.png" title="Japanese">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ko">
+          
+          <img src="https://cdn.countryflags.com/thumbs/south-korea/flag-400.png" title="Korean">
+          
+        </a>
+      </li>
+    
+      <li>
+        <a href="#" class="lang-select" data-lang="ru">
+          
+          <img src="https://cdn.countryflags.com/thumbs/russia/flag-400.png" title="Russian">
+          
+        </a>
+      </li>
+    
+  </ul>
+</span>
+
+<script type="text/javascript">
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement({
+    pageLanguage: 'en',
+    autoDisplay: false,
+    layout: google.translate.TranslateElement.InlineLayout.VERTICAL
+  }, 'google_translate_element');
+
+  // Links to cross-origin destinations are unsafe
+  var gll = document.getElementsByClassName('goog-logo-link')[0];
+  if (gll) {
+    gll.setAttribute('rel', 'noopener');
+  }
+
+  function restoreLang() {
+    var iframe = document.getElementsByClassName('goog-te-banner-frame')[0];
+    if (!iframe) return;
+
+    var innerDoc = iframe.contentDocument || iframe.contentWindow.document;
+    var restore_el = innerDoc.getElementsByTagName("button");
+
+    for (var i = 0; i < restore_el.length; i++) {
+      if (restore_el[i].id.indexOf("restore") >= 0) {
+        restore_el[i].click();
+        var close_el = innerDoc.getElementsByClassName("goog-close-link");
+        close_el[0].click();
+        return;
+      }
+    }
+  }
+
+  function triggerHtmlEvent(element, eventName) {
+    var event;
+    if (document.createEvent) {
+      event = document.createEvent('HTMLEvents');
+      event.initEvent(eventName, true, true);
+      element.dispatchEvent(event);
+    } else {
+      event = document.createEventObject();
+      event.eventType = eventName;
+      element.fireEvent('on' + event.eventType, event);
+    }
+  }
+
+  var googleCombo = document.querySelector("select.goog-te-combo");
+  var langSelect = document.querySelector('.ct-language');
+  langSelect.addEventListener('click', function(event) {
+    if (!event.target) {
+      return;
+    }
+
+    var selected = document.querySelector('.ct-language .ct-language-selected');
+    if (selected) {
+      selected.classList.remove('ct-language-selected');
+    }
+
+    var target = event.target;
+    while (target && target !== langSelect ) {
+      if (target.matches('.lang-select')) {
+        break;
+      }
+      target = target.parentElement;
+    }
+
+    if (target && target.matches('.lang-select')) {
+      var lang = target.getAttribute('data-lang');
+      if (googleCombo.value == lang) {
+        restoreLang();
+      } else {
+        target.parentElement.classList.add('ct-language-selected');
+        googleCombo.value = lang;
+        triggerHtmlEvent(googleCombo, 'change');
+      }
+    }
+
+    event.preventDefault();
+  });
+}
+</script>
+
+<script type="text/javascript" src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+</span>
+</div>
+        </nav>
+</div>
+  </div>
+</header>
+
+<script>
+  function initHeader() {
+    var lastScrollY = getScrollPos().y;
+    var documentElement = document.documentElement;
+
+    function storeScrollData() {
+      var y = getScrollPos().y;var scrollStatus = "";
+
+      if (y <= 0) {
+        scrollStatus = "top";
+      } else if ((window.innerHeight + y) >= document.body.offsetHeight) {
+        scrollStatus = "bottom";
+      } else {
+        var isScrollDown = (y - lastScrollY > 0) ? true : false;
+        scrollStatus = isScrollDown ? "down" : "up";
+      }
+
+      lastScrollY = y;
+      documentElement.setAttribute("data-scroll-status", scrollStatus);
+    }
+
+    window.addEventListener('scroll', function(e) {
+      storeScrollData();
+    });
+
+    storeScrollData();
+  }
+  document.addEventListener('DOMContentLoaded', initHeader);
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<script>
+  function hashLocate(hashValue) {
+    hashValue = hashValue.replace(/^.*#h-/, '');
+    hashValue = decodeURIComponent(hashValue);
+    var element = document.getElementById(hashValue);
+
+    if (!element) {
+      return;
+    }
+
+    var header = document.querySelector('header.site-header');
+    var headerRect = header.getBoundingClientRect();
+    var headerTop = Math.floor(headerRect.top);
+    var headerHeight = Math.floor(headerRect.height);
+    var scrollPos = getScrollPos();
+    var offsetY = element.offsetTop - (headerTop + headerHeight + 20);
+
+    if (offsetY == scrollPos.y) {
+      return;
+    }
+
+    if (headerTop == 0  && offsetY > scrollPos.y) {
+      offsetY += headerHeight + 2;
+    } else if (headerTop < 0  && offsetY < scrollPos.y) {
+      offsetY -= headerHeight - 2;
+    }
+
+    smoothScrollTo(offsetY);
+  }
+
+  // The first event occurred
+  window.addEventListener('load', function(event) {
+    if (window.location.hash) {
+      hashLocate(window.location.hash);
+    }
+  });
+
+  // The first event occurred
+  window.addEventListener('click', function(event) {
+    if (event.target.tagName.toLowerCase() == 'a') {
+      hashLocate(event.target.getAttribute('href'));
+    }
+  });
+</script>
+<div class="theme-toggle">
+  <input type="checkbox" id="theme-switch">
+  <label for="theme-switch">
+    <div class="toggle"></div>
+    <div class="names">
+      <p class="light">Light</p>
+      <p class="dark">Dark</p>
+    </div>
+  </label>
+</div>
+
+
+
+
+<script>
+  (function() {
+    var sw = document.getElementById('theme-switch');
+    var html = document.getElementsByTagName('html')[0];
+    var nightModeOption = ('auto' || 'auto').toLowerCase();
+    var storage = nightModeOption === 'manual'
+        ? localStorage
+        : sessionStorage;
+    var themeData = loadThemeData();
+
+    function saveThemeData(data) {
+      storage.setItem('theme', JSON.stringify(data));
+    }
+
+    function loadThemeData() {
+      var data = storage.getItem('theme');
+      try {
+        data = JSON.parse(data ? data : '');
+      } catch(e) {
+        data = { nightShift: undefined, autoToggleAt: 0 };
+        saveThemeData(data);
+      }
+      return data;
+    }
+
+    function handleThemeToggle(nightShift) {
+      themeData.nightShift = nightShift;
+      saveThemeData(themeData);
+      html.dataset.theme = nightShift ? 'dark' : 'light';
+      setTimeout(function() {
+        sw.checked = nightShift ? true : false;
+      }, 50);
+    }
+
+    function autoThemeToggle() {
+      // Next time point of theme toggle
+      var now = new Date();
+      var toggleAt = new Date();
+      var hours = now.getHours();
+      var nightShift = hours >= 19 || hours <=7;
+
+      if (nightShift) {
+        if (hours > 7) {
+          toggleAt.setDate(toggleAt.getDate() + 1);
+        }
+        toggleAt.setHours(7);
+      } else {
+        toggleAt.setHours(19);
+      }
+
+      toggleAt.setMinutes(0);
+      toggleAt.setSeconds(0);
+      toggleAt.setMilliseconds(0)
+
+      var delay = toggleAt.getTime() - now.getTime();
+
+      // auto toggle theme mode
+      setTimeout(function() {
+        handleThemeToggle(!nightShift);
+      }, delay);
+
+      return {
+        nightShift: nightShift,
+        toggleAt: toggleAt.getTime()
+      };
+    }
+
+    // Listen the theme toggle event
+    sw.addEventListener('change', function(event) {
+      handleThemeToggle(event.target.checked);
+    });
+
+    if (nightModeOption == 'auto') {
+      var data = autoThemeToggle();
+
+      // Toggle theme by local setting
+      if (data.toggleAt > themeData.autoToggleAt) {
+        themeData.autoToggleAt = data.toggleAt;
+        handleThemeToggle(data.nightShift);
+      } else {
+        handleThemeToggle(themeData.nightShift);
+      }
+    } else if (nightModeOption == 'manual') {
+      handleThemeToggle(themeData.nightShift);
+    } else {
+      var nightShift = themeData.nightShift;
+      if (nightShift === undefined) {
+        nightShift = nightModeOption === 'on';
+      }
+      handleThemeToggle(nightShift);
+    }
+  })();
+</script>
+<main class="page-content" aria-label="Content">
+      <div class="wrapper">
+        <div class="framework">
+  <section class="main">
+
+     <div class="post">
+  <section>
+
+
+
+
+
+
+
+
+
+<header class="post-header">
+  <h1 class="post-title p-name" itemprop="name headline">Docker in Docker and Docker out of Docker for Jenkins</h1>
+  <h2 class="post-subtitle"></h2>
+
+  <p class="post-meta">
+    <time class="dt-published" datetime="2021-11-20T00:00:00+00:00" itemprop="datePublished"><i class="fa fa-calendar"></i> Nov 20, 2021
+    </time>
+
+    
+    
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+    <span class="post-reading-time left-vsplit"><i class="fa fa-clock-o"></i> About 13 mins</span>
+  </p>
+<div class="post-tags">
+<a class="post-tag" href="/tags.html#dockerfile">#dockerfile</a><a class="post-tag" href="/tags.html#jenkins">#jenkins</a><a class="post-tag" href="/tags.html#docker">#docker</a><a class="post-tag" href="/tags.html#dind">#dind</a><a class="post-tag" href="/tags.html#dood">#dood</a>
+</div></header>
+<article class="post h-entry" itemscope itemtype="https://schema.org/BlogPosting">
+
+    <div class="post-content e-content" itemprop="articleBody">
+
+      <h2 id="jenkins-in-docker">Jenkins in Docker</h2>
+
+<h3 id="reference-links">Reference Links</h3>
+
+<ul>
+  <li>Install Jenkins via Docker
+    <ul>
+      <li>
+<a href="https://www.jenkins.io/doc/book/installing/docker/#customizing-jenkins-with-plugins" target="_blank">Official Manual - Jenkins via Docker</a> Useful guide for Downloading and running Jenkins in Docker</li>
+      <li>
+<a href="https://github.com/jenkinsci/docker/blob/master/README.md" target="_blank">Official GitHub Documentation for Jenkins Docker Image</a> Not yet to be used but, useful someday…</li>
+      <li>
+<a href="https://hub.docker.com/r/jenkins/jenkins/tags" target="_blank">Official Docker Hub for Jenkins Docker Image</a> Not yet to be used but, useful someday…</li>
+    </ul>
+  </li>
+  <li>Getting Started with Jenkins
+    <ul>
+      <li>
+<a href="https://www.jenkins.io/doc/pipeline/tour/hello-world/" target="_blank">Official Manual - Create your first Pipeline</a> Useful step by step guide for pipelilne plugin</li>
+      <li>
+<a href="https://www.jenkins.io/doc/book/blueocean/creating-pipelines/" target="_blank">Official Manaual - Creating Jenkins Pipeline with Blueocean</a> Useful guide for creating pipeline with blueocean plugin</li>
+      <li>
+<a href="https://www.jenkins.io/doc/book/pipeline/syntax/" target="_blank">Official Manaual - Pipeline Syntax</a> Useful guide for writing pipeline syntax with blueocean plugin
+        <ul>
+          <li>
+<a href="https://logical-code.tistory.com/179" target="_blank">Blog - Description of Jenkins Blueocean (Korean)</a> Good to understand the what the Blueocean plugin is…</li>
+          <li>
+<a href="https://www.jenkins.io/doc/book/pipeline/getting-started/#built-in-documentation" target="_blank">Blog - Guide for Jenkins Blueocean</a> Useful guide for using blueocean plugin</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Groovy
+    <ul>
+      <li>
+<a href="https://www.jenkins.io/doc/book/pipeline/getting-started/#built-in-documentation" target="_blank">Official Manaual - Pipeline &amp; Groovy Snippet Generator</a> Useful guide for writing pipeline syntax and groovy</li>
+      <li>
+<a href="https://groovy-lang.org/" target="_blank">Official Manual - Groovy</a> Useful guide for writing groovy file to be loaded by Jenkinsfile</li>
+      <li>
+<a href="https://blog.mrhaki.com/2009/11/groovy-goodness-working-with-lines-in.html" target="_blank">Blog - Groovy Working with Lines in Strings</a> When you want to write multiple lines of strings</li>
+      <li>
+<a href="https://wilsonmar.github.io/jenkins2-pipeline/#unicode-icons" target="_blank">Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile</a> Miscellaneous knowledges about Jenkinsfile</li>
+      <li>
+<a href="https://www.guru99.com/create-users-manage-permissions.html" target="_blank">Blog - Guide for Jenkins Role-based Authorization Strategy</a> Useful guide for access control on jenkins</li>
+    </ul>
+  </li>
+</ul>
+
+<h2 id="dind-and-dood-for-jenkins">DinD and DooD for jenkins</h2>
+
+<h3 id="reference-links-1">Reference Links</h3>
+
+<ul>
+  <li>Background knowledges
+    <ul>
+      <li>
+<a href="https://aidanbae.github.io/code/docker/docker-overview/" target="_blank">Blog - Docker Client - Server Arhitecture</a> Docker Client - Server Arhitecture</li>
+      <li>
+<a href="https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities" target="_blank">Official Docs - Runtime privilege and Linux capabilities</a> Explains several options for running docker container</li>
+      <li>
+<a href="https://github.com/ehfd/nvidia-dind" target="_blank">Github - NVIDIA DinD Container (not for jenkins)</a> Simple dind container for general purposes</li>
+    </ul>
+  </li>
+  <li>Comparisons of DinD vs DooD
+    <ul>
+      <li>
+<a href="https://mns010.tistory.com/25" target="_blank">Blog - DinD vs. DooD (Korean)</a> Simple descriptions of DinD and DooD with refer to the nastybox blog</li>
+      <li>
+<a href="https://blog.nestybox.com/2019/09/14/dind.html" target="_blank">Blog - DinD vs DooD by NastyBox</a> Good explaination about DinD and DooD while introducing their own secure dind solution</li>
+    </ul>
+  </li>
+  <li>Which one should I use? DinD or DooD?
+    <ul>
+      <li>
+<a href="https://jpetazzo.github.io/2015/09/03/do-not-use-docker-in-docker-for-ci/" target="_blank">Blog - DooD rather than DinD by jpetazzo</a> Most quoted blog that explains the drawbacks of Docker in Docker</li>
+      <li>
+<a href="https://applatix.com/case-docker-docker-kubernetes-part/" target="_blank">Blog - DinD rather than DooD on K8s by applatix</a> DinD can be better structure when you use kubernetes</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="docker-client---server-arhitecture">Docker Client - Server Arhitecture</h3>
+
+<ul>
+  <li>Client (e.g. docker CLI) requests to the Docker Daemon (dockerd)</li>
+  <li>Using belows for communication
+    <ul>
+      <li>RESTAPI</li>
+      <li>Unix Socket (in a local host)</li>
+      <li>TCP Socket (between remote machines)</li>
+    </ul>
+  </li>
+</ul>
+
+<h3 id="docker-in-docker">Docker in Docker</h3>
+
+<ul>
+  <li>Two docker daemons exist.
+    <ul>
+      <li>One on the host</li>
+      <li>The other on a container (e.g. dind) on a host</li>
+    </ul>
+  </li>
+  <li>Requires “–privieged” option</li>
+  <li>System-level program does not run inside a regular Docker container because
+    <ul>
+      <li>Container does not expose sufficient kernel resources and appropriate permissions</li>
+      <li>Issues related to
+        <ul>
+          <li>Docker’s use of overlay filesystems,</li>
+          <li>security profiles,</li>
+          <li>etc.</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="reference-links-2">Reference Links</h4>
+
+<ul>
+  <li>
+<a href="https://github.com/ehfd/nvidia-dind" target="_blank">Github - NVIDIA DinD (Docker in Docker) Container by ehfd</a> GPU enabled DinD but not suitable for Jenkins (which create a separate DinD container apart from the jenkins container)</li>
+</ul>
+
+<h4 id="sample-source-codes">Sample Source Codes</h4>
+
+<ul>
+  <li><a href="https://github.com/coolwindjo/jenkins_scripts/tree/master_nvidia_dind" target="_blank">Scripts for Jenkins in Docker</a></li>
+</ul>
+
+<h5 id="dockerfiles">Dockerfiles</h5>
+
+<div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> jenkins/jenkins:2.303.2-jdk11</span>
+
+<span class="c"># if we want to install via apt</span>
+<span class="k">USER</span><span class="s"> root</span>
+
+<span class="c"># install packages</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>	apt-transport-https <span class="se">\
+</span>	ca-certificates curl gnupg2 <span class="se">\
+</span>	software-properties-common <span class="se">\
+</span>	<span class="nb">tar</span> <span class="se">\
+</span>	xz-utils <span class="se">\
+</span>	bash-completion <span class="se">\
+</span>	vim <span class="se">\
+</span>	<span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="k">RUN </span>curl <span class="nt">-fsSL</span> https://download.docker.com/linux/debian/gpg | apt-key add -
+<span class="k">RUN </span>apt-key fingerprint 0EBFCD88
+<span class="k">RUN </span>add-apt-repository <span class="se">\
+</span>       <span class="s2">"deb [arch=amd64] https://download.docker.com/linux/debian </span><span class="se">\
+</span><span class="s2">       </span><span class="si">$(</span>lsb_release <span class="nt">-cs</span><span class="si">)</span><span class="s2"> stable"</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> docker-ce-cli
+
+<span class="c"># drop back to the regular jenkins user - good practice</span>
+<span class="k">USER</span><span class="s"> jenkins</span>
+<span class="k">RUN </span>jenkins-plugin-cli <span class="nt">--plugins</span> <span class="se">\
+</span>	<span class="s2">"blueocean:1.25.1"</span> <span class="se">\
+</span>	<span class="s2">"docker-workflow:1.26"</span> <span class="se">\
+</span>	<span class="s2">"extended-choice-parameter"</span> <span class="se">\
+</span>	<span class="s2">"role-strategy"</span> <span class="se">\
+</span>	<span class="s2">"pipeline-model-definition"</span>
+
+<span class="k">COPY</span><span class="s"> --chown=jenkins:jenkins executors.groovy /usr/share/jenkins/ref/init.groovy.d/executors.groovy</span>
+</code></pre></div></div>
+
+<div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">FROM</span><span class="s"> nvidia/opengl:1.2-glvnd-runtime-ubuntu20.04</span>
+
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> <span class="se">\
+</span>        apt-utils <span class="se">\
+</span>        ca-certificates <span class="se">\
+</span>        openssh-client <span class="se">\
+</span>        curl <span class="se">\
+</span>        iptables <span class="se">\
+</span>        git <span class="se">\
+</span>        gnupg <span class="se">\
+</span>        supervisor <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/list/<span class="k">*</span>
+
+<span class="c"># NVIDIA Container Toolkit &amp; Docker</span>
+<span class="k">RUN </span><span class="nv">distribution</span><span class="o">=</span><span class="si">$(</span><span class="nb">.</span> /etc/os-release<span class="p">;</span><span class="nb">echo</span> <span class="nv">$ID$VERSION_ID</span><span class="si">)</span> <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    curl <span class="nt">-s</span> <span class="nt">-L</span> https://nvidia.github.io/nvidia-docker/gpgkey | apt-key add - <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    curl <span class="nt">-s</span> <span class="nt">-L</span> https://nvidia.github.io/nvidia-docker/<span class="nv">$distribution</span>/nvidia-docker.list | <span class="nb">tee</span> /etc/apt/sources.list.d/nvidia-docker.list <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-y</span> nvidia-docker2 docker.io docker-compose <span class="o">&amp;&amp;</span> <span class="se">\
+</span>    <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/list/<span class="k">*</span>
+
+<span class="k">COPY</span><span class="s"> modprobe startup.sh /usr/local/bin/</span>
+<span class="k">COPY</span><span class="s"> supervisor/ /etc/supervisor/conf.d/</span>
+<span class="k">COPY</span><span class="s"> logger.sh /opt/bash-utils/logger.sh</span>
+
+<span class="k">RUN </span><span class="nb">chmod</span> +x /usr/local/bin/startup.sh /usr/local/bin/modprobe
+<span class="k">VOLUME</span><span class="s"> /var/lib/docker</span>
+
+<span class="k">ENTRYPOINT</span><span class="s"> ["startup.sh"]</span>
+<span class="k">CMD</span><span class="s"> ["sh"]</span>
+</code></pre></div></div>
+
+<h5 id="run-jenkins-docker-for-docker-in-docker">Run Jenkins Docker (for Docker in Docker)</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">JENKINS_DATA</span><span class="o">=</span><span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/../../workspace/jenkins_home/data
+
+docker network create jenkins
+
+<span class="nb">cd</span> ./nvidia-dind <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker build <span class="nt">-t</span> nvidia-dind-image <span class="nb">.</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker run <span class="se">\</span>
+	<span class="nt">--name</span> nvidia-dind-container <span class="se">\</span>
+	<span class="nt">--rm</span> <span class="se">\</span>
+	<span class="nt">--detach</span> <span class="se">\</span>
+	<span class="nt">--privileged</span> <span class="se">\</span>
+	<span class="nt">--gpus</span> 1 <span class="se">\</span>
+	<span class="nt">--network</span> jenkins <span class="se">\</span>
+	<span class="nt">--network-alias</span> docker <span class="se">\	</span><span class="c"># Makes the Docker in Docker container available as the hostname docker within the jenkins network.</span>
+	<span class="nt">--env</span> <span class="nv">DOCKER_TLS_CERTDIR</span><span class="o">=</span>/certs <span class="se">\	</span><span class="c"># Enables the use of TLS in the Docker server. Due to the use of a privileged container, this is recommended, though it requires the use of the shared volume described below. This environment variable controls the root directory where Docker TLS certificates are managed.</span>
+	<span class="nt">--volume</span> jenkins-dind-certs:/certs/client <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>:/var/jenkins_home <span class="se">\</span>
+	<span class="nt">--volume</span> /mnt/motional_database:/mnt/motional_database <span class="se">\</span>
+	<span class="nt">--publish</span> 2376:2376 <span class="se">\	</span><span class="c"># ( Optional ) Exposes the Docker daemon port on the host machine. This is useful for executing docker commands on the host machine to control this inner Docker daemon.</span>
+	nvidia-dind-image:latest <span class="se">\</span>
+	<span class="nt">--storage-driver</span> overlay2	<span class="c"># The storage driver for the Docker volume. See "Docker storage drivers" for supported options.</span>
+</code></pre></div></div>
+
+<h5 id="stop-jenkins-docker-for-docker-in-docker">Stop Jenkins Docker (for Docker in Docker)</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop nvidia-dind-container
+
+docker rmi nvidia-dind-image
+
+docker network <span class="nb">rm </span>jenkins
+
+docker volume <span class="nb">rm </span>jenkins-docker-certs
+</code></pre></div></div>
+
+<h5 id="run-jenkins-installed-container">Run Jenkins (installed) Container</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">JENKINS_DATA</span><span class="o">=</span><span class="k">${</span><span class="nv">PWD</span><span class="k">}</span>/../../workspace/jenkins_home/data
+
+<span class="nb">sudo chown</span> <span class="nt">-R</span> 1000.1000 <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>
+<span class="nb">sudo chmod </span>777 <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>/..
+
+<span class="nb">cd</span> ./jenkins-dind <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker build <span class="nt">-t</span> jenkins-image <span class="nb">.</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker run <span class="se">\</span>
+	<span class="nt">--name</span> jenkins-container <span class="se">\</span>
+	<span class="nt">--rm</span> <span class="se">\</span>
+	<span class="nt">--detach</span> <span class="se">\</span>
+	<span class="nt">--network</span> jenkins <span class="se">\</span>
+	<span class="nt">--env</span> <span class="nv">DOCKER_HOST</span><span class="o">=</span>tcp://docker:2376 <span class="se">\</span>
+	<span class="nt">--env</span> <span class="nv">DOCKER_CERT_PATH</span><span class="o">=</span>/certs/client <span class="se">\</span>
+	<span class="nt">--env</span> <span class="nv">DOCKER_TLS_VERIFY</span><span class="o">=</span>1 <span class="se">\</span>
+	<span class="nt">--publish</span> 8081:8080 <span class="se">\</span>
+	<span class="nt">--publish</span> 50000:50000 <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>:/var/jenkins_home <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>/..:/var/jenkins_out <span class="se">\</span>
+	<span class="nt">--volume</span> jenkins-docker-certs:/certs/client <span class="se">\</span>
+	<span class="nt">--volume</span> /mnt/motional_database:/mnt/motional_database <span class="se">\</span>
+	<span class="nt">--workdir</span><span class="o">=</span>/var/jenkins_home <span class="se">\</span>
+	jenkins-image
+</code></pre></div></div>
+
+<h5 id="stop-jenkins-container">Stop Jenkins Container</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop jenkins-container
+
+docker rmi jenkins-image
+</code></pre></div></div>
+
+<h3 id="docker-out-of-docker">Docker out of Docker</h3>
+
+<ul>
+  <li>Only docker daemon runs on the host.
+    <ul>
+      <li>Client (e.g. docker CLI) is on a container on a host</li>
+    </ul>
+  </li>
+  <li>The connection is done by mounting the host’s Docker’s socket into the container that runs the Docker CLI. For example:</li>
+</ul>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>  <span class="nv">$ </span>docker run <span class="nt">-it</span> <span class="nt">-v</span> /var/run/docker.sock:/var/run/docker.sock docker
+</code></pre></div></div>
+<ul>
+  <li>Benefits
+    <ul>
+      <li>One key benefit: it bypasses the complexities of running the Docker daemon inside a container and does not require an unsecure privileged container.</li>
+      <li>Avoids having multiple Docker image caches in the system
+        <ul>
+          <li>since there is only one Docker daemon on the host</li>
+          <li>if your system is constrained on storage space</li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+  <li>Drawbacks.
+    <ul>
+      <li>Main drawback: it results in poor context isolation because the Docker CLI runs within a different context than the Docker daemon.
+        <ul>
+          <li>While DinD runs within the container’s context; DooD runs within host’s context. This leads to problems such as:
+            <ul>
+              <li>Container naming collisions</li>
+              <li>Mount paths confusion:
+                <ul>
+                  <li>Container running the Docker CLI creates a container with a bind mount, the mount path must be relative to the host (as otherwise the host Docker daemon on the host won’t be able to perform the mount correctly).</li>
+                </ul>
+              </li>
+              <li>Port mappings:
+                <ul>
+                  <li>Container running the Docker CLI creates a container with a port mapping, the port mapping occurs at the host level, potentially colliding with other port mappings.</li>
+                </ul>
+              </li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+      <li>Not good on Kubernetes
+        <ul>
+          <li>Any containers created by the containerized Docker CLI will not be encapsulated within the associated Kubernetes pod, and will thus be outside of Kubernetes’ visibility and control.</li>
+        </ul>
+      </li>
+      <li>Finally, there are security concerns too:
+        <ul>
+          <li>Container running the Docker CLI can manipulate any containers running on the host.
+            <ul>
+              <li>It can remove containers created by other entities on the host, or</li>
+              <li>even create unsecure privileged containers putting the host at risk.</li>
+            </ul>
+          </li>
+        </ul>
+      </li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="reference-links-3">Reference Links</h4>
+
+<ul>
+  <li>Jekins using DooD
+    <ul>
+      <li>
+<a href="https://gitee.com/onisuly/docker-jenkins-dood" target="_blank">Gitee - Jenkins with DooD (Docker outside of Docker) by onisuly</a> Simple Dockerfile being referred most</li>
+      <li>
+<a href="https://github.com/psharkey/docker/tree/master/jenkins-dood" target="_blank">Github - Jenkins + DOOD (Docker-Outside-Of-Docker) by psharkey</a> refer it for adding jenkins to sudoers</li>
+      <li>
+<a href="https://github.com/axltxl/docker-jenkins-dood" target="_blank">Github - Jenkins with DooD (Docker outside of Docker) by axltxl</a> Last commit is done in 2016 and it is using supervisor</li>
+      <li>
+<a href="https://github.com/toto1310/Simple-Jenkins-DooD" target="_blank">Github - Simple-Jenkins-DooD by toto1310</a> Last commit is done in 2019 and refer it for making the Dockerfile to use latest jenkins docker image</li>
+    </ul>
+  </li>
+</ul>
+
+<h4 id="sample-source-codes-1">Sample Source Codes</h4>
+
+<ul>
+  <li><a href="https://github.com/coolwindjo/jenkins_scripts/tree/master_nvidia_dood" target="_blank">Scripts for Jenkins in Docker</a></li>
+</ul>
+
+<h5 id="dockerfile">Dockerfile</h5>
+
+<div class="language-Dockerfile highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="k">ARG</span><span class="s"> tag=${DOCKER_TAG:-lts}</span>
+<span class="k">FROM</span><span class="s"> jenkins/jenkins:${tag}</span>
+
+<span class="c"># if we want to install via apt</span>
+<span class="k">USER</span><span class="s"> root</span>
+
+<span class="c"># Install packages</span>
+<span class="k">RUN </span>apt-get update <span class="o">&amp;&amp;</span> apt-get <span class="nb">install</span> <span class="nt">-q</span> <span class="nt">-y</span> <span class="nt">--no-install-recommends</span> <span class="se">\
+</span>	libltdl7 <span class="se">\
+</span>	apt-transport-https <span class="se">\
+</span>	ca-certificates curl gnupg2 <span class="se">\
+</span>	software-properties-common <span class="se">\
+</span>	<span class="nb">tar</span> <span class="se">\
+</span>	xz-utils <span class="se">\
+</span>	bash-completion <span class="se">\
+</span>	vim <span class="se">\
+</span>	python3 <span class="se">\
+</span>	<span class="o">&amp;&amp;</span> apt-get clean <span class="o">&amp;&amp;</span> <span class="nb">rm</span> <span class="nt">-rf</span> /var/lib/apt/lists/<span class="k">*</span>
+
+<span class="c"># Add jenkins user to docker group to make sure jenkins user has docker privileges</span>
+<span class="c"># getent group docker | awk -F: '{printf "%d\n", $3}'</span>
+<span class="k">ARG</span><span class="s"> dockerGid=1013</span>
+<span class="k">RUN </span><span class="nb">echo</span> <span class="s2">"</span><span class="k">${</span><span class="nv">dockerGid</span><span class="k">}</span><span class="s2">"</span>
+<span class="k">RUN </span><span class="nb">echo</span> <span class="s2">"docker:x:</span><span class="k">${</span><span class="nv">dockerGid</span><span class="k">}</span><span class="s2">:jenkins"</span> <span class="o">&gt;&gt;</span> /etc/group
+
+<span class="c"># drop back to the regular jenkins user - good practice</span>
+<span class="k">USER</span><span class="s"> jenkins</span>
+
+<span class="k">COPY</span><span class="s"> plugins.txt /usr/share/jenkins/ref/plugins.txt</span>
+<span class="k">RUN </span>jenkins-plugin-cli <span class="nt">--plugins</span> &lt; /usr/share/jenkins/ref/plugins.txt
+</code></pre></div></div>
+
+<h5 id="run-jenkins-docker">Run Jenkins Docker</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="nv">JENKINS_DATA</span><span class="o">=</span>/var/jenkins_home
+
+<span class="nb">cd </span>jenkins-nvidia-dood
+
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>
+<span class="nb">sudo mkdir</span> <span class="nt">-p</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>/out
+<span class="nb">sudo chown</span> <span class="nt">-R</span> 1000.1000 <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>
+
+docker build <span class="nt">-t</span> jenkins-dood-image <span class="nb">.</span> <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker run <span class="se">\</span>
+	<span class="nt">--name</span> jenkins-dood-container <span class="se">\</span>
+	<span class="nt">--rm</span> <span class="se">\</span>
+	<span class="nt">--detach</span> <span class="se">\</span>
+	<span class="nt">--publish</span> 8080:8080 <span class="se">\</span>
+	<span class="nt">--publish</span> 50000:50000 <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="si">$(</span>which docker<span class="si">)</span>:/usr/bin/docker <span class="se">\</span>
+	<span class="nt">--volume</span> /var/run/docker.sock:/var/run/docker.sock <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>:/var/jenkins_home <span class="se">\</span>
+	<span class="nt">--volume</span> <span class="k">${</span><span class="nv">JENKINS_DATA</span><span class="k">}</span>/out:/var/jenkins_home/out <span class="se">\</span>
+	<span class="nt">--volume</span> /mnt/motional_database:/mnt/motional_database <span class="se">\</span>
+	<span class="nt">--workdir</span><span class="o">=</span>/var/jenkins_home <span class="se">\</span>
+	jenkins-dood-image
+</code></pre></div></div>
+
+<h5 id="stop-jenkins-docker">Stop Jenkins Docker</h5>
+
+<div class="language-bash highlighter-rouge"><div class="highlight"><pre class="highlight"><code>docker stop jenkins-dood-container <span class="o">&amp;&amp;</span> <span class="se">\</span>
+docker rmi jenkins-dood-image
+</code></pre></div></div>
+
+
+    </div>
+
+</article>
+<div class="post-nav">
+<a class="previous" href="/skillorknowhow/2021/08/27/selenium-in-docker.html" title="Python Selenium in Docker">Python Selenium in Docker</a><a class="next" href="/blogging/2021/12/05/markdown-cheat-sheet.html" title="Markdown Cheat Sheet">Markdown Cheat Sheet</a>
+</div>
+<div class="post-related">
+      <div>Related Articles</div>
+      <ul>
+        <li><a class="post-link" href="/gui/2022/03/10/Qt-introduction.html" title="Markdown Cheat Sheet">Qt Introduction</a></li>
+<li><a class="post-link" href="/blogging/2018/12/05/an-exhibit-of-markdown.html" title="Markdown Cheat Sheet">An exhibit of Markdown</a></li>
+<li><a class="post-link" href="/blogging/2017/12/18/video-example.html" title="Markdown Cheat Sheet">Video example</a></li>
+<li><a class="post-link" href="/raspberrypi/2020/10/24/agl-for-raspberrypi.html" title="Markdown Cheat Sheet">Automotive Graded Linux for Raspberry Pi</a></li>
+</ul>
+    </div>
+<div class="post-comments"></div></section>
+</div>
+
+
+  </section>
+  <section class="sidebar" style="margin-left: 15px;">
+    <!-- Get sidebar items --><style type="text/css" media="screen">
+.post-menu ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+</style>
+
+<div class="post-menu">
+  <div class="post-menu-title">TOC</div>
+  <div class="post-menu-content"></div>
+</div>
+
+<script>
+  function generateContent() {
+    var menu = document.querySelector(".post-menu");
+    var menuContent =  menu.querySelector(".post-menu-content");
+    var headings = document.querySelector(".post-content").querySelectorAll("h2, h3, h4, h5, h6");
+
+    // Hide menu when no headings
+    if (headings.length === 0) {
+      return menu.style.display = "none";
+    }
+
+    // Generate post menu
+    var menuHTML = '';
+    for (var i = 0; i < headings.length; i++) {
+      var h = headings[i];
+      menuHTML += (
+        '<li class="h-' + h.tagName.toLowerCase() + '">'
+        + '<a href="#h-' + h.getAttribute('id') + '">' + h.textContent + '</a></li>');
+    }
+
+    menuContent.innerHTML = '<ul>' + menuHTML + '</ul>';
+
+    // The header element
+    var header = document.querySelector('header.site-header');
+
+    function doMenuCollapse(index, over_items) {
+      var items = menuContent.firstChild.children;
+
+      if (over_items == undefined) {
+        over_items = 20;
+      }
+
+      if (items.length < over_items) {
+        return;
+      }
+
+      var activeItem = items[index];
+      var beginItem = activeItem
+      var endItem = activeItem
+      var beginIndex = index;
+      var endIndex = index + 1;
+      while (beginIndex >= 0
+        && !items[beginIndex].classList.contains('h-h2')) {
+        beginIndex -= 1;
+      }
+      while (endIndex < items.length
+        && !items[endIndex].classList.contains('h-h2')) {
+        endIndex += 1;
+      }
+      for (var i = 0; i < beginIndex; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+      for (var i = beginIndex + 1; i < endIndex; i++) {
+        item = items[i]
+        // if (!item.classList.contains('h-h2')) {
+          item.style.display = '';
+        // }
+      }
+      for (var i = endIndex; i < items.length; i++) {
+        item = items[i]
+        if (!item.classList.contains('h-h2')) {
+          item.style.display = 'none';
+        }
+      }
+    }
+
+    // Init menu collapsed
+    doMenuCollapse(-1);
+
+    // Active the menu item
+    window.addEventListener('scroll', function (event) {
+      var lastActive = menuContent.querySelector('.active');
+      var changed = true;
+      var activeIndex = -1;
+      for (var i = headings.length - 1; i >= 0; i--) {
+        var h = headings[i];
+        var headingRect = h.getBoundingClientRect();
+        var headerRect = header.getBoundingClientRect();
+        var headerTop = Math.floor(headerRect.top);
+        var headerHeight = Math.floor(headerRect.height);
+        var headerHeight = headerTop + headerHeight + 20;
+        if (headingRect.top <= headerHeight) {
+          var id = 'h-' + h.getAttribute('id');
+          var a = menuContent.querySelector('a[href="#' + id  + '"]');
+          var curActive = a.parentNode;
+          if (curActive) {
+            curActive.classList.add('active');
+            activeIndex = i;
+          }
+          if (lastActive == curActive) {
+            changed = false;
+          }
+          break;
+        }
+      }
+      if (changed) {
+        if (lastActive) {
+          lastActive.classList.remove('active');
+        }
+        doMenuCollapse(activeIndex);
+      }
+      event.preventDefault();
+    });
+  }
+  generateContent();
+</script>
+</section>
+</div>
+
+      </div>
+    </main><footer class="site-footer h-card">
+  <data class="u-url" href="/"></data>
+
+  <div class="wrapper">
+    <div class="site-footer-inner">
+<div>2019-2022 @ CoolWind coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a>
+</div>
+      <!-- <div>2019-{currentYear} @ {author} coolwind@hotmail.co.kr All rights reserved. Powered by <a href="https://jekyllrb.com/">Jekyll</a> <a href=https://github.com/coolwindjo/coolwindjo.github.io>@CoolWind</a></div> -->
+      <div>Powered by <a title="Jekyll is a simple, blog-aware, static site
+      generator." href="https://jekyllrb.com/">Jekyll</a> &amp; <a title="Yat, yet
+      another theme." href="https://github.com/jeffreytse/jekyll-theme-yat">Yat Theme</a>.</div>
+      <div class="footer-col rss-subscribe">Subscribe <a href="/feed.xml">via RSS</a>
+</div>
+    </div>
+  </div>
+</footer>
+</body>
+</html>
