@@ -19,7 +19,7 @@ tags: [qt, xml, qt-example]
 
 ### Introduction
 
-- In this case, the XML data represents a *cookbook.xml*, which contains \<cookbook\> as its document element,
+- In this case, the XML data represents a cookbook, *cookbook.xml*, which contains \<cookbook\> as its document element,
   - which in turn contains a sequence of \<recipe\> elements.
 - This XML data is searched using queries stored in **XQuery** files (*.xq).
 
@@ -34,7 +34,7 @@ tags: [qt, xml, qt-example]
     - a **text viewer** that displays the XML text from the cookbook file.
   - The middle group box contains
     - a **combo box** for choosing the **XQuery** to run and
-      - The **.xq** files in the file list above are shown in the combo box menu.
+      - The *.xq* files in the file list above are shown in the combo box menu.
         - Choosing an **XQuery** loads, parses, and runs the selected **XQuery**.
     - a **text viewer** for displaying the text of the selected **XQuery**.
   - The query result is shown in the bottom group box's **text viewer**.
@@ -44,7 +44,7 @@ tags: [qt, xml, qt-example]
 - You can write your own **XQuery** files and run them in the example program.
 - The file *xmlpatterns/recipes/recipes.qrc* is the resource file for this example.
   - It is used in *main.cpp (Q_INIT_RESOURCE(recipes);)*.
-  - It lists the **XQuery** files(**.xq**) that can be selected in the combo box.
+  - It lists the **XQuery** files(*.xq*) that can be selected in the combo box.
   ```qrc
   <!DOCTYPE RCC><RCC version="1.0">
   <qresource>
@@ -57,7 +57,7 @@ tags: [qt, xml, qt-example]
   </qresource>
   </RCC>
   ```
-  - To add your own queries to the example's combo box, store your **.xq** files in the *example/xmlpatterns/recipes/files* directory and add them to **recipes.qrc** as shown above.
+  - To add your own queries to the example's combo box, store your *.xq* files in the *example/xmlpatterns/recipes/files* directory and add them to **recipes.qrc** as shown above.
 
 ### Code Walk-Through
 
@@ -99,10 +99,10 @@ private:
 };
 ```
 
-- The constructor finds the window's **combo box** child widget and connects its [currentIndexChanged](<https://doc.qt.io/qt-5/qcombobox.html#currentIndexChanged>){:target="_blank"}() signal to the window's *dispalyQuery()* slot.
-- It then calls *loadInputFile()* to load **cookbook.xml** and
+- The constructor finds the window's **combo box** child widget and connects its [currentIndexChanged](<https://doc.qt.io/qt-5/qcombobox.html#currentIndexChanged>){:target="_blank"}() signal to the window's **dispalyQuery()** slot.
+- It then calls **loadInputFile()** to load *cookbook.xml* and
   - display its contents in the top group box's **text viewer**.
-- Finally, it finds the **XQuery** files(**.xq**) and adds each one to the **combo box** menu.
+- Finally, it finds the **XQuery** files(*.xq*) and adds each one to the **combo box** menu.
 
 ```querymainwindow.cpp
 QueryMainWindow::QueryMainWindow()	:
@@ -142,3 +142,55 @@ void QueryMainWindow::displayQuery(int index)
     evaluate(query);
 }
 ```
+
+- **evaluate()** demonstrates the standard Qt XML Pattern usage pattern.
+  - First, an instance of [QXmlQuery](<https://doc.qt.io/qt-5/qxmlquery.html>){:target="_blank"} is created (query).
+    - The query's [bindVariable](<https://doc.qt.io/qt-5/qxmlquery.html#bindVariable>){:target="_blank"} function is then called to bind the *cookbook.xml* file to the **XQuery** variable *inputDocument*.
+    - *After* the variable is bound, [setQuery](<https://doc.qt.io/qt-5/qxmlquery.html#setQuery>){:target="_blank"}() is called to pass the **XQuery** text to the query.
+
+> Note: **setQuery()** must be called after **bindVariable()**.
+
+- Passing the **XQuery** to **setQuery()** causes Qt XML Patterns to parse the **XQuery**.
+  - [QXmlQuery::isValid](<https://doc.qt.io/qt-5/qxmlquery.html#isValid>){:target="_blank"}() is called to ensure that the **XQuery** was correctly parsed.
+
+```querymainwindow.cpp
+void QueryMainWindow::evaluate(const QString &str)
+{
+    QFile sourceDocument;
+    sourceDocument.setFileName(":/files/cookbook.xml");
+    sourceDocument.open(QIODevice::ReadOnly);
+
+    QByteArray outArray;
+    QBuffer buffer(&outArray);
+    buffer.open(QIODevice::ReadWrite);
+
+    QXmlQuery query;
+    query.bindVariable("inputDocument", &sourceDocument);
+    query.setQuery(str);
+    if (!query.isValid())
+        return;
+
+    QXmlFormatter formatter(query, &buffer);
+    if (!query.evaluateTo(&formatter))
+        return;
+
+    buffer.close();
+    findChild<QTextEdit*>("outputTextEdit")->setPlainText(QString::fromUtf8(outArray.constData()));
+}
+```
+
+- If the **XQuery** is valid, an instance of [QXmlFormatter](<https://doc.qt.io/qt-5/qxmlformatter.html>){:target="_blank"} is created to format the query result as XML into a [QBuffer](<https://doc.qt.io/qt-5/qbuffer.html>){:target}.
+  - To evaluate the **XQuery**, an overload of [evaluateTo](<https://doc.qt.io/qt-5/qxmlquery.html#evaluateTo>){:target="_blank"} is called that takes a [QAbstractXmlReceiver](<https://doc.qt.io/qt-5/qabstractxmlreceiver.html>){:target="_blank"} for its output (**QXmlFormatter** inherits **QAbstractXmlReceiver**).
+- Finally, the formatted XML result is displayed in the UI's bottom text view.
+
+> Note: Each **XQuery** *.xq* file must declare the **$inputDocument** variable to represent the *cookbook.xml* document.
+
+```
+(: All ingredients for Mushroom Soup. :)
+declare variable $inputDocument external;
+
+doc($inputDocument)/cookbook/recipe[@xml:id = "MushroomSoup"]/ingredient/
+<p>{@name, @quantity}</p>
+```
+
+> Note: if you add your own *query.xq* files, you must declare the $inputDocument and use it as shown above.
