@@ -2,7 +2,7 @@
 layout: post
 title: How to remove Nvidia related modules like CUDA toolkit and driver
 categories: MLops
-tags: [nvidia, uninstall, cuda]
+tags: [nvidia, cuda]
 ---
 
 ## Reference Links

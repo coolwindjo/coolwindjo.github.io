@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Title
-categories: ROS / RaspberryPi / GCP / SkillOrKnowhow
+categories: ROS / RaspberryPi / GCP / SkillOrKnowhow / UnitTest
 tags: [ros, lecture, mooc, getting-started, robotics, jenkins, sensor, term, jargon, gcp, google, iot, raspberrypi]
 ---
 
