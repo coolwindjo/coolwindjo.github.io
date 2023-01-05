@@ -7,6 +7,7 @@ tags: [qt, menu, qt-example]
 ## Reference Links
 
 - [Qt Documentation - Menus Example](<https://doc.qt.io/qt-5/qtwidgets-mainwindows-menus-example.html>){:target="_blank"}
+- [Qt Documentation - Qt Widgets Examples](<https://doc.qt.io/qt-5/examples-widgets.html>){:target="_blank"}
 - [Qt Source code - Menus Example](<https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/mainwindows/menus>){:target="_blank"}
 
 ## Menus Example
