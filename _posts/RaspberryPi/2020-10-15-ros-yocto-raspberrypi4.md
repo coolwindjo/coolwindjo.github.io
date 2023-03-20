@@ -5,7 +5,7 @@ categories: RaspberryPi
 tags: [ros, yocto, raspberrypi]
 ---
 
-## Reference Links
+### Reference Links
 
 - [ROS2 yocto meta layer](<https://discourse.ros.org/t/ros2-yocto-meta-layer/9643>){:target="_blank"} Discourse: Discussion about how to install ROS2 into a yocto based system
 - [Best ARM board for ROS](<https://discourse.ros.org/t/best-arm-board-for-ros/152>){:target="_blank"} Discourse: Discussion about Best ARM board for ROS

@@ -5,7 +5,7 @@ categories: Linux
 tags: [task]
 ---
 
-## Process, Thread and Task
+### Process, Thread and Task
 
 | Managing unit | Description
 | ------------- | ---------------------
@@ -33,7 +33,7 @@ $ ps
 
 - Scheduling is determining processes to acquire CPU resource by the Kernel.
 
-## Process structure
+### Process structure
 
 - Virtual address space structure
   - One of the representative resource being allocated by the kernel to run process
@@ -52,7 +52,7 @@ $ ps
   | Data region                             | Fixed region on top of Text region           | Global variables
   | Text region                             | Fixed region at the beginning of user space  | CPU instructions
 
-## Creation and Execution of Process and Thread
+### Creation and Execution of Process and Thread
 
 - fork()
 
@@ -193,4 +193,4 @@ Parent
 - After execl() is not printed because "execl()" replace the process image "fork_exec" (including text, data, stack) with the previous image "fork".
 - In this case, "vfork()" can be used for the same address space with parent's so that redundant memory space does not created before being replaced with the previous image "fork".
 
-## Linux task model
+### Linux task model

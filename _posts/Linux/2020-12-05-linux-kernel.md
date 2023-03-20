@@ -5,7 +5,7 @@ categories: Linux
 tags: [kernel]
 ---
 
-## Linux kernel structure
+### Linux kernel structure
 
 - Operating System is a resource manager
 - Resource
@@ -123,7 +123,7 @@ tags: [kernel]
     Network           | Communication protocol, Packet | Network Manager    | /ipc
     Devices           | Device drivers for each devices| Device Manager     | /driver
 
-## Linux kernel compile
+### Linux kernel compile
 
 - For new version of linux kernel, just compile and reboot the new kernel.
 

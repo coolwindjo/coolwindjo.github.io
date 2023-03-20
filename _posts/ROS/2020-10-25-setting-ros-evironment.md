@@ -5,7 +5,7 @@ categories: ROS
 tags: [ros, official, tutorial]
 ---
 
-## ROS Official Tutorial
+### ROS Official Tutorial
 
 1. [ROS + Docker](<http://wiki.ros.org/docker/Tutorials/Docker>){:target="_blank"}
     - [Getting started with ROS and Docker Compose](<http://wiki.ros.org/docker/Tutorials/Compose>){:target="_blank"}
@@ -15,7 +15,7 @@ tags: [ros, official, tutorial]
 3. [ROS Tutorials](<http://wiki.ros.org/ROS/Tutorials>){:target="_blank"}
     - [Installing from source](<http://wiki.ros.org/jade/Installation/Source>){:target="_blank"}
 
-## Install Dependent Libraries
+### Install Dependent Libraries
 
 ![Build error for a dependent library]({{ "/assets/images/posts/2020-10-25/error_ros_dependent_lib.png" | relative_url }})
 
@@ -48,7 +48,7 @@ ros-melodic-costmap-2d
 #ros-melodic-roscpp-git \
 #ros-melodic-std-msgs \
 #ros-melodic-roslint \
-#ros-melodic-filters \ 
+#ros-melodic-filters \
 #ros-melodic-joint-limits-interface \
 #ros-melodic-catkin \
 #ros-build-tools \

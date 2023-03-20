@@ -6,9 +6,9 @@ tags: [dockerfile, jenkins, docker, dind, dood]
 ---
 
 
-## Jenkins in Docker
+### Jenkins in Docker
 
-### Reference Links
+#### Reference Links
 
 - Install Jenkins via Docker
   - [Official Manual - Jenkins via Docker](<https://www.jenkins.io/doc/book/installing/docker/#customizing-jenkins-with-plugins>){:target="_blank"} Useful guide for Downloading and running Jenkins in Docker
@@ -27,9 +27,9 @@ tags: [dockerfile, jenkins, docker, dind, dood]
   - [Blog - Jenkins2 Pipeline jobs using Groovy code in Jenkinsfile](<https://wilsonmar.github.io/jenkins2-pipeline/#unicode-icons>){:target="_blank"} Miscellaneous knowledges about Jenkinsfile
   - [Blog - Guide for Jenkins Role-based Authorization Strategy](<https://www.guru99.com/create-users-manage-permissions.html>){:target="_blank"} Useful guide for access control on jenkins
 
-## DinD and DooD for jenkins
+### DinD and DooD for jenkins
 
-### Reference Links
+#### Reference Links
 
 - Background knowledges
   - [Blog - Docker Client - Server Arhitecture](<https://aidanbae.github.io/code/docker/docker-overview/>){:target="_blank"} Docker Client - Server Arhitecture
@@ -43,7 +43,7 @@ tags: [dockerfile, jenkins, docker, dind, dood]
   - [Blog - DinD rather than DooD on K8s by applatix](<https://applatix.com/case-docker-docker-kubernetes-part/>){:target="_blank"} DinD can be better structure when you use kubernetes
 
 
-### Docker Client - Server Arhitecture
+#### Docker Client - Server Arhitecture
 
 - Client (e.g. docker CLI) requests to the Docker Daemon (dockerd)
 - Using belows for communication
@@ -52,7 +52,7 @@ tags: [dockerfile, jenkins, docker, dind, dood]
   - TCP Socket (between remote machines)
 
 
-### Docker in Docker
+#### Docker in Docker
 
 - Two docker daemons exist.
   - One on the host
@@ -65,15 +65,15 @@ tags: [dockerfile, jenkins, docker, dind, dood]
     - security profiles,
     - etc.
 
-#### Reference Links
+##### Reference Links
 
 - [Github - NVIDIA DinD (Docker in Docker) Container by ehfd](<https://github.com/ehfd/nvidia-dind>){:target="_blank"} GPU enabled DinD but not suitable for Jenkins (which create a separate DinD container apart from the jenkins container)
 
-#### Sample Source Codes
+##### Sample Source Codes
 
 - [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/master_nvidia_dind>){:target="_blank"}
 
-##### Dockerfiles
+###### Dockerfiles
 
 ```Dockerfile
 FROM jenkins/jenkins:2.303.2-jdk11
@@ -143,7 +143,7 @@ ENTRYPOINT ["startup.sh"]
 CMD ["sh"]
 ```
 
-##### Run Jenkins Docker (for Docker in Docker)
+###### Run Jenkins Docker (for Docker in Docker)
 
 ```bash
 JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data
@@ -169,7 +169,7 @@ docker run \
 	--storage-driver overlay2	# The storage driver for the Docker volume. See "Docker storage drivers" for supported options.
 ```
 
-##### Stop Jenkins Docker (for Docker in Docker)
+###### Stop Jenkins Docker (for Docker in Docker)
 
 ```bash
 docker stop nvidia-dind-container
@@ -182,7 +182,7 @@ docker volume rm jenkins-docker-certs
 ```
 
 
-##### Run Jenkins (installed) Container
+###### Run Jenkins (installed) Container
 
 ```bash
 JENKINS_DATA=${PWD}/../../workspace/jenkins_home/data
@@ -210,7 +210,7 @@ docker run \
 	jenkins-image
 ```
 
-##### Stop Jenkins Container
+###### Stop Jenkins Container
 
 ```bash
 docker stop jenkins-container
@@ -218,7 +218,7 @@ docker stop jenkins-container
 docker rmi jenkins-image
 ```
 
-### Docker out of Docker
+#### Docker out of Docker
 
 - Only docker daemon runs on the host.
   - Client (e.g. docker CLI) is on a container on a host
@@ -248,7 +248,7 @@ docker rmi jenkins-image
       - It can remove containers created by other entities on the host, or
       - even create unsecure privileged containers putting the host at risk.
 
-#### Reference Links
+##### Reference Links
 
 - Jekins using DooD
   - [Gitee - Jenkins with DooD (Docker outside of Docker) by onisuly](<https://gitee.com/onisuly/docker-jenkins-dood>){:target="_blank"} Simple Dockerfile being referred most
@@ -256,11 +256,11 @@ docker rmi jenkins-image
   - [Github - Jenkins with DooD (Docker outside of Docker) by axltxl](<https://github.com/axltxl/docker-jenkins-dood>){:target="_blank"} Last commit is done in 2016 and it is using supervisor
   - [Github - Simple-Jenkins-DooD by toto1310](<https://github.com/toto1310/Simple-Jenkins-DooD>){:target="_blank"} Last commit is done in 2019 and refer it for making the Dockerfile to use latest jenkins docker image
 
-#### Sample Source Codes
+##### Sample Source Codes
 
 - [Scripts for Jenkins in Docker](<https://github.com/coolwindjo/jenkins_scripts/tree/master_nvidia_dood>){:target="_blank"}
 
-##### Dockerfile
+###### Dockerfile
 
 ```Dockerfile
 ARG tag=${DOCKER_TAG:-lts}
@@ -295,7 +295,7 @@ COPY plugins.txt /usr/share/jenkins/ref/plugins.txt
 RUN jenkins-plugin-cli --plugins < /usr/share/jenkins/ref/plugins.txt
 ```
 
-##### Run Jenkins Docker
+###### Run Jenkins Docker
 
 ```bash
 JENKINS_DATA=/var/jenkins_home
@@ -322,7 +322,7 @@ docker run \
 	jenkins-dood-image
 ```
 
-##### Stop Jenkins Docker
+###### Stop Jenkins Docker
 
 ```bash
 docker stop jenkins-dood-container && \

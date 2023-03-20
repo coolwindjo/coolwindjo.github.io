@@ -4,12 +4,12 @@ categories: GUI
 tags: [qt, ]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt for Beginners](<https://wiki.qt.io/Qt_for_Beginners>){:target="_blank"}
 
 
-## Introduction to Qt
+### Introduction to Qt
 
 - Qt (pronounced as "cute", not "cu-tee") is a cross-platform framework that is usually used as a graphical toolkit, although it is also very helpful in creating CLI applications.
 
@@ -25,9 +25,9 @@ tags: [qt, ]
   - **QtXML**, support for simple XML parsing (SAX) and DOM
   - **QtXmlPatterns**, support for XSLT, XPath, XQuery and Schema validation
 
-## Run the first Qt app. via Docker Container
+### Run the first Qt app. via Docker Container
 
-### Scripts
+#### Scripts
 
   - run-qt5-container.sh
 
@@ -73,7 +73,7 @@ tags: [qt, ]
     #ENTRYPOINT [ "qtcreator" ]
     ```
 
-### Create window
+#### Create window
 
   - Let's start by creating our first project. It will be an empty project, so we have to proceed with: File > New file or project > Other Projects > Empty Qt Project
   ![image of the new project wizard]({{"https://qt-wiki-uploads.s3.amazonaws.com/images/thumb/0/0f/Beginners-01-NewProject.jpg/600px-Beginners-01-NewProject.jpg"}})
@@ -124,7 +124,7 @@ tags: [qt, ]
   }
   ```
 
-## How a Qt program is compiled
+### How a Qt program is compiled
 
 - Qt apps are compiled in 3 steps
   - A .pro file is written to describe the project to compile
@@ -139,7 +139,7 @@ tags: [qt, ]
   ./hello_world_app
   ```
 
-### Widgets
+#### Widgets
 
 Qt objects have a lot of attributes that can be modified using getters and setters. In Qt, if an attribute is called foo, the associated getter and setter will have these signatures
 
@@ -174,7 +174,7 @@ For now, we will use "attribute" or "property" to do the same thing.
   - tooltip
   ...
 
-### Qt class hierarchy
+#### Qt class hierarchy
 
 @startuml
 QObject <|-- QThread
@@ -217,7 +217,7 @@ This inheritance is done in order to facilitate properties management.
 - Shared properties like size and cursors can be used on other graphical components, and
 - QAbstractButton provides basic properties that are shared by all buttons.
 
-### Parenting system
+#### Parenting system
 
 Parenting system is a convenient way of dealing with objects in Qt, especially widgets. Any object that inherits from QPObject can have a parent and children. This hierarchy tree makes many things convenient:
 - When an object is destroyed, all of its children are destroyed as well. So calling delete becomes optional in certain cases.
@@ -277,7 +277,7 @@ void QWidget::setFixedSize(int width, int height)
 void QWidget::setGeometry(int x, int y, int width, int height)
 ```
 
-### Subclassing QWidget
+#### Subclassing QWidget
 
 We might want to split our code into different classes. What is often done is to create a class that is used to display a window, and implement all the widgets that are contained in this window as attributes of this class.
 

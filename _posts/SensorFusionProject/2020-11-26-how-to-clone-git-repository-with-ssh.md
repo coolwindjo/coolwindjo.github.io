@@ -5,7 +5,7 @@ categories: SensorFusionProject
 tags: [getting-started, ssh, git]
 ---
 
-## Generate your SSH key for your convenient git work
+### Generate your SSH key for your convenient git work
 
 If you don't already have an SSH key, you must generate a new SSH key. If you're unsure whether you already have an SSH key, check for existing keys.
 
@@ -49,7 +49,7 @@ ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDltFNAyuz2eRra1NIdYC9Nh/3e/OQh4JXXuvFTv/s
 
 ```
 
-## Add the SSH key to your GitHub account
+### Add the SSH key to your GitHub account
 
 - Go to Settings on your GitHub Profile
 ![Add the SSH key to your GitHub account 1]({{ "/assets/images/posts/2020-11-26/github_page1.png" | relative_url }})

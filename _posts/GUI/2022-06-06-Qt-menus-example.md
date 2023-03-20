@@ -4,13 +4,13 @@ categories: GUI
 tags: [qt, menu, qt-example]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt Documentation - Menus Example](<https://doc.qt.io/qt-5/qtwidgets-mainwindows-menus-example.html>){:target="_blank"}
 - [Qt Documentation - Qt Widgets Examples](<https://doc.qt.io/qt-5/examples-widgets.html>){:target="_blank"}
 - [Qt Source code - Menus Example](<https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/mainwindows/menus>){:target="_blank"}
 
-## Menus Example
+### Menus Example
 
 - How menus can be used in a main window application
 - Menu widget can be either
@@ -29,7 +29,7 @@ tags: [qt, menu, qt-example]
 - The Menus example consists of one single class, MainWidow, derived from the [QMainWindow](<https://doc.qt.io/qt-5/qmainwindow.html>){:target="_blank"} class.
   - When choosing one of the action items in our application, it will display the item's path in its central widget.
 
-### MainWindow Class Definition
+#### MainWindow Class Definition
 
 - [QMainWindow](<https://doc.qt.io/qt-5/qmainwindow.html>){:target="_blank"} class provides a main application window, with a menu bar, tool bars, dock widgets and a status bar around a large central widget.
 
@@ -127,7 +127,7 @@ private:
   - e.g., we have a Left Align actions, a Right Align action, a Justify action, and a Center action, and we want only one of these actions to be active at any one time.
   - One simple way of achieving this is to group the actions together in an action group using the [QActionGroup](<https://doc.qt.io/qt-5/qactiongroup.html>){:target="_blank"} class.
 
-### MainWindow Class Implementation
+#### MainWindow Class Implementation
 
 - In the constructor, we start off by creating a regular QWidget and make it our main window's central widget.
   - Note that the main window takes ownership of the widget pointer and deletes it at the appropriate time.

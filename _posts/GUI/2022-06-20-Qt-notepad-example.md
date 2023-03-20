@@ -4,7 +4,7 @@ categories: GUI
 tags: [qt, notepad, qt-example]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt Documentation - Notepad Example](<https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html>){:target="_blank"}
 - [Qt Source code - Notepad Example](<https://code.qt.io/cgit/qt/qtbase.git/tree/examples/widgets/tutorials/notepad>){:target="_blank"}
@@ -30,7 +30,7 @@ tags: [qt, notepad, qt-example]
 - [tr() and internationalization - Writing Source Code for Translation](<https://doc.qt.io/qt-6/i18n-source-translation.html>){:target="_blank"}
 - [tr() and internationalization - Internationalization with Qt](<https://doc.qt.io/qt-6/internationalization.html>){:target="_blank"}
 
-## Goals
+### Goals
 
 - We teach basic Qt knowledge by implementing a simple Notepad application using C++ and the [QtWidgets](<https://doc.qt.io/qt-6/qtwidgets-index.html>){:target="_blank"} module.
   - The application is a small text editor which allows you to...
@@ -40,15 +40,15 @@ tags: [qt, notepad, qt-example]
     - or reopen and edit it again.
     - set the font to be used.
 
-## Notepad Example
+### Notepad Example
 
 ![notepad_example]({{"/assets/images/posts/2022-06-20/notepad_example.png"}})
 
-### Running the example
+#### Running the example
 
 - To run the example from [Qt Creator](<https://doc.qt.io/qtcreator/index.html>), open the Welcome mode and select the example from Examples.
 
-### Creating the Notepad Project
+#### Creating the Notepad Project
 
 - Setting up a new project in Qt Creator is aided by a wizard that guides you step-by-step through the project creation process.
   - The wizard prompts you to enter the settings needed for that particular type of project and creates the project for you.
@@ -73,7 +73,7 @@ tags: [qt, notepad, qt-example]
 
 - The files come with the necessary boiler plate code for you to be able to build and run the project.
 
-### Main Source File
+#### Main Source File
 
 - The wizard generates the following code in th main.cpp file:
 
@@ -116,13 +116,13 @@ int main(int argc, char *argv[])    // 2.
   - When a Qt application is running, events are generated and sent to the widgets of the application.
   - e.g. mouse presses and key strokes
 
-### Designing a UI
+#### Designing a UI
 
 - The wizard generates a UI definition in XML format: notepad.ui.
   - When you open the notepad.ui file in Qt Creator, it automatically opens in the integrated Qt Designer.
 - When you build the application, Qt Creator launches the Qt [User Interface Compiler (uic)](<https://doc.qt.io/qt-6/uic.html>){:target="_blank"} that reads the .ui file and creates a corresponding C++ header file, ui_notepad.h.
 
-### Using Qt Designer
+#### Using Qt Designer
 
 - The wizard creates an application that uses a [QMainWindow](<https://doc.qt.io/qt-6/qmainwindow.html>){:target="_blank"}.
   - It has its own layout to which you can add
@@ -182,7 +182,7 @@ int main(int argc, char *argv[])    // 2.
 
 - The UI file is used together with the header and source file of the Notepad class.
 
-### Notepad Header File
+#### Notepad Header File
 
 - The wizard generated a header file for the Notepad class that has the necessary #includes, a constructor, a destructor, and the Ui object.
 
@@ -225,7 +225,7 @@ private:
 6. Declares a member variable which is a pointer to the Notepad UI class.
   - A member variable is associated with a specific class, and accessible for all its methods.
 
-### Notepad Source File
+#### Notepad Source File
 
 - The source file that the wizard generated for the Notepad class looks as follows:
 
@@ -253,7 +253,7 @@ Notepad::~Notepad()   // 6.
 5. Sets up the UI.
 6. In the destructor, we delete the **ui**.
 
-### Project File
+#### Project File
 
 - The wizard generates the following project file, **CMakeLists.txt**, for us.
 
@@ -321,7 +321,7 @@ endif()
 
 - The project file specifies the source, header, and UI files included in the project.
 
-### Adding User Interaction
+#### Adding User Interaction
 
 ![qtcreator_ui_type_here]({{"/assets/images/posts/2022-06-20/qtc_ui_type_here.png"}})
 
@@ -362,7 +362,7 @@ private:
   QString currentFile;
 ```
 
-### Opening a file
+#### Opening a file
 
 - In notepad.ui, right click on actionOpen and select **Go to Slot**
 - Complete method open().
@@ -397,7 +397,7 @@ void Notepad::on_actionOpen_triggered()
   - The contents of file *myfile* is copied into [QString](<https://doc.qt.io/qt-6/qstring.html>){:target="_blank"} text.
   - *setText(text)* fills the buffer of out editor with text.
 
-### Saving a file
+#### Saving a file
 
 - We create the method for saving a file in the same way as for [Opening a file](<https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#opening-a-file>){:target="_blank"}, by right clinking on *actionSave*, and selecting **Go to Slot**.
 
@@ -434,7 +434,7 @@ void Notepad::on_actionSave_triggered()
   - We create a **QTextStream** *outstream*.
   - The contents of the editor buffer is converted to plain text, and then written to *outstream*.
 
-### Saving a file under another name
+#### Saving a file under another name
 
 ```notepad.cpp
 void Notepad::on_actionSave_as_triggered()
@@ -458,7 +458,7 @@ void Notepad::on_actionSave_as_triggered()
 
 - This is the same procedure as for [Saving a file](<https://doc.qt.io/qt-6/qtwidgets-tutorials-notepad-example.html#saving-a-file>){:target="_blank"}, the only difference being that here you need to enter a new file name for the file to be created.
 
-### Printing a File
+#### Printing a File
 
 If you want to use print functionalities, you need to add *PrintSupport* to the project file:
 
@@ -490,7 +490,7 @@ void Notepad::on_actionPrint_triggered()
   - If we clicked on *Cancel* and did not select a printer, the methods returns.
   - The actual printer command is given with *ui->textEdit->print* with our QPrinter object as parameter.
 
-### Select a Font
+#### Select a Font
 
 ```notepad.cpp
 void Notepad::on_actionFont_triggered()
@@ -505,7 +505,7 @@ void Notepad::on_actionFont_triggered()
 - We declare a boolean indicating  if we did select a font with [QFontDialog](<https://doc.qt.io/qt-6/qfontdialog.html>){:target="_blank"}.
   - If so, we set the font with *ui->textEdit->setFont(myfont)*.
 
-### Copy, Cut, Paste, Undo and Redo
+#### Copy, Cut, Paste, Undo and Redo
 
 - If you select some text, and want to copy it to the clipboard, you call the appropriate method of *ui->textEdit*. The same counts for cut, paste, undo and redo.
 

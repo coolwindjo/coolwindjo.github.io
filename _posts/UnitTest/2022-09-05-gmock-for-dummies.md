@@ -4,14 +4,14 @@ categories: UnitTest
 tags: [gmock, dummy]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Official GoogleTest - gMock for Dummies](<http://google.github.io/googletest/gmock_for_dummies.html>){:target="_blank"}
 
 
-## gMock for Dummies
+### gMock for Dummies
 
-### What is gMock?
+#### What is gMock?
 
 - When writing Prototype or test,
   - not feasible or
@@ -42,9 +42,9 @@ tags: [gmock, dummy]
   3. exercise code that uses the mock objects.
     - gMock will catch any violation to the expectations as soon as it arises
 
-### Getting Started
+#### Getting Started
 
-#### A Case for Mock Turtles
+##### A Case for Mock Turtles
 
 - For testing a graphics program, you can compare the screen with a golden screen snapshot.
   - tests like this are expensive to run and fragile
@@ -86,12 +86,12 @@ class Turtle {
     - easier to read and maintain,
     - and run much, much faster.
 
-### Writing the Mock Class
+#### Writing the Mock Class
 
 - If you are lucky, the mocks you need to use have already been implemented.
 - Otherwise, gMock turns this work into a fun game!
 
-#### How to Define it
+##### How to Define it
 
 - Using the *Turtle* interface as example, follow these simple steps.
   - Derive a class *MockTurtle* from *Turtle*.
@@ -131,7 +131,7 @@ class MockTurtle : public Turtle {
 
 
 
-### Setting Expectations
+#### Setting Expectations
 
 - The key to using a mock object successfully is to
   - set the right expectations on it.
@@ -142,7 +142,7 @@ class MockTurtle : public Turtle {
     - such that your test can catch exactly the kind of bugs you intend it to catch.
 - gMock provides the necessary means for you to do it "just right".
 
-#### General Syntax
+##### General Syntax
 
 - In gMock we use the *EXPECT_CALL()* macro to set an expectation on a mock method.
 - The general syntax is:

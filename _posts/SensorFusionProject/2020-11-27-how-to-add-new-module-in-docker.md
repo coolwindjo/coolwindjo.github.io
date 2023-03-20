@@ -5,7 +5,7 @@ categories: SensorFusionProject
 tags: [getting-started, docker]
 ---
 
-## Modify Dockerfile
+### Modify Dockerfile
 
 ```terminal
 
@@ -20,7 +20,7 @@ vim Dockerfile
 - You can bring another RUN header for your own shell command.
 ![Modify Dockerfile]({{ "/assets/images/posts/2020-11-27/modify_dockerfile.png" | relative_url }})
 
-## Temporally modify the run-docker.sh to use your own container to be built with the Dockerfile
+### Temporally modify the run-docker.sh to use your own container to be built with the Dockerfile
 
 ```terminal
 
@@ -33,7 +33,7 @@ vim run-docker.sh
 - Replace the "IMAGE='coolwindjo/ros-melodic:latest'" with "IMAGE='ros-melodic:latest'" by removing and adding sharps(#)
 ![Modify run-docker.sh]({{ "/assets/images/posts/2020-11-27/modify_rundocker.png" | relative_url }})
 
-## Execute the script for building the Dockerfile and running the corresponding docker container
+### Execute the script for building the Dockerfile and running the corresponding docker container
 
 ```terminal
 
@@ -45,11 +45,11 @@ $ ./build_and_run.sh
 
 ```
 
-## Test your new module
+### Test your new module
 
 - Now, you can test your new module in the new docker container.
 
-## Push the Dockerfile only and reset the others
+### Push the Dockerfile only and reset the others
 
 ```terminal
 

@@ -5,7 +5,7 @@ categories: ROS
 tags: [ros, lecture, mooc, robotis]
 ---
 
-## ROS References
+### ROS References
 
 - [ROS Robotis Lecture](<https://www.youtube.com/playlist?list=PLRG6WP3c31_VIFtFAxSke2NG_DumVZPgw>){:target="_blank"} Youtube
   - [Material](<https://github.com/robotpilot/ros-seminar>){:target="_blank"} Github
@@ -19,19 +19,19 @@ tags: [ros, lecture, mooc, robotis]
 - [OpenRTM-aist](<https://www.openrtm.org/openrtm/>){:target="_blank"}
 - [오로카](<https://cafe.naver.com/openrt/23862>){:target="_blank"} Naver Cafe
 
-## Robotics OS 종류
+### Robotics OS 종류
 
 ![Image of Robotics OSes]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_1.png" | relative_url }})
 
-## Communication b/w Heterogeneous Multi-devices
+### Communication b/w Heterogeneous Multi-devices
 
 ![Image of communication b/w multi-devices]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_3.png" | relative_url }})
 
-## Structure of ROS
+### Structure of ROS
 
 ![Image of Structure of ROS]({{ "/assets/images/posts/2020-10-08/robotis-lec-1_4.png" | relative_url }})
 
-## Features of ROS
+### Features of ROS
 
 1. Communication Function
     - Node 간 Data 통신을 제공
@@ -87,7 +87,7 @@ tags: [ros, lecture, mooc, robotis]
         - Physics Engine을 탑재, Robot, Sensor, 환경 Model 등을 지원
       - ROS와의 높은 호환성
 
-## ROS Release Schedule과 Version 선택
+### ROS Release Schedule과 Version 선택
 
 - ROS Releases
   - 2020.05.23 - Noetic Ninjemys (LTS)

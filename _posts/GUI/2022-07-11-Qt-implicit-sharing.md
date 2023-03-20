@@ -4,7 +4,7 @@ categories: GUI
 tags: [qt, memory-management, copy-on-write, shared-data]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt - Implicit Sharing](<https://doc.qt.io/qt-6/implicit-sharing.html>){:target="_blank"}
 - [Qt - Implicit Sharing iterator problem](<https://doc.qt.io/qt-6/containers.html#implicit-sharing-iterator-problem>){:target="_blank"}
@@ -12,7 +12,7 @@ tags: [qt, memory-management, copy-on-write, shared-data]
 - [Qt - QSharedData](<https://doc.qt.io/qt-6/qshareddata.html>){:target="_blank"}
 - [Qt - QSharedDataPointer](<https://doc.qt.io/qt-6/qshareddatapointer.html>){:target="_blank"}
 
-## Implicit Sharing
+### Implicit Sharing
 
 - Many C++ classes in Qt use implicit data sharing to
   - maximize resource usage and
@@ -22,7 +22,7 @@ tags: [qt, memory-management, copy-on-write, shared-data]
   - the data is copied only if and when a function writes to it,
     - i.e., copy-on-write
 
-### Overview
+#### Overview
 
 - A shared class consists of
   - a pointer to a shared data block that contains
@@ -50,7 +50,7 @@ tags: [qt, memory-management, copy-on-write, shared-data]
 - In multithreaded applications implicit sharing takes place, as explained in **Qt - Threads and Implicitly Shared Classes**.
 - When implementing your own implicitly shared classes, use the **QSharedData**, and **QSharedDataPointer** classes.
 
-### Implicit Sharing in Detail
+#### Implicit Sharing in Detail
 
 - Copy-On-Write or Value semantics
   - Implicit sharing automatically detaches the object from a shared block
@@ -77,7 +77,7 @@ void QPen::detach()
 }
 ```
 
-### List of Classes
+#### List of Classes
 
 - The classes listed below automatically detach from common data if an object is about to be changed.
   - The programmer will not even notice that the objects are shared.

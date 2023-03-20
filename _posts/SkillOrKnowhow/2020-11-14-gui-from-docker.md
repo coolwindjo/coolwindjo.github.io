@@ -5,7 +5,7 @@ categories: SkillOrKnowhow
 tags: [gui, docker]
 ---
 
-## Add xhost access permission for the docker
+### Add xhost access permission for the docker
 
 ```terminal
 $ xhost +local:docker

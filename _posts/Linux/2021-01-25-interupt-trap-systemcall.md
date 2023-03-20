@@ -5,11 +5,11 @@ categories: Linux
 tags: [interupt, trap, system-call]
 ---
 
-## Interupt Handling Procedure
+### Interupt Handling Procedure
 
-## System Call Handling Procedure
+### System Call Handling Procedure
 
-## Additional System Call Implementation
+### Additional System Call Implementation
 
 - Adding a new system call
   1. Add a new system call number "317" and register the signature "sys_newsyscall()" to the "sys_call_table" in the "~/arch/x86/kernel/syscalls/syscall_64_tbl" file.
@@ -57,7 +57,7 @@ tags: [interupt, trap, system-call]
       - Use gcc option "-l" for linking the library
       - Use gcc option "-L" for specifying the directory includes the library
 
-## System Call Implementation Extended
+### System Call Implementation Extended
 
 - Two major objectives for using system call
   1. Ask kernel to execute a kernel service

@@ -5,7 +5,7 @@ categories: ROS
 tags: [ros, lecture, mooc]
 ---
 
-## ROS basics
+### ROS basics
 
 - [Axis Orientation](<https://www.ros.org/reps/rep-0103.html#coordinate-frame-conventions>){:target="_blank"}
 
@@ -47,7 +47,7 @@ tags: [ros, lecture, mooc]
   | Constant       | ALL_CAPITALS | const uint8_t DAYS_IN_A_WEEK = 7;
   | Macro          | ALL_CAPITALS | #define PI_ROUNDED 3.0
 
-## ROS Message Communications
+### ROS Message Communications
 
 - Overall Diagram
 
@@ -57,10 +57,10 @@ tags: [ros, lecture, mooc]
   - Service
   - Action
   - Parameter
-  
-### ROS Package Creation
 
-#### Create ROS Package for Topic Test
+#### ROS Package Creation
+
+##### Create ROS Package for Topic Test
 
 ```terminal
 cw
@@ -121,7 +121,7 @@ CATKIN_DEPENDS roscpp std_msgs
 )
 
 ###########
-## Build ##
+### Build ##
 ###########
 
 include_directories(
@@ -142,7 +142,7 @@ ${catkin_LIBRARIES}
 )
 ```
 
-#### Create ROS Package for Service Test
+##### Create ROS Package for Service Test
 
 ```terminal
 cw
@@ -203,7 +203,7 @@ CATKIN_DEPENDS roscpp std_msgs
 )
 
 ###########
-## Build ##
+### Build ##
 ###########
 
 include_directories(
@@ -224,9 +224,9 @@ ${catkin_LIBRARIES}
 )
 ```
 
-### Message File Creation
+#### Message File Creation
 
-#### Create Message File for Topic Test
+##### Create Message File for Topic Test
 
 ```terminal
 roscd ros_tutorials_topic_josh
@@ -245,7 +245,7 @@ int32 data
   - common_msgs: common messages being used in ROS
   - [Message reference](<http://wiki.ros.org/msg>){:target="_blank"}
 
-#### Create Launch File for Topic Test
+##### Create Launch File for Topic Test
 
 ```terminal
 roscd ros_tutorials_topic_josh
@@ -294,7 +294,7 @@ vim union.launch
 roslaunch my_package my_package.launch updaete_period:=30
 ```
 
-#### Create Service File for Service Test
+##### Create Service File for Service Test
 
 ```terminal
 roscd ros_tutorials_service_josh
@@ -316,9 +316,9 @@ int64 result
   - common_msgs: common messages being used in ROS
   - [Message reference](<http://wiki.ros.org/msg>){:target="_blank"}
 
-### Source File Creation
+#### Source File Creation
 
-#### Create Publisher and Subscriber Nodes for Topic Test
+##### Create Publisher and Subscriber Nodes for Topic Test
 
 - Publisher Node Creation
 
@@ -401,7 +401,7 @@ int64 result
       return 0;
   }
   ```
-#### Create Server and Client Nodes for Service Test
+##### Create Server and Client Nodes for Service Test
 
 - Server Node Creation
 
@@ -499,7 +499,7 @@ int64 result
   }
   ```
 
-#### Create Server and Client Nodes for Parameter Test
+##### Create Server and Client Nodes for Parameter Test
 
 - Server Node Creation
 
@@ -578,13 +578,13 @@ int64 result
 
   - Use the same file as the one in the Service Test
 
-### Build and Run the Sample Packages
+#### Build and Run the Sample Packages
 
 ```terminal
 cm
 ```
 
-#### Execute Publisher and Subscriber Nodes for Topic Test
+##### Execute Publisher and Subscriber Nodes for Topic Test
 
 ```terminal
 rosrun ros_tutorials_topic_josh topic_publisher_josh
@@ -594,7 +594,7 @@ rosrun ros_tutorials_topic_josh topic_publisher_josh
 rosrun ros_tutorials_topic_josh topic_subscriber_josh
 ```
 
-#### Execute Server and Client Nodes for Service Test
+##### Execute Server and Client Nodes for Service Test
 
 ```terminal
 $ rosrun ros_tutorials_service_josh service_server_josh
@@ -609,7 +609,7 @@ $ rosservice call /ros_tutorial_srv 10 2
 result: 12
 ```
 
-#### Execute Server and Client Nodes for Parameter Test
+##### Execute Server and Client Nodes for Parameter Test
 
 ```terminal
 $ rosrun ros_tutorials_service_josh service_server_josh

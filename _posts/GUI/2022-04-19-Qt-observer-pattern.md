@@ -4,11 +4,11 @@ categories: GUI
 tags: [qt, observer-pattern, signal, slot]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt for Beginners](<https://wiki.qt.io/Qt_for_Beginners>){:target="_blank"}
 
-## The observer pattern
+### The observer pattern
 
 - Nearly all UI toolkits have a mechanism to detect an user action, and respond to this action.
   - Some of them use callbacks, other use listeners, but basically, all of them are inspired by the observer pattern.
@@ -21,7 +21,7 @@ tags: [qt, observer-pattern, signal, slot]
       - Qt was created with the idea of removing this boilerplate code and providing a nice and clean syntax,
       - And the signal and slots mechanism is the answer.
 
-## Signals and slots
+### Signals and slots
 
 - Instead of having observable objects and observers, and registering them, Qt provides two high level concepts: **signals** and **slots**.
   - A **signal** is a message
@@ -55,7 +55,7 @@ tags: [qt, observer-pattern, signal, slot]
     - While the notion of a *signal* as a method is unusual,
       - a *slot* is actually a real method, and can be called as usual in other methods, or whilst responding to a *signal*.
 
-## Transmitting information
+### Transmitting information
 
 - The *signal*s and *slot*s mechanism is useful to respond to buttons clicks, but it can do much more than that.
   - For example, it can also be used to communicate information.
@@ -87,7 +87,7 @@ tags: [qt, observer-pattern, signal, slot]
           - You can see that you have to provide a signature inside the *SIGNAL* and *SLOT* macro, providing the type of values that are passed through the *signal*s.
             - You may also provide the name of the variable if you want. (It is actually even better).
 
-## Feature of signals and slots
+### Feature of signals and slots
 
 - A *signal* can be connected to several *slots*
 - Many *signals* can be connected to a *slot*
@@ -95,7 +95,7 @@ tags: [qt, observer-pattern, signal, slot]
   - it is *signal* relaying.
   - The second is sent if the first *signal* is sent
 
-## Examples
+### Examples
 
 - Responding to an event
   - [QPushButton](<https://doc.qt.io/qt-5/qpushbutton.html>){:target="_blank"} provides the *clicked* signal.
@@ -128,7 +128,7 @@ tags: [qt, observer-pattern, signal, slot]
     ```
     - While clicking on the button inside of the window, the application should quit.
 
-## Transmitting information with signals and slots
+### Transmitting information with signals and slots
 
 - Simpler example for information transmission.
   - Only displays a progress bar and a slider (created by [QSlider](<http://doc.qt.io/qt-5/qslider.html#>){:target="_blank"}) inside a window, and while the slider is moved, the value of the progress bar is synced with a very simple connection.

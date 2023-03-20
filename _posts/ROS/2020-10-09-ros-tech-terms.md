@@ -5,7 +5,7 @@ categories: ROS
 tags: [ros, term, jargon]
 ---
 
-## Technical Terms
+### Technical Terms
 
 Term | Description
 -----| -------------
@@ -21,16 +21,16 @@ Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File for
 [Catkin](#catkin) | ROS1의 Build package로서, ROS에 맞게 Customize된 CMake macro 집합이라 할 수 있음
 [Meta-OS](#meta-os) (Meta-Operating System) | Application과 Parallel Computing 자원간의 가상화 Layer (비공식 용어)
 
-## Detailed description
+### Detailed description
 
-### ROS
+#### ROS
 
 - 일반 OS에서 제공하는 HW 추상화, 저수준 기기제어, 빈번히 사용되는 기능들이 구현되어 있음
 - Process간 Message 전달 Package 관리 기능 등을 제공
 - 여러 Computer system 에서 작동하는 Code를 Fetch, Build, Implementation, Run하기 위한 Tools & Library를 제공
 - 일종의 MOM (Message-Oriented Middleware)라고 할 수 있음
 
-### Master
+#### Master
 
 - roscore를 통해 실행
 - Master를 실행하면 각 Node의 이름을 등록하고 필요에 따라 정보를 받을 수 있다.
@@ -40,7 +40,7 @@ Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File for
 - Server 주소와 Port로는 ROS_MASTER_URI 변수에 기재된 URI 주소와 Port를 사용한다.
 - 기본값은 ${Current Local IP}:11311이다.
 
-### Node
+#### Node
 
 - ROS에서는 하나의 목적에 하나의 Node 작성을 권장
   - 재사용이 쉽게 구성하여 개발하는 것이 권장됨
@@ -68,27 +68,27 @@ Bag | ROS에서 주고받는 Message Data를 저장할 때 사용하는 File for
   - 접속 요청과 응답은 XMLRPC
   - Message 통신은 TCP/IP 기반의 TCPROS 사용
 
-### Topic
+#### Topic
 
 - Publisher가 Master에 Topic을 등록한 뒤, Message를 일방 출력하면 Master에 등록된 Subscriber가 Data를 수신하는 형태
 - Topic은 Publisher가 Subscriber에게 일방적으로 Data를 전달하는 단방향 통신이며, 비동기 적으로 연속적인 Message를 전달하는 통신방법이기 때문에 Sensor Data 전송에 적합
 
-### Service
+#### Service
 
 - Client의 요청이 있을 때 응답하는 Server를 가진다.
 - 일회성 Message 통신으로 요청과 응답이 완료되면 두 Node간 접속이 끊긴다.
 
-### Action
+#### Action
 
 - 요청과 응답에 해당하는 Gool과 Result가 있으며, 중간 결과에 해당하는 Feedback이 추가됨
 - Action Client가 Goal을 Action Server에 전달하면, Action Server가 수행 상태에 따라 Feedback과 Result를 반환
 
-### Catkin
+#### Catkin
 
 - CMakeLists.txt를 이용해서 사용
 - rosbuild -> catkin (ROS1) -> ament -> colcon (ROS2)
 
-### Meta OS
+#### Meta OS
 
 - Parallel Computing Resource를 활용하여, Scheduling, Load, Monitoring, Error Handling 등을 실행하는 System
 - 즉, Windows, Linux, Android와 같은 전통적인 OS와 같은 개념이라기 보다, 이 OS들을 이용함

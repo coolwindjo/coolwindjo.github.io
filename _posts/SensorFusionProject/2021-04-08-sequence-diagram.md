@@ -5,12 +5,12 @@ categories: SensorFusionProject
 tags: [ros, uml, sequence-diagram]
 ---
 
-## Sequence Diagram
+### Sequence Diagram
 
-### As-is image
+#### As-is image
 
 ![radar_input as-is sequnce]({{ "/assets/images/posts/2021-04-08/radar_input_asis.png" | relative_url }})
 
-### To-be image
+#### To-be image
 
 ![radar_input to-be sequnce]({{ "/assets/images/posts/2021-04-08/radar_input_tobe.png" | relative_url }})

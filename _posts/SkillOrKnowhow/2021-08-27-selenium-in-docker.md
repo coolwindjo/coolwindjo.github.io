@@ -5,16 +5,16 @@ categories: SkillOrKnowhow
 tags: [python, selenium, docker]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Using Selenium With Python in a Docker Container](<https://dev.to/nazliander/using-selenium-within-a-docker-container-ghp>){:target="_blank"} A blog on dev.to that intruduce a docker file to build containers in which the selenium and chrome run.
 - [GitHub: docker-python-chromedriver](<https://github.com/joyzoursky/docker-python-chromedriver>){:target="_blank"} GitHub containing docker files with various versions of python. Seems to based on the source code from the above dev.to blog.
 - [A recipe for website automated tests with Python Selenium & Headless Chrome in Docker](<https://www.freecodecamp.org/news/a-recipe-for-website-automated-tests-with-python-selenium-headless-chrome-in-docker-8d344a97afb5/>){:target="_blank"} A blog on freecodecamp written by Joyz who is the author of the github above.
 
 
-## Sample Source Codes
+### Sample Source Codes
 
-### Dockerfile
+#### Dockerfile
 
 ```Dockerfile
 # FROM python:3.9
@@ -70,7 +70,7 @@ RUN pip install selenium
 # CMD ["python", "./app.py"]
 ```
 
-### devcontainer.json
+#### devcontainer.json
 
 ```json
 {
@@ -134,7 +134,7 @@ RUN pip install selenium
 ```
 
 
-### unit_test.py
+#### unit_test.py
 
 ```python
 import unittest

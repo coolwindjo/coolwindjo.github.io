@@ -5,7 +5,7 @@ categories: MLops
 tags: [nvidia, cuda]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Blog - RTX3090 Deep learning 실험환경 구축하기 (Korean)](<https://uhou.tistory.com/207>){:target="_blank"} Offering commands to uninstall Nvidia related modules like CUDA toolkit and driver
 

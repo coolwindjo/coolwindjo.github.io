@@ -5,7 +5,7 @@ categories: Linux
 tags: [file-system, virtual-file-system]
 ---
 
-## File System
+### File System
 
 - Main Memory vs. Secondary Storage
 
@@ -15,7 +15,7 @@ tags: [file-system, virtual-file-system]
 | secondary storage | file system       | hard disk | non-volatile | disk block + FILE NAME
 
 
-## Disk Block Management
+### Disk Block Management
 
 - Disk
 
@@ -58,9 +58,9 @@ tags: [file-system, virtual-file-system]
     - FAT
 
 
-## FAT
+### FAT
 
-## inode structure
+### inode structure
 
 - ext2_inode
 
@@ -128,7 +128,7 @@ tags: [file-system, virtual-file-system]
     };
     ```
 
-## Ext2 File System
+### Ext2 File System
 
 - IDE disks
   - /dev/hda, /dev/hdb
@@ -139,6 +139,6 @@ tags: [file-system, virtual-file-system]
   ![ext2_inode]({{ "/assets/images/posts/2020-12-28/ext2_inode.png" | relative_url }})
 
 
-## Advisory Lock vs. Mandatory Lock
+### Advisory Lock vs. Mandatory Lock
 
 -

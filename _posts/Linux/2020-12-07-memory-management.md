@@ -5,7 +5,7 @@ categories: Linux
 tags: [memory]
 ---
 
-## Memory management technic and virtual memory
+### Memory management technic and virtual memory
 
 - Virtual memory offers maximum sized Virtual Address Space to each Task.
 
@@ -20,7 +20,7 @@ tags: [memory]
     - Easy to share or protect memory between tasks
     - Fast task creation
 
-## Physical memory management data structure
+### Physical memory management data structure
 
 - Linux has the information about entire physical memory.
 - UMA(Uniform Memory Access): SMP(Symmetric Multi-Processing)
@@ -183,7 +183,7 @@ tags: [memory]
 
   ![Node-Zone]({{ "/assets/images/posts/2020-12-07/node-zone.png" | relative_url }})
 
-## Buddy and Slab
+### Buddy and Slab
 
 - Linux allocates physical memory to tasks by the "Page frame" unit.
   - At least 4KB, which can be changed to be 8KB, 2MB, etc.
@@ -229,7 +229,7 @@ tags: [memory]
 - Slab Allocator
   - Internal Fragmentation
 
-## [Exercise 2. Answer: Understanding Stack based buffer overflow](<https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow>){:target="_blank"}
+### [Exercise 2. Answer: Understanding Stack based buffer overflow](<https://payatu.com/blog/Siddharth-Bezalwar/understanding-stack-based-buffer-overflow>){:target="_blank"}
 
 ```cpp
 #include <string.h>

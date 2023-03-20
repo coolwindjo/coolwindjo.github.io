@@ -4,11 +4,11 @@ categories: GUI
 tags: [qt, meta-object]
 ---
 
-## Reference Links
+### Reference Links
 
 - [Qt for Beginners](<https://wiki.qt.io/Qt_for_Beginners>){:target="_blank"}
 
-## The Meta Object
+### The Meta Object
 
 - Qt provides a meta-object system.
   - Meta-object (literally "over the object") is a way to achieve some programming paradigms that are normally impossible to achieve with pure C++ like:
@@ -24,7 +24,7 @@ tags: [qt, meta-object]
   ```
 - [QMetaObject](<http://doc.qt.io/qt-5/qmetaobject.html#>){:target="_blank"} class contains all the methods that deal with meta-objects.
 
-## Important macros
+### Important macros
 
 - The most important macro is **Q_OBJECT**.
   - Signal-Slot connections and their syntax cannot be interpreted by a regular C++ compiler.
@@ -46,7 +46,7 @@ tags: [qt, meta-object]
       - When a **signal** is emitted, the **meta-object** system is used to compare the signature of the **signal**, to check the connection, and to find the **slot** using it's signature.
       - These macros are actually used to convert the provided method signature into a string that matches the one stored in the **meta-object**.
 
-## Creating custom signals and slots
+### Creating custom signals and slots
 
 - Creating custom **slots**
   - Slots are like normal methods, but with small decorations around,
@@ -59,14 +59,14 @@ tags: [qt, meta-object]
   - implement **slots** as normal methods
   - establish **connect**ions
 
-### Creating custom slots
+#### Creating custom slots
 
 - In order to implement a slot, we first need to [make the class be able to send signals and have slots](<https://coolwindjo.github.io/gui/2022/04/19/Qt-observer-pattern.html>){:target="_blank"}.
 - This is done by setting the **Q_OBJECT** macro in the class declaration (often in the header).
 - After that, a **slot** should be declared in the corresponding section, and implemented as a normal method.
 - Finally, **slots** are connected to **signals**.
 
-### Creating signals
+#### Creating signals
 
 - As for slots, we first need to add the **Q_OBJECT** macro.
 - **Signals** should also be declared in the *signals* section, and there is no need for them to be implemented.
@@ -79,9 +79,9 @@ emit mySignal();
 emit mySignal(firstParameter, secondParameter ...);
 ```
 
-### Example
+#### Example
 
-#### Creating custom slots
+##### Creating custom slots
 
 - Let's start with our window with the button:
 
@@ -149,7 +149,7 @@ void Window::slotButtonClicked(bool checked) {
   ```
   - Implement private and protected slots by prefixing them with "slot"
 
-#### Emitting custom signals
+##### Emitting custom signals
 
 - New Button Action
   - close the app. after clicking 10 times
@@ -210,7 +210,7 @@ void Window::slotButtonClicked(bool checked) {
 ```
 - We need t o write the keyword emit to send the signal.
 
-### Troubleshooting
+#### Troubleshooting
 
 While compiling your program, especially when you are adding the macro Q_OBJECT, you might have this compilation error.
 
@@ -220,9 +220,9 @@ main.cpp:(.text._ZN6WindowD2Ev[_ZN6WindowD5Ev]+0x3): undefined reference to `vta
 
 This is because of the meta-object compiler not being run on a class that should have meta-object. You should rerun qmake, by doing Build > Run qmake.
 
-### Widgets
+#### Widgets
 
-#### QRadioButton
+##### QRadioButton
 
 - Radio button is a standard GUI component being used to make a unique choice from a list.
 - QRadioButton behaves just like QPushButton thanks to a nice inheritance.

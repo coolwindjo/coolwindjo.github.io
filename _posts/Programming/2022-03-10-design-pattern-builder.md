@@ -5,18 +5,18 @@ tags: [design-pattern, builder, creator]
 ---
 
 
-## Reference Links
+### Reference Links
 
 - [Refactoring GURU - Builder](<https://refactoring.guru/design-patterns/builder>){:target="_blank"}
 
-## Intent
+### Intent
 
 Builder is a creational design pattern that lets you construct complex objects step by step. The pattern allows you to produce different types and representations of an object using the same construction code.
 
 ![image of factory building robots]({{"https://refactoring.guru/images/patterns/content/builder/builder-en.png"}})
 
 
-## Problem
+### Problem
 
 ![image of various houses]({{"https://refactoring.guru/images/patterns/diagrams/builder/problem1.png"}})
 
@@ -27,14 +27,14 @@ There’s another approach that doesn’t involve breeding subclasses. You can c
 ![create houses with tons of parameters]({{"https://refactoring.guru/images/patterns/diagrams/builder/problem2.png"}})
 
 
-## Solution
+### Solution
 
 ![image of different builders executing the same task in various ways]({{"https://refactoring.guru/images/patterns/content/builder/builder-comic-1-en-2x.png"}})
 
 For example, imagine a builder that builds everything from wood and glass, a second one that builds everything with stone and iron and a third one that uses gold and diamonds. By calling the same set of steps, you get a regular house from the first builder, a small castle from the second and a palace from the third. However, this would only work if the client code that calls the building steps is able to interact with builders using a common interface.
 
 
-### Director
+#### Director
 
 You can go further and extract a series of calls to the builder steps you use to construct a product into a separate class called director. The director class defines the order in which to execute the building steps, while the builder provides the implementation for those steps.
 
@@ -45,14 +45,14 @@ Having a director class in your program isn’t strictly necessary. You can alwa
 In addition, the director class completely hides the details of product construction from the client code. The client only needs to associate a builder with a director, launch the construction with the director, and get the result from the builder.
 
 
-## Structure
+### Structure
 
 ![image of builder and director]({{"https://refactoring.guru/images/patterns/diagrams/builder/structure-2x.png"}})
 
 The Client must associate one of the builder objects with the director. Usually, it’s done just once, via parameters of the director’s constructor. Then the director uses that builder object for all further construction. However, there’s an alternative approach for when the client passes the builder object to the production method of the director. In this case, you can use a different builder each time you produce something with the director.
 
 
-## Pseudocode
+### Pseudocode
 
 ![image of car builder and director]({{"https://refactoring.guru/images/patterns/diagrams/builder/example-en-2x.png"}})
 
@@ -207,9 +207,9 @@ class Application is
 
 ```
 
-## Applicability
+### Applicability
 
-### Use the Builder pattern to get rid of a “telescopic constructor”
+#### Use the Builder pattern to get rid of a “telescopic constructor”
 
 ```C++
 
@@ -221,17 +221,17 @@ class Pizza {
 
 ```
 
-### Use the Builder pattern when you want your code to be able to create different representations of some product (for example, stone and wooden houses)
+#### Use the Builder pattern when you want your code to be able to create different representations of some product (for example, stone and wooden houses)
 
  The Builder pattern can be applied when construction of various representations of the product involves similar steps that differ only in the details.
 
 
-### Use the Builder to construct Composite trees or other complex objects
+#### Use the Builder to construct Composite trees or other complex objects
 
 The Builder pattern lets you construct products step-by-step. You could defer execution of some steps without breaking the final product. You can even call steps recursively, which comes in handy when you need to build an object tree.
 
 
-## How to Implement
+### How to Implement
 
 1. Clearly define the common construction steps for building all available product representations
 2. Declare these steps in the base builder interface.
@@ -247,7 +247,7 @@ The Builder pattern lets you construct products step-by-step. You could defer ex
 6. The construction result can be obtained directly from the director only if all products follow the same interface. Otherwise, the client should fetch the result from the builder.
 
 
-## Pros and Cons
+### Pros and Cons
 
 :heavy_check_mark:
 Single Responsibility Principle. You can isolate complex construction code from the business logic of the product.
@@ -256,7 +256,7 @@ Single Responsibility Principle. You can isolate complex construction code from 
 The overall complexity of the code increases since the pattern requires creating multiple new classes.
 
 
-## Relations with Other Patterns
+### Relations with Other Patterns
 
 - Many designs start by using **Factory Method** (less complicated and more customizable via subclasses) and evolve toward **Abstract Factory**, **Prototype**, or **Builder** (more flexible, but more complicated).
 
@@ -269,7 +269,7 @@ The overall complexity of the code increases since the pattern requires creating
 - **Abstract Factories**, **Builders** and **Prototypes** can all be implemented as **Singletons**.
 
 
-## Code Examples
+### Code Examples
 
 - [C#](<https://refactoring.guru/design-patterns/builder/csharp/example>){:target="_blank"}
 - [C++](<https://refactoring.guru/design-patterns/builder/cpp/example>){:target="_blank"}
