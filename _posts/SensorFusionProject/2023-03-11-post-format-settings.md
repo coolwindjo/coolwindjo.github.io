@@ -11,6 +11,12 @@ tags: [ubuntu, docker, nvidia-driver, nvidia-container-toolkit]
 
 ## Step by step guide
 
+### Install Git
+
+```terminal
+sudo apt-get update -y && sudo apt-get install -q -y git
+```
+
 ### Generate your SSH key for your convenient git work
 
 - Follow the post linked => [How to clone a git repository with ssh-key]({% link _posts/SensorFusionProject/2020-11-26-how-to-clone-git-repository-with-ssh.md %}){:target="_blank"}
@@ -33,14 +39,24 @@ sudo chmod 755 post-format-settings/*
 
 ```
 
+#### Change the Git Configurations Information
+
+```terminal
+vim 01_set_git_config.sh
+```
+
+- Replace the followings with your information
+  - "mailID@address.com"
+  - "UserName"
+
 #### Run each script one by one (reboot required for some scripts)
 
 ```terminal
 
 ./00_initialize_linux.sh
+./01_set_git_config.sh
 ./02-1_install_vscode_docker.sh
 ./02-2_add_docker-group.sh
-./04_sensorfusion-clone-settings.sh
 ./04_install_nvidia-driver_reboot_rqrd.sh
 <<Reboot the Desktop!>>
 ./05_install_nvidia-container-toolkit_reboot_rqrd.sh
