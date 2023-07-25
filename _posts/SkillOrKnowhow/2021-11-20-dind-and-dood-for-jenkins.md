@@ -1,7 +1,7 @@
 ---
 layout: post
 title: Docker in Docker and Docker out of Docker for Jenkins
-categories: Scripts
+categories: SkillOrKnowhow
 tags: [dockerfile, jenkins, docker, dind, dood]
 ---
 
