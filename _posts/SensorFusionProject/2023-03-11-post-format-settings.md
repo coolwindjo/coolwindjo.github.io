@@ -28,7 +28,7 @@ sudo apt-get update -y && sudo apt-get install -q -y git
 
 ```terminal
 
-git clone git@github.com:SensorFusionProject/post-format-settings.git
+git clone https://github.com/coolwindjo/post-format-settings.git
 
 ```
 #### Change the permission of the files for script execution
@@ -36,18 +36,20 @@ git clone git@github.com:SensorFusionProject/post-format-settings.git
 ```terminal
 
 sudo chmod 755 post-format-settings/*
+cd post-format-settings
 
 ```
 
 #### Change the Git Configurations Information
 
 ```terminal
-vim 01_set_git_config.sh
+gedit 01_set_git_config.sh
 ```
 
 - Replace the followings with your information
-  - "mailID@address.com"
-  - "UserName"
+  - user.email "mailID@address.com"
+  - user.name "UserName"
+  - core.editor "gedit"
 
 #### Run each script one by one (reboot required for some scripts)
 
