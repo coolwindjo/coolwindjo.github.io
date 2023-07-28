@@ -30,6 +30,9 @@ sudo apt-get update -y && sudo apt-get install -q -y git
 
 git clone https://github.com/coolwindjo/post-format-settings.git
 
+# if you have a ssh-key
+git clone git@github.com:coolwindjo/post-format-settings.git
+
 ```
 #### Change the permission of the files for script execution
 
