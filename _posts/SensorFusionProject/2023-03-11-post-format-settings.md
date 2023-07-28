@@ -60,8 +60,10 @@ gedit 01_set_git_config.sh
 
 ./00_initialize_linux.sh
 ./01_set_git_config.sh
+# if you use Ubuntu 22.04, it is safe to continue.
 ./02-1_install_vscode_docker.sh
 ./02-2_add_docker-group.sh
+# Check graphic card version =>  https://developer.nvidia.com/cuda-downloads
 ./04_install_nvidia-driver_reboot_rqrd.sh
 <<Reboot the Desktop!>>
 ./05_install_nvidia-container-toolkit_reboot_rqrd.sh
