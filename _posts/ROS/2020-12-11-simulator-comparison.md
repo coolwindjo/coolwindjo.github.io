@@ -11,7 +11,7 @@ tags: [ros, robotics, self-driving, sensor, simulator]
 - [AirSim](<https://github.com/Microsoft/AirSim/>){:target="_blank"}
 - [CARLA](<http://carla.org/>){:target="_blank"}
 - [AADS](<https://robotics.sciencemag.org/content/4/28/eaaw0863/>){:target="_blank"}
-  - [AADS paper](<https://arxiv.org/ftp/arxiv/papers/1901/1901.07849.pdf>){:target="_blank"}
+- [AADS paper](<https://arxiv.org/ftp/arxiv/papers/1901/1901.07849.pdf>){:target="_blank"}
 - [LGSVL](<https://github.com/lgsvl/simulator>){:target="_blank"}
 - [Gazebo](<http://gazebosim.org/>){:target="_blank"}
 - [Udacity's Self-Driving Car Simulators](<https://github.com/udacity/self-driving-car-sim>){:target="_blank"}

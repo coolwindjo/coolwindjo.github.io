@@ -5,15 +5,24 @@ categories: SensorFusionProject
 tags: [getting-started, ros, docker]
 ---
 
-## Easier way to do this post
+## Related Posts
 
-- [Post Format Settings]({% link _posts/SensorFusionProject/2023-03-11-post-format-settings.md %}){:target="_blank"}
-
+- [SensorFusionProject Category](<https://coolwindjo.github.io/categories.html#h-SensorFusionProject>){:target="_blank"} 
 
 ## Step by step guide
 ### Generate your SSH key for your convenient git work
 
-- Follow the post linked => [How to clone a git repository with ssh-key]({% link _posts/SensorFusionProject/2020-11-26-how-to-clone-git-repository-with-ssh.md %}){:target="_blank"}
+- Follow the post linked => [How to add a ssh-key to your github account]({% link _posts/SensorFusionProject/2020-11-26-how-to-add-a-ssh-key-to-your-github-account.md %}){:target="_blank"}
+
+### Install Docker on your linux (Ubuntu)
+
+- [Find the method from the official homepage](<https://docs.docker.com/engine/install/ubuntu/>){:target="_blank"}
+- [Manage Docker as a non-root user](<https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user>){:target="_blank"}
+
+#### Easier way to do this post
+
+- [Post Format Settings]({% link _posts/SensorFusionProject/2023-03-11-post-format-settings.md %}){:target="_blank"}
+
 
 ### Clone the SensorFusion Repository
 
@@ -32,12 +41,6 @@ git clone --recursive git@github.com:SensorFusionProject/SensorFusion.git
 git submodule update --init --recursive
 
 ```
-
-### Install Docker on your linux (Ubuntu)
-
-- [Find the method from the official homepage](<https://docs.docker.com/engine/install/ubuntu/>){:target="_blank"}
-
-- [Manage Docker as a non-root user](<https://docs.docker.com/engine/install/linux-postinstall/#manage-docker-as-a-non-root-user>){:target="_blank"}
 
 ### Execute the script for running ROS docker
 

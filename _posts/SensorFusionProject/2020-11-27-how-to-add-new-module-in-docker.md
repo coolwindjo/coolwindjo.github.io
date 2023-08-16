@@ -5,6 +5,12 @@ categories: SensorFusionProject
 tags: [getting-started, docker]
 ---
 
+## Related Posts
+
+- [SensorFusionProject Category](<https://coolwindjo.github.io/categories.html#h-SensorFusionProject>){:target="_blank"} 
+
+## Step by step guide
+
 ### Modify Dockerfile
 
 ```terminal

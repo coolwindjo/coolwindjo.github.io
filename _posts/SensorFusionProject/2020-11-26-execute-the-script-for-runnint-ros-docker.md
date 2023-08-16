@@ -5,10 +5,6 @@ categories: SensorFusionProject
 tags: [getting-started, ros, docker]
 ---
 
-## Related Posts
-
-- [How to start the Sensor Fusion Project]({% link _posts/SensorFusionProject/2020-11-26-how-to-start-the-sensor-fusion.md %}){:target="_blank"}
-
 ## Step by step guide
 
 ### Execute the script for running ROS docker

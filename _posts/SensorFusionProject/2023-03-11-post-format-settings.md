@@ -6,8 +6,8 @@ tags: [ubuntu, docker, nvidia-driver, nvidia-container-toolkit]
 
 ## Related Posts
 
+- [SensorFusionProject Category](<https://coolwindjo.github.io/categories.html#h-SensorFusionProject>){:target="_blank"} 
 - [How to start the Sensor Fusion Project]({% link _posts/SensorFusionProject/2020-11-26-how-to-start-the-sensor-fusion.md %}){:target="_blank"}
-
 
 ## Step by step guide
 
@@ -19,7 +19,7 @@ sudo apt-get update -y && sudo apt-get install -q -y git
 
 ### Generate your SSH key for your convenient git work
 
-- Follow the post linked => [How to clone a git repository with ssh-key]({% link _posts/SensorFusionProject/2020-11-26-how-to-clone-git-repository-with-ssh.md %}){:target="_blank"}
+- Follow the post linked => [How to add a ssh-key to your github account]({% link _posts/SensorFusionProject/2020-11-26-how-to-add-a-ssh-key-to-your-github-account.md %}){:target="_blank"}
 
 
 ### Easier way to be ready for the SensorFusionProject
@@ -58,25 +58,29 @@ gedit 01_set_git_config.sh
 
 ```terminal
 
+# Update this 'post-format-settings' git first!
+git fetch && git rebase
+
 ./00_initialize_linux.sh
 ./01_set_git_config.sh
+
 # if you use Ubuntu 22.04, it is safe to continue.
 ./02-1_install_vscode_docker.sh
 ./02-2_add_docker-group.sh
+
 # Check graphic card version =>  https://developer.nvidia.com/cuda-downloads
 ./04_install_nvidia-driver_reboot_rqrd.sh
-<<Reboot the Desktop!>>
+# <<Reboot the Desktop!>>
+
 ./05_install_nvidia-container-toolkit_reboot_rqrd.sh
-<<Reboot the Desktop!>>
+# <<Reboot the Desktop!>>
 
+# Clone the 'carla-autoware' git on you system
+# Copy the '06_apply_carla-autoware_modification.sh' and '0001-modify-to-use-CARLA-Autoware.patch' to your 'carla-autoware' directory
+# Go to the 'carla-autoware' local repository on your system
+./06_apply_carla-autoware_modification.sh
 ```
-
-### Execute the script for running ROS docker
-
-- Follow the post linked => [Execute the script for running ROS docker]({% link _posts/SensorFusionProject/2020-11-26-execute-the-script-for-runnint-ros-docker.md %}){:target="_blank"}
-
 
 ### It's done!
 
-
-## Report any error message or inconvinient situation to JoSH
+## Report any error message or inconvenient situation to JoSH

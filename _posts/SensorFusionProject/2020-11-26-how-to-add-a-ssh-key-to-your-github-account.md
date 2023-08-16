@@ -1,9 +1,15 @@
 ---
 layout: post
-title: How to clone a git repository with ssh-key
+title: How to add a ssh-key to your github account
 categories: SensorFusionProject
 tags: [getting-started, ssh, git]
 ---
+
+## Related Posts
+
+- [SensorFusionProject Category](<https://coolwindjo.github.io/categories.html#h-SensorFusionProject>){:target="_blank"} 
+
+## Step by step guide
 
 ### Generate your SSH key for your convenient git work
 

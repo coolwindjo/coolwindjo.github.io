@@ -4,9 +4,15 @@ categories: SensorFusionProject
 tags: [ros, getting-started, ]
 ---
 
-### Reference Links
+## Related Posts
+
+- [SensorFusionProject Category](<https://coolwindjo.github.io/categories.html#h-SensorFusionProject>){:target="_blank"} 
+
+## Reference Links
 
 - [CARLA-AUTOWARE](<https://github.com/carla-simulator/carla-autoware>){:target="_blank"} 
+
+## Step by step guide
 
 ### Set up CARLA-DOCKER
 
