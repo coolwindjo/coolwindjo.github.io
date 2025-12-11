@@ -1,6 +1,6 @@
 ---
 layout: post
-categories: Linux / Programming
+categories: Linux
 tags: [iot, dump, embedded, debug]
 ---
 
