@@ -5,15 +5,13 @@ categories: Private
 status: in-progress
 tags:
 ---
-<!-- 
-status: backlog, in-progress, todo, completed, stopped, wating
--->
 2025-08-22 09:56
 
 Tags: [[persönliche]]
 
 # Informationen zur Sozialversicherung
 - Agentur für Arbeit 고객번호 Kundennummer bereit: 843E345936
+- Steuernummer: 183 314 00250
 - 사회보험 번호 (Sozialversicherungsausweis, Rentenversicherungsnummer)
 	- Jo, SeungHyeon: 54 231284 J 029
 	- Lee, Narae: 14 010987 L 521
