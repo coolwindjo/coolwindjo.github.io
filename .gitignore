@@ -2,6 +2,7 @@
 .bundle
 .sass-cache
 .DS_store
+.sync.ffs_db
 _site
 Gemfile.lock
 /.jekyll-cache
