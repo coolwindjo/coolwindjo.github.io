@@ -9,21 +9,12 @@ tags:
 
 Tags: [[_Integrated Daily Battle Plan]], [[study]]
 
-# Integrated Daily Battle Plan - Day1
+## **Engineering Tech Cheat Sheet: Advanced C++ & Robotics Architecture**
 
 ---
+### 1. Advanced Memory Management (Smart Pointers)
 
-### **Engineering Tech Cheat Sheet: Advanced C++ & Robotics Architecture**
-
-Owner: Jo, SeungHyeon (Senior Robotics Software Engineer)
-
-Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
-
----
-
-### **1. Advanced Memory Management (Smart Pointers)**
-
-#### **A. Internal Structure & Performance**
+#### A. Internal Structure & Performance
 
 - **Structure:** `std::shared_ptr<T>` contains **Two Pointers**:
     
@@ -40,7 +31,7 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 > To visually clarify item 1.A of your Cheat Sheet (the `std::shared_ptr` structure), we are providing a diagram. You should be able to draw this on a whiteboard during an interview.
         
 
-#### **B. `std::make_shared` vs `new` (The Trade-off)**
+#### B. `std::make_shared` vs `new` (The Trade-off)
 
 |**Feature**|**std::shared_ptr<T>(new T())**|**std::make_shared<T>()**|
 |---|---|---|
@@ -53,7 +44,7 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
     - **Rule:** For large data with `weak_ptr` observers -> Use `new`.
         
 
-#### **C. Parameter Passing**
+#### C. Parameter Passing
 
 - **Bad:** `void func(std::shared_ptr<T> p)` -> Calls copy ctor -> Atomic Inc/Dec -> **Performance Hit**.
     
@@ -62,16 +53,16 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 
 ---
 
-### **2. System Architecture & Low-Latency Design**
+### 2. System Architecture & Low-Latency Design
 
-#### **A. Zero-Copy vs. Socket Communication**
+#### A. Zero-Copy vs. Socket Communication
 
 - **The Problem (Socket/TCPROS):** Even on localhost, data travels: `User Space` -> `Kernel Space` -> `User Space`. (Requires **Serialization** + **4 Data Copies**).
     
 - **The Solution (Shared Memory):** `mmap` same physical RAM to virtual address space of multiple processes. (**0 Copies**).
     
 
-#### **B. The Virtual Memory Trap**
+#### B. The Virtual Memory Trap
 
 - **Scenario:** Sending `std::vector` or pointers via Shared Memory.
     
@@ -80,7 +71,7 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 - **Fix:** Use **Relative Pointers** (Offset based) or Fixed-size structures (Flattened Data).
     
 
-#### **C. Serialization Strategy**
+#### C. Serialization Strategy
 
 - **JSON:** Human readable, but **Heavy parsing** & **Large payload**. (Use for Configs only).
     
@@ -93,17 +84,15 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 
 ---
 
-### **3. C++ Design Patterns (Safety-Critical)**
+### 3. C++ Design Patterns (Safety-Critical)
 
-#### **A. Singleton (Static Initialization Fiasco)**
+#### A. Singleton (Static Initialization Fiasco)
 
 - **Danger:** Global variables in different `.cpp` files have **undefined initialization order**.
     
 - **Fix (Meyers' Singleton):** Use `static` local variable inside a function. Guaranteed to initialize on first call.
     
-    C++
-    
-    ```
+    ```cpp
     static Config& getInstance() {
         static Config instance; // Lazy Init + Thread-Safe (C++11+)
         return instance;
@@ -111,7 +100,7 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
     ```
     
 
-#### **B. PIMPL (Pointer to Implementation)**
+#### B. PIMPL (Pointer to Implementation)
 
 - **Goal:** Break compilation dependency (reduce build time) & ABI stability.
     
@@ -126,16 +115,16 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 
 ---
 
-### **4. Concurrency & Multi-threading**
+### 4. Concurrency & Multi-threading
 
-#### **A. `std::async` Trap**
+#### A. `std::async` Trap
 
 - **Issue:** Default policy allows `deferred` execution (runs serially on main thread when `.get()` is called).
     
 - **Fix:** Always force new thread: `std::async(std::launch::async, ...)`
     
 
-#### **B. Race Conditions**
+#### B. Race Conditions
 
 - **Shared Ptr:** Ref Count is thread-safe, but **Managed Object is NOT**.
     
@@ -144,16 +133,16 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 
 ---
 
-### **5. JavaScript Internals (for C++ Mindset)**
+### 5. JavaScript Internals (for C++ Mindset)
 
-#### **A. Scope & Memory**
+#### A. Scope & Memory
 
 - **Hoisting:** Variable declarations move to top. `var` = garbage init, `let/const` = RAII-like safety (TDZ).
     
 - **Closure Trap:** `var` in loops shares one memory address. Use `let` for block scoping.
     
 
-#### **B. Event Loop Priority**
+#### B. Event Loop Priority
 
 1. **Call Stack** (Synchronous)
     
@@ -164,7 +153,7 @@ Version: 1.0 (Integration of C++17/20, OS Internals, and System Design)
 
 ---
 
-### **6. Suggested Action Items**
+### 6. Suggested Action Items
 
 1. **Build a Sandbox:** Create a `cpp_experiments` repo.
     
