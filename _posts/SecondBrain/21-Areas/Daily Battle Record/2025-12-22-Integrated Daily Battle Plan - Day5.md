@@ -5,12 +5,13 @@ subtitle:
 categories: Programming
 status: published
 tags:
+mathjax: true
 ---
 2025-12-23 09:24
 
 Tags: [[_Integrated Daily Battle Plan]], [[study]]
 
-## Training Log: 2025-12-22 (Algorithm Pattern Optimization)
+## Algorithm Pattern Optimization
 
 ### 1. Key Concepts & Corrections
 

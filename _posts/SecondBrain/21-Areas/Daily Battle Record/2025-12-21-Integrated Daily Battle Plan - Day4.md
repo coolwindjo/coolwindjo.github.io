@@ -5,6 +5,7 @@ subtitle:
 categories: Programming
 status: published
 tags:
+mathjax: true
 ---
 2025-12-22 08:05
 
