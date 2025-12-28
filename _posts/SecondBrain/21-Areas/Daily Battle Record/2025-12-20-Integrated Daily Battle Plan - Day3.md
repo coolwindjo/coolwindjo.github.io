@@ -82,7 +82,8 @@ void transfer_ownership(SensorNode& source, std::vector<SensorNode>& dest) {
 - **With `noexcept`:** No table registration. If an exception occurs, it jumps straight to `std::terminate`.
     
 - **Benefit:** Reduced binary size, faster function entry/exit, better instruction cache locality.
-    
+
+![noexcept with no unwinding]({{ "assets/images/posts/2025-12-20/noexcept_no_unwinding.png" | relative_url }})
 
 ## 3. Action Items
 
