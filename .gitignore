@@ -1,7 +1,7 @@
 *.gem
 .bundle
 .sass-cache
-.DS_store
+.DS_Store
 .sync.ffs_db
 _site
 Gemfile.lock
